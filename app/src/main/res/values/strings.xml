@@ -6,4 +6,6 @@
     <string name="txt_ok">OK</string>
     <string name="label_configurar_server">Indique o endereço do servidor ao qual a aplicação se irá ligar</string>
     <string name="txt_configurar_servidor">Configurar servidor</string>
+    <string name="txt_abrir">Abrir</string>
+    <string name="txt_fechar">Fechar</string>
 </resources>

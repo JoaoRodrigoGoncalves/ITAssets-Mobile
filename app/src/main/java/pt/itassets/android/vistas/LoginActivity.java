@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
         // TODO: Apresentar apenas quando a aplicação não estiver configurada
         FragmentManager fm = getSupportFragmentManager();
         ConfigurarServerFragment csf = new ConfigurarServerFragment();
-        csf.show(fm, "TAG"); // TAG?
+        csf.show(fm, null); // TAG?
 
     }
 
