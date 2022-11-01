@@ -8,12 +8,11 @@
     tools:context=".vistas.LoginActivity"
     android:layout_margin="5dp">
 
-    <!-- TODO: Substituir por icon com texto -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.5"
-        android:src="@drawable/icon_white"
+        android:src="@drawable/icon_white_text"
         android:forceDarkAllowed="false"/>
 
     <TextView
