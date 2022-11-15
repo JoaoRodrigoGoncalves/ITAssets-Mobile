@@ -6,9 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -19,6 +26,11 @@ public class MenuMainActivity extends AppCompatActivity
 
     private NavigationView navigationView;
     private DrawerLayout drawer;
+    private FragmentManager fragmentManager;
+    private String email;
+    public static final String SHAREDUSER="DADOS_USER";
+    public static final String EMAIL="EMAIL";
+    public static final String USERNAME="USERNAME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +49,51 @@ public class MenuMainActivity extends AppCompatActivity
         toggle.syncState();
         drawer.addDrawerListener(toggle);
 
+        carregarCabecalho();
+        navigationView.setNavigationItemSelectedListener(this);
+        fragmentManager = getSupportFragmentManager();
+        carregarFragmentoInicial();
+
+    }
+
+    private void carregarCabecalho(){
+        email = getIntent().getStringExtra(EMAIL);
+
+        SharedPreferences infoUser=getSharedPreferences(SHAREDUSER, Context.MODE_PRIVATE);
+        if(email!=null){
+            SharedPreferences.Editor editor = infoUser.edit();
+            editor.putString(EMAIL, email);
+            editor.apply();
+        }
+        else{
+            email=infoUser.getString(EMAIL, getString(R.string.default_email));
+        }
+
+        View headerView = navigationView.getHeaderView(0);
+        TextView tvEmail = headerView.findViewById(R.id.tvMainEmail);
+        tvEmail.setText(email);
+    }
+
+    private boolean carregarFragmentoInicial() {
+        Menu menu = navigationView.getMenu();
+        MenuItem item = menu.getItem(0);
+        item.setChecked(true);
+        return onNavigationItemSelected(item);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment fragment =  null;
+        switch (item .getItemId()) {
+            case R.id.listagemItens:
+                fragment = new ListagemItensFragment();
+                setTitle(item.getTitle());
+                break;
+        }
+        if (fragment != null){
+            fragmentManager.beginTransaction().replace(R.id.contentFragment, fragment).commit();
+        }
+
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

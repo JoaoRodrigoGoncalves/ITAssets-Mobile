@@ -5,8 +5,10 @@
 
     <item android:title="Grupo 1">
         <menu>
-            <item android:title="Item 1"
-                android:icon="@drawable/icon_white"/>
+            <item
+                android:id="@+id/listagemItens"
+                android:title="@string/txt_menu_listagem_de_itens"
+                android:icon="@drawable/ic_action_listaitens"/>
         </menu>
     </item>
 
