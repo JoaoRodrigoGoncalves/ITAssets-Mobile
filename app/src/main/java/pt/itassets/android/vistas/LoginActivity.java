@@ -23,6 +23,8 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         {
             if(prefs.getString(Helper.PREF_USER_TOKEN, null) != null)
             {
-                // TODO: Validar que o token ainda é válido e enviar email para a atividade
+                // TODO: Validar que o token ainda é válido, testar biometria e enviar email para a atividade
                 Intent autologinIntent = new Intent(this, MenuMainActivity.class);
                 startActivity(autologinIntent);
                 finish();
@@ -86,14 +88,9 @@ public class LoginActivity extends AppCompatActivity {
 
             try
             {
-//                JSONObject jsonBody = new JSONObject();
-//                jsonBody.put("email", email);
-//                jsonBody.put("password", pass);
-//                String requestBody = jsonBody.toString();
-
                 Context thisContext = this;
 
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, SYSTEM_DOMAIN + "login",
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, SYSTEM_DOMAIN + "login",
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
@@ -106,22 +103,26 @@ public class LoginActivity extends AppCompatActivity {
                                     Login loginObj = loginJson.fromJson(response, Login.class);
 
 
-                                    if(loginObj.status == 200)
+                                    switch(loginObj.status)
                                     {
-                                        SharedPreferences prefs = thisContext.getSharedPreferences(Helper.PREF_STORAGE, MODE_PRIVATE);
-                                        SharedPreferences.Editor prefEditor = prefs.edit();
-                                        prefEditor.putString(Helper.PREF_USER_TOKEN, loginObj.token);
-                                        prefEditor.apply();
+                                        case 200:
+                                            SharedPreferences prefs = thisContext.getSharedPreferences(Helper.PREF_STORAGE, MODE_PRIVATE);
+                                            SharedPreferences.Editor prefEditor = prefs.edit();
+                                            prefEditor.putString(Helper.PREF_USER_TOKEN, loginObj.token);
+                                            prefEditor.apply();
 
-                                        Intent mainMenu = new Intent(thisContext, MenuMainActivity.class);
-                                        mainMenu.putExtra(MenuMainActivity.EMAIL, email);
-                                        startActivity(mainMenu);
-                                        finish();
+                                            Intent mainMenu = new Intent(thisContext, MenuMainActivity.class);
+                                            mainMenu.putExtra(MenuMainActivity.EMAIL, email);
+                                            startActivity(mainMenu);
+                                            finish();
+                                            break;
 
-                                    }
-                                    else
-                                    {
-                                        //TODO: erro login
+                                        case 403:
+                                            etPassword.setError(loginObj.getMessage());
+                                            break;
+
+                                        default:
+                                            //TODO: Dialog com message do erro
                                     }
                                 }
                                 else
@@ -136,12 +137,14 @@ public class LoginActivity extends AppCompatActivity {
                         System.out.println(error.networkResponse.statusCode);
                     }
                 })  {
+                    // https://stackoverflow.com/a/44049327
                     @Override
-                    protected Map<String, String> getParams() {
-                        // https://www.geeksforgeeks.org/how-to-post-data-to-api-using-volley-in-android/
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        String authString = email + ":" + pass;
+
                         Map<String, String> params = new HashMap<String, String>();
-                        params.put("email", email);
-                        params.put("password", pass);
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Basic " + Base64.getEncoder().encodeToString(authString.getBytes(StandardCharsets.UTF_8)));
                         return params;
                     }
                 };
@@ -149,6 +152,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             catch (Exception e)
             {
+
                 System.out.println("EXCEPTION: " + e.getMessage());
             }
         }

@@ -49,7 +49,6 @@ public class ConfigurarServerFragment extends DialogFragment implements View.OnC
 
     @Override
     public void onClick(View view) {
-        // TODO: Terminar configuração da aplicação (seleção de servidor)
         if(Helper.isURLValid(et_endereco.getText().toString()))
         {
             // Instantiate the RequestQueue.
@@ -58,7 +57,7 @@ public class ConfigurarServerFragment extends DialogFragment implements View.OnC
 
             if(!et_endereco.getText().toString().contains("http://"))
             {
-                //caso nao tenha contain
+                //Caso não contenha já o protocolo explicitamente, adicionar https por padrão
                 url="https://"+ et_endereco.getText().toString();
             }
 
@@ -88,7 +87,6 @@ public class ConfigurarServerFragment extends DialogFragment implements View.OnC
                                 // Add the buttons
                                 builder.setPositiveButton("Sim", (DialogInterface.OnClickListener)(dialog, which)->
                                 {
-                                    //Guardar dados, yada, yada
                                     //Aceder à sharedPreference e definir o modo de acesso
 
                                     SharedPreferences infoUrl = getContext().getSharedPreferences(Helper.PREF_STORAGE, Context.MODE_PRIVATE);
