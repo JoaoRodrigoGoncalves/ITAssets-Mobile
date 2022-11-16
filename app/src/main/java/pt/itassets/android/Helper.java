@@ -1,6 +1,9 @@
 package pt.itassets.android;
 
+import android.content.Context;
 import android.util.Patterns;
+
+import androidx.biometric.BiometricManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +31,11 @@ public class Helper {
         return Patterns.WEB_URL.matcher(url).matches();
     }
 
-    //Método isEmailValido() para validar se foi inserido um email
+    /**
+     * Valida se a String indicada é um email válido
+     * @param email String com email a validar
+     * @return boolean
+     */
     public static boolean isEmailValido(String email){
         if(email == null){
             return false;
@@ -36,7 +43,12 @@ public class Helper {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    // https://www.baeldung.com/java-validate-json-string
+    /**
+     * Valida se a String indicada é JSON válido
+     * @see <a href="https://www.baeldung.com/java-validate-json-string">Fonte</a>
+     * @param string String a validar
+     * @return boolean
+     */
     public static boolean isValidJSON(String string)
     {
         try {
@@ -45,6 +57,17 @@ public class Helper {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Verifica se o dispositivo está apto para autenticação biométrica
+     * @param context
+     * @return boolean
+     */
+    public static boolean IsBiometricAvailable(Context context)
+    {
+        BiometricManager manager = BiometricManager.from(context);
+        return (manager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS);
     }
 
 }

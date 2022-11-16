@@ -6,8 +6,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.android.volley.AuthFailureError;
@@ -24,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import pt.itassets.android.Helper;
 import pt.itassets.android.R;
@@ -56,25 +61,49 @@ public class LoginActivity extends AppCompatActivity {
         }
         else
         {
-            SharedPreferences user_preferences = getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
-            if(user_preferences.getString(Helper.USER_TOKEN, null) != null)
-            {
-                // TODO: Validar que o token ainda é válido, testar biometria e enviar email para a atividade
-                Intent autologinIntent = new Intent(this, MenuMainActivity.class);
-                startActivity(autologinIntent);
-                finish();
-            }
             SYSTEM_DOMAIN = app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null);
+
+            SharedPreferences user_preferences = getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
+
+            if(user_preferences.getString(Helper.USER_TOKEN, null) != null && Helper.IsBiometricAvailable(this))
+            {
+                Executor executor = ContextCompat.getMainExecutor(this);
+                BiometricPrompt bioPrompt = new androidx.biometric.BiometricPrompt(this, executor, new androidx.biometric.BiometricPrompt.AuthenticationCallback() {
+                    @Override
+                    public void onAuthenticationSucceeded(@NonNull androidx.biometric.BiometricPrompt.AuthenticationResult result) {
+                        super.onAuthenticationSucceeded(result);
+                        Intent autologinIntent = new Intent(getBaseContext(), MenuMainActivity.class);
+                        startActivity(autologinIntent);
+                        finish();
+                    }
+                });
+
+                BiometricPrompt.PromptInfo.Builder prompt = new BiometricPrompt.PromptInfo.Builder()
+                        .setTitle(getString(R.string.txt_coloque_dedo_sensor_title))
+                        .setDescription(getString(R.string.txt_coloque_dedo_sensor_description))
+                        .setNegativeButtonText(getString(R.string.txt_cancelar));
+
+                bioPrompt.authenticate(prompt.build());
+            }
         }
     }
 
     public void onClick_btn_login(View view) {
-        //Validar dados inseridos nas EditText
         String email = etEmail.getText().toString();
         String pass = etPassword.getText().toString();
 
+        // Remover erros que possam ter sido anteriormente aplicados às editTexts
+        etEmail.setError(null);
+        etPassword.setError(null);
+
         if(!Helper.isEmailValido(email)) {
             etEmail.setError(getString(R.string.email_invalido));
+            return;
+        }
+
+        if(pass.length() < 1)
+        {
+            etPassword.setError(getString(R.string.txt_indique_password));
             return;
         }
 
@@ -83,11 +112,10 @@ public class LoginActivity extends AppCompatActivity {
         {
             RequestQueue queue = Volley.newRequestQueue(this);
             queue.start();
+            Gson loginJson = new Gson();
 
             try
             {
-                Context thisContext = this;
-
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, SYSTEM_DOMAIN + "login",
                         new Response.Listener<String>() {
                             @Override
@@ -96,40 +124,39 @@ public class LoginActivity extends AppCompatActivity {
                                 if(Helper.isValidJSON(response))
                                 {
                                     // TODO: uniformizar classes json usadas
-                                    Gson loginJson = new Gson();
                                     Login loginObj = loginJson.fromJson(response, Login.class);
 
                                     if(loginObj.status == 200)
                                     {
-                                        SharedPreferences prefs = thisContext.getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
+                                        SharedPreferences prefs = getBaseContext().getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
                                         SharedPreferences.Editor prefEditor = prefs.edit();
                                         prefEditor.putString(Helper.USER_TOKEN, loginObj.token);
                                         prefEditor.apply();
 
-                                        Intent mainMenu = new Intent(thisContext, MenuMainActivity.class);
+                                        Intent mainMenu = new Intent(getBaseContext(), MenuMainActivity.class);
                                         mainMenu.putExtra(Helper.USER_EMAIL, email);
                                         startActivity(mainMenu);
                                         finish();
                                     }
                                     else
                                     {
-                                        Snackbar.make(thisContext, view, getString(R.string.txt_erro) + ": " + loginObj.getMessage(), Snackbar.LENGTH_LONG).show();
+                                        Snackbar.make(getBaseContext(), view, getString(R.string.txt_erro) + ": " + loginObj.getMessage(), Snackbar.LENGTH_LONG).show();
                                     }
                                 }
                                 else
                                 {
-                                    Snackbar.make(thisContext, view, getString(R.string.txt_erro_login_no_json), Snackbar.LENGTH_LONG).show();
+                                    Snackbar.make(getBaseContext(), view, getString(R.string.txt_erro_login_no_json), Snackbar.LENGTH_LONG).show();
                                 }
                             }
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         if(error.networkResponse.statusCode == 403) {
-                            etPassword.setError(new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                            etPassword.setError(getString(R.string.txt_credenciais_incorretas));
                         }
                         else
                         {
-                            Snackbar.make(thisContext, view, error.toString(), Snackbar.LENGTH_LONG).show();
+                            Snackbar.make(getBaseContext(), view, error.toString(), Snackbar.LENGTH_LONG).show();
                         }
                     }
                 })  {
