@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item android:title="@string/txt_alocacao_itens">
+        <menu>
+            <item
+                android:id="@+id/listagemItens"
+                android:title="@string/txt_menu_lista_de_itens"
+                android:icon="@drawable/ic_action_listaitens"/>
+            <item
+                android:title="Pedir Item"
+                android:icon="@drawable/icon_white"/>
+            <item
+                android:title="@string/txt_meus_pedidos"
+                android:icon="@drawable/ic_action_pedidos"/>
+        </menu>
+    </item>
+
+    <item android:title="@string/txt_reparacao_itens">
+        <menu>
+            <item
+                android:title="Pedir Reparação de Item"
+                android:icon="@drawable/icon_white" />
+            <item
+                android:title="@string/txt_meus_pedidos"
+                android:icon="@drawable/ic_action_pedidos"/>
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/itemLogout"
+        android:title="@string/txt_logout"
+        android:icon="@drawable/ic_action_logout"/>
+</menu>
