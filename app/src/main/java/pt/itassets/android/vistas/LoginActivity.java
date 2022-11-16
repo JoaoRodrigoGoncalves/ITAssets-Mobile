@@ -15,14 +15,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
@@ -50,23 +47,24 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        SharedPreferences prefs = getSharedPreferences(Helper.PREF_STORAGE, MODE_PRIVATE);
+        SharedPreferences app_preferences = getSharedPreferences(Helper.APP_STORAGE, MODE_PRIVATE);
 
-        if(prefs.getString(Helper.PREF_SYSTEM_DOMAIN_URL, null) == null){
+        if(app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null) == null){
             FragmentManager fm = getSupportFragmentManager();
             ConfigurarServerFragment csf = new ConfigurarServerFragment();
             csf.show(fm, null); //Tag?
         }
         else
         {
-            if(prefs.getString(Helper.PREF_USER_TOKEN, null) != null)
+            SharedPreferences user_preferences = getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
+            if(user_preferences.getString(Helper.USER_TOKEN, null) != null)
             {
                 // TODO: Validar que o token ainda é válido, testar biometria e enviar email para a atividade
                 Intent autologinIntent = new Intent(this, MenuMainActivity.class);
                 startActivity(autologinIntent);
                 finish();
             }
-            SYSTEM_DOMAIN = prefs.getString(Helper.PREF_SYSTEM_DOMAIN_URL, null);
+            SYSTEM_DOMAIN = app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null);
         }
     }
 
@@ -94,7 +92,6 @@ public class LoginActivity extends AppCompatActivity {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                System.out.println(response);
 
                                 if(Helper.isValidJSON(response))
                                 {
@@ -102,39 +99,38 @@ public class LoginActivity extends AppCompatActivity {
                                     Gson loginJson = new Gson();
                                     Login loginObj = loginJson.fromJson(response, Login.class);
 
-
-                                    switch(loginObj.status)
+                                    if(loginObj.status == 200)
                                     {
-                                        case 200:
-                                            SharedPreferences prefs = thisContext.getSharedPreferences(Helper.PREF_STORAGE, MODE_PRIVATE);
-                                            SharedPreferences.Editor prefEditor = prefs.edit();
-                                            prefEditor.putString(Helper.PREF_USER_TOKEN, loginObj.token);
-                                            prefEditor.apply();
+                                        SharedPreferences prefs = thisContext.getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
+                                        SharedPreferences.Editor prefEditor = prefs.edit();
+                                        prefEditor.putString(Helper.USER_TOKEN, loginObj.token);
+                                        prefEditor.apply();
 
-                                            Intent mainMenu = new Intent(thisContext, MenuMainActivity.class);
-                                            mainMenu.putExtra(MenuMainActivity.EMAIL, email);
-                                            startActivity(mainMenu);
-                                            finish();
-                                            break;
-
-                                        case 403:
-                                            etPassword.setError(loginObj.getMessage());
-                                            break;
-
-                                        default:
-                                            //TODO: Dialog com message do erro
+                                        Intent mainMenu = new Intent(thisContext, MenuMainActivity.class);
+                                        mainMenu.putExtra(Helper.USER_EMAIL, email);
+                                        startActivity(mainMenu);
+                                        finish();
+                                    }
+                                    else
+                                    {
+                                        Snackbar.make(thisContext, view, getString(R.string.txt_erro) + ": " + loginObj.getMessage(), Snackbar.LENGTH_LONG).show();
                                     }
                                 }
                                 else
                                 {
-                                    // TODO: Handle erro que não vem em JSON
+                                    Snackbar.make(thisContext, view, getString(R.string.txt_erro_login_no_json), Snackbar.LENGTH_LONG).show();
                                 }
                             }
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //TODO: Handle erros relcaionados com a execução do pedido
-                        System.out.println(error.networkResponse.statusCode);
+                        if(error.networkResponse.statusCode == 403) {
+                            etPassword.setError(new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                        }
+                        else
+                        {
+                            Snackbar.make(thisContext, view, error.toString(), Snackbar.LENGTH_LONG).show();
+                        }
                     }
                 })  {
                     // https://stackoverflow.com/a/44049327
@@ -152,8 +148,9 @@ public class LoginActivity extends AppCompatActivity {
             }
             catch (Exception e)
             {
-
-                System.out.println("EXCEPTION: " + e.getMessage());
+                String erro = e.getMessage() == null ? getString(R.string.txt_erro) : e.getMessage();
+                Snackbar.make(this, view, erro, Snackbar.LENGTH_LONG).show();
+                System.out.println(getString(R.string.txt_erro) + ": " + e.getMessage());
             }
         }
     }

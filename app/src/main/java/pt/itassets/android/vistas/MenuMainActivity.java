@@ -30,9 +30,6 @@ public class MenuMainActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private FragmentManager fragmentManager;
     private String email;
-    public static final String SHAREDUSER="DADOS_USER";
-    public static final String EMAIL="EMAIL";
-    public static final String USERNAME="USERNAME";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +56,16 @@ public class MenuMainActivity extends AppCompatActivity
     }
 
     private void carregarCabecalho(){
-        email = getIntent().getStringExtra(EMAIL);
+        email = getIntent().getStringExtra(Helper.USER_EMAIL);
 
-        SharedPreferences infoUser=getSharedPreferences(SHAREDUSER, Context.MODE_PRIVATE);
+        SharedPreferences infoUser=getSharedPreferences(Helper.USER_STORAGE, Context.MODE_PRIVATE);
         if(email!=null){
             SharedPreferences.Editor editor = infoUser.edit();
-            editor.putString(EMAIL, email);
+            editor.putString(Helper.USER_EMAIL, email);
             editor.apply();
         }
         else{
-            email=infoUser.getString(EMAIL, getString(R.string.default_email));
+            email=infoUser.getString(Helper.USER_EMAIL, getString(R.string.default_email));
         }
 
         View headerView = navigationView.getHeaderView(0);
@@ -93,9 +90,9 @@ public class MenuMainActivity extends AppCompatActivity
                 break;
 
             case R.id.itemLogout:
-                SharedPreferences sharedPrefs = getSharedPreferences(Helper.PREF_STORAGE, MODE_PRIVATE);
+                SharedPreferences sharedPrefs = getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPrefs.edit();
-                editor.remove(Helper.PREF_USER_TOKEN);
+                editor.remove(Helper.USER_TOKEN);
                 editor.apply();
 
                 Intent voltar = new Intent(this, LoginActivity.class);

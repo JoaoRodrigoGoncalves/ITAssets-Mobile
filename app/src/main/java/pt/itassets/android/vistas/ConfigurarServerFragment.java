@@ -76,56 +76,45 @@ public class ConfigurarServerFragment extends DialogFragment implements View.OnC
 
                             // Verificar código de estado de resposta
                             if(objEmpresa.getStatus() == 200){
+
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                builder.setMessage("Tem a certeza se é esta empresa que pretende ligar-se?\n " +
-                                        "Empresa: " + objEmpresa.getCompanyNome() +
-                                        "\n NIF: " + objEmpresa.getCompanyNIF());
-                                builder.setTitle("Verificação");
+
+                                builder.setTitle(R.string.txt_confirmar);
+                                builder.setMessage(getString(R.string.txt_confirmar_empresa_login) + "\n" +
+                                        getString(R.string.txt_empresa) + ": " + objEmpresa.getCompanyNome() + "\n" +
+                                        getString(R.string.txt_nif) + ": " + objEmpresa.getCompanyNIF());
 
                                 builder.setCancelable(false);
 
                                 // Add the buttons
-                                builder.setPositiveButton("Sim", (DialogInterface.OnClickListener)(dialog, which)->
+                                builder.setPositiveButton(R.string.txt_sim, (DialogInterface.OnClickListener)(dialog, which)->
                                 {
                                     //Aceder à sharedPreference e definir o modo de acesso
-
-                                    SharedPreferences infoUrl = getContext().getSharedPreferences(Helper.PREF_STORAGE, Context.MODE_PRIVATE);
+                                    SharedPreferences infoUrl = getContext().getSharedPreferences(Helper.APP_STORAGE, Context.MODE_PRIVATE);
 
                                     //Definir o Editor para permitir guardar/ alterar o valor
                                     SharedPreferences.Editor editor = infoUrl.edit();
-                                    editor.putString(Helper.PREF_SYSTEM_DOMAIN_URL, url);
+                                    editor.putString(Helper.APP_SYSTEM_DOMAIN_URL, url);
                                     editor.apply();
 
                                     dismiss();
                                 });
-                                builder.setNegativeButton("Cancelar", (DialogInterface.OnClickListener)(dialog, which)->
+                                builder.setNegativeButton(R.string.txt_cancelar, (DialogInterface.OnClickListener)(dialog, which)->
                                 {
                                     dialog.cancel();
                                 });
+
                                 // Create the AlertDialog
                                 AlertDialog dialog = builder.create();
                                 dialog.show();
                             }else{
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                builder.setMessage(objEmpresa.getMessage());
-                                builder.setTitle("Erro");
-                                builder.setMessage("Erro " + objEmpresa.getStatus() + ": " + objEmpresa.getMessage());
-
-                                // Add the buttons
-                                builder.setPositiveButton("Ok", (DialogInterface.OnClickListener)(dialog, which)->
-                                {
-                                    dialog.cancel();
-                                });
-                                // Create the AlertDialog
-                                AlertDialog dialog = builder.create();
-                                dialog.show();
+                                Snackbar.make(getContext(), view, objEmpresa.getStatus() + ": " + objEmpresa.getMessage(), Snackbar.LENGTH_LONG).show();
                             }
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            et_endereco.setError(error.toString());
-                            //TODO: Handle errors
+                            Snackbar.make(getContext(), view, getString(R.string.txt_url_nao_existe_ou_offline), Snackbar.LENGTH_LONG).show();
                         }
                     });
 
@@ -135,7 +124,7 @@ public class ConfigurarServerFragment extends DialogFragment implements View.OnC
         else
         {
             // Notificar que URL não é válido
-            Snackbar.make(getContext(),view, "URL inválido", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(getContext(),view, getString(R.string.txt_url_invalido), Snackbar.LENGTH_LONG).show();
         }
     }
 }

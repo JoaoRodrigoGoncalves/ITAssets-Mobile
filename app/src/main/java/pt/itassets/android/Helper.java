@@ -7,9 +7,14 @@ import org.json.JSONObject;
 
 public class Helper {
 
-    public static final String PREF_STORAGE = "PREF_STORAGE";
-    public static final String PREF_SYSTEM_DOMAIN_URL = "SYSTEM_DOMAIN_URL";
-    public static final String PREF_USER_TOKEN = null;
+    //---------------------- APP STORAGE ---------------------------
+    public static final String APP_STORAGE = "APP_STORAGE";
+    public static final String APP_SYSTEM_DOMAIN_URL = "SYSTEM_DOMAIN_URL";
+
+    //--------------------- USER STORAGE ---------------------------
+    public static final String USER_STORAGE = "USER_STORAGE";
+    public static final String USER_TOKEN = "USER_TOKEN";
+    public static final String USER_EMAIL = "USER_EMAIL";
 
     /**
      * Verifica se uma URL é válida
