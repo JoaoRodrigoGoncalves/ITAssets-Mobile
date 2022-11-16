@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
+import pt.itassets.android.Helper;
 import pt.itassets.android.R;
 
 public class MenuMainActivity extends AppCompatActivity
@@ -88,6 +90,17 @@ public class MenuMainActivity extends AppCompatActivity
             case R.id.listagemItens:
                 fragment = new ListagemItensFragment();
                 setTitle(item.getTitle());
+                break;
+
+            case R.id.itemLogout:
+                SharedPreferences sharedPrefs = getSharedPreferences(Helper.PREF_STORAGE, MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPrefs.edit();
+                editor.remove(Helper.PREF_USER_TOKEN);
+                editor.apply();
+
+                Intent voltar = new Intent(this, LoginActivity.class);
+                startActivity(voltar);
+                finish();
                 break;
         }
         if (fragment != null){

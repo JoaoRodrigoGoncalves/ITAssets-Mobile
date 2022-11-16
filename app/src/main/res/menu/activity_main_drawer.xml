@@ -21,8 +21,10 @@
 
     <item android:title="Grupo 1">
         <menu>
-            <item android:title="Item 1"
-                android:icon="@drawable/icon_white"/>
+            <item
+                android:id="@+id/itemLogout"
+                android:title="Logout"
+                android:icon="@drawable/ic_logout"/>
         </menu>
     </item>
 

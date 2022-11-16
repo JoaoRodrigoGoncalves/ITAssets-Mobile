@@ -23,6 +23,8 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 import pt.itassets.android.Helper;
 import pt.itassets.android.R;
@@ -46,16 +48,23 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        SharedPreferences urlPref = getSharedPreferences(Helper.PREF_STORAGE, MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(Helper.PREF_STORAGE, MODE_PRIVATE);
 
-        if(urlPref.getString(Helper.PREF_SYSTEM_DOMAIN_URL, null) == null){
+        if(prefs.getString(Helper.PREF_SYSTEM_DOMAIN_URL, null) == null){
             FragmentManager fm = getSupportFragmentManager();
             ConfigurarServerFragment csf = new ConfigurarServerFragment();
             csf.show(fm, null); //Tag?
         }
         else
         {
-            SYSTEM_DOMAIN = urlPref.getString(Helper.PREF_SYSTEM_DOMAIN_URL, null);
+            if(prefs.getString(Helper.PREF_USER_TOKEN, null) != null)
+            {
+                // TODO: Validar que o token ainda é válido e enviar email para a atividade
+                Intent autologinIntent = new Intent(this, MenuMainActivity.class);
+                startActivity(autologinIntent);
+                finish();
+            }
+            SYSTEM_DOMAIN = prefs.getString(Helper.PREF_SYSTEM_DOMAIN_URL, null);
         }
     }
 
@@ -77,11 +86,10 @@ public class LoginActivity extends AppCompatActivity {
 
             try
             {
-                JSONObject jsonBody = new JSONObject();
-                jsonBody.put("email", email);
-                jsonBody.put("password", pass);
-
-                String requestBody = jsonBody.toString();
+//                JSONObject jsonBody = new JSONObject();
+//                jsonBody.put("email", email);
+//                jsonBody.put("password", pass);
+//                String requestBody = jsonBody.toString();
 
                 Context thisContext = this;
 
@@ -127,20 +135,14 @@ public class LoginActivity extends AppCompatActivity {
                         //TODO: Handle erros relcaionados com a execução do pedido
                         System.out.println(error.networkResponse.statusCode);
                     }
-                }) {
+                })  {
                     @Override
-                    public String getBodyContentType() {
-                        return "application/json; charset=utf-8";
-                    }
-
-                    @Override
-                    public byte[] getBody() throws AuthFailureError {
-                        try {
-                            return requestBody.getBytes("utf-8");
-                        } catch (UnsupportedEncodingException uee) {
-                            VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
-                            return null;
-                        }
+                    protected Map<String, String> getParams() {
+                        // https://www.geeksforgeeks.org/how-to-post-data-to-api-using-volley-in-android/
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("email", email);
+                        params.put("password", pass);
+                        return params;
                     }
                 };
                 queue.add(stringRequest);
