@@ -4,22 +4,21 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import pt.itassets.android.R;
-import pt.itassets.android.modelos.Itens;
+import pt.itassets.android.modelos.Item;
 
 public class ListaItensAdaptador extends BaseAdapter
 {
     private Context context;
     private LayoutInflater inflater;
-    private ArrayList<Itens> itens;
+    private ArrayList<Item> itens;
 
-    public ListaItensAdaptador(Context context, ArrayList<Itens> itens) {
+    public ListaItensAdaptador(Context context, ArrayList<Item> itens) {
         this.context = context;
         this.itens = itens;
     }
@@ -62,21 +61,22 @@ public class ListaItensAdaptador extends BaseAdapter
     }
 
     private class ViewHolderLista{
-        private ImageView imgCapa;
-        private TextView tvNome, tvNumSerie, tvCategoria;
+        private TextView tvNome, tvNumSerie, tvCategoria, tvNotas, tvStatus;
 
         public ViewHolderLista(View view){
             tvNome=view.findViewById(R.id.tvNome);
             tvNumSerie=view.findViewById(R.id.tvNumSerie);
             tvCategoria=view.findViewById(R.id.tvCategoria);
-            imgCapa=view.findViewById(R.id.imgCapa);
+            tvNotas = view.findViewById(R.id.tvNotas);
+            tvStatus = view.findViewById(R.id.tvStatus);
         }
 
-        public void update(Itens itens){
+        public void update(Item itens){
             tvNome.setText(itens.getNome());
-            tvNumSerie.setText(itens.getNumserie()+"");
-            tvCategoria.setText(itens.getCategoria());
-            imgCapa.setImageResource(itens.getCapa());
+            tvNumSerie.setText(String.valueOf(itens.getSerialNumber()));
+            tvCategoria.setText(itens.getCategoria_id());
+            tvNotas.setText(itens.getNotas());
+            tvStatus.setText(itens.getStatus());
         }
     }
 }

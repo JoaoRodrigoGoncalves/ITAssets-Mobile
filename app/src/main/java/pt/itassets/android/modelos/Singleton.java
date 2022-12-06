@@ -1,36 +1,78 @@
 package pt.itassets.android.modelos;
 
+import android.content.Context;
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
 import java.util.ArrayList;
 
-import pt.itassets.android.R;
-
 public class Singleton {
-
+    private ArrayList<Item> itens;
     private static Singleton instance=null;
-    private ArrayList<Itens> itens;
+    private static RequestQueue volleyQueue=null;
+    //private LivroDBHelper livrosDB = null;
 
-    public static synchronized Singleton getInstance(){
+    public static synchronized Singleton getInstance(Context context){
         if(instance == null){
-            instance = new Singleton();
+            instance = new Singleton(context);
+            volleyQueue = Volley.newRequestQueue(context);
         }
         return instance;
     }
 
-    private Singleton(){
+    private Singleton(Context context){
         itens = new ArrayList<>();
-        itens.add(new Itens(1,351515313, R.drawable.pc,"Computador - 1","Equipamento"));
-        itens.add(new Itens(2,789456123, R.drawable.pc,"Computador - 2","Equipamento"));
-        itens.add(new Itens(3,741852963, R.drawable.pc, "Computador - 3","Equipamento"));
-        itens.add(new Itens(4,987456321, R.drawable.pc,"Computador - 4","Equipamento"));
-        itens.add(new Itens(5,951753852, R.drawable.pc,"Computador - 5","Equipamento"));
-        itens.add(new Itens(6,357485962, R.drawable.pc, "Computador - 6","Equipamento"));
-        itens.add(new Itens(7,247513896, R.drawable.pc,"Computador - 7","Equipamento"));
-        itens.add(new Itens(8,745745475, R.drawable.pc,"Computador - 8","Equipamento"));
-        itens.add(new Itens(9,123546888, R.drawable.pc, "Computador - 9","Equipamento"));
-        itens.add(new Itens(10,915456865, R.drawable.pc,"Computador - 10","Equipamento"));
+        //livrosDB = new LivroDBHelper(context);
     }
 
-    public ArrayList<Itens> getItens() {
+    /*
+    public ArrayList<Livro> getLivrosBD() {
+        livros = livrosDB.getAllLivrosDB();
+        return new ArrayList(livros);
+    }
+
+    public Livro getLivro(int id){
+        for(Livro l:livros){
+            if(l.getId()==id){
+                return l;
+            }
+        }
+        return null;
+    }
+
+    public void adicionarLivroBD(Livro l){
+        Livro auxLivro = livrosDB.adicionarLivroDB(l);
+        if(auxLivro != null){
+            livros.add(auxLivro);
+        }
+    }
+
+    public void editarLivroBD(Livro l){
+        Livro auxLivro = getLivro(l.getId());
+        if(auxLivro!=null){
+            if(livrosDB.editarLivroDB(l)) {
+                auxLivro.setTitulo(l.getTitulo());
+                auxLivro.setAno(l.getAno());
+                auxLivro.setAutor(l.getAutor());
+                auxLivro.setSerie(l.getSerie());
+            }
+        }
+    }
+
+    public void removerLivroBD(int id){
+        Livro auxLivro = getLivro(id);
+        if(auxLivro != null){
+            if(livrosDB.removerLivroDB(getLivro(id))) {
+                livros.remove(auxLivro);
+            }
+        }
+    }
+    */
+
+    public ArrayList<Item> getItens() {
         return new ArrayList<>(itens);
     }
+
+
 }

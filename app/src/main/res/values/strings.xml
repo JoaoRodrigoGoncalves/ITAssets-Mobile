@@ -7,13 +7,18 @@
     <string name="label_configurar_server">Indique o endereço do servidor ao qual a aplicação se irá ligar</string>
     <string name="txt_configurar_servidor">Configurar servidor</string>
     <string name="txt_abrir">Abrir</string>
-    <string name="txt_fechar">Fechar</string><string name="txt_titulo">Título </string>
+    <string name="txt_fechar">Fechar</string>
+    <string name="txt_titulo">Título </string>
     <string name="txt_numserie">Número de Série </string>
     <string name="txt_nome">Nome </string>
     <string name="txt_categoria">Categoria </string>
+    <string name="txt_notas">Notas:</string>
     <string name="email_invalido">Email Inválido!</string>
     <string name="pass_invalido">Password Inválido!</string>
     <string name="txt_menu_lista_de_itens">Lista de Itens</string>
+    <string name="txt_status_itens">Status:</string>
+    <string name="txt_menu_requisicao_de_item">Requisição de Item</string>
+    <string name="txt_menu_pedidos_requisicao">Pedidos de Requisição</string>
     <string name="default_email">Erro: Email não identificado!</string>
     <string name="txt_hint_server_domain">api.itassets.pt</string>
     <string name="txt_confirmar_empresa_login">Tem a certeza se quer ligar a esta empresa?</string>
@@ -29,9 +34,16 @@
     <string name="txt_indique_password">Indique uma palavra-passe</string>
     <string name="txt_credenciais_incorretas">Credenciais incorretas</string>
     <string name="txt_logout">Terminar Sessão</string>
-    <string name="txt_meus_pedidos">Os meus pedidos</string>
     <string name="txt_alocacao_itens">Alocação de Itens</string>
     <string name="txt_reparacao_itens">Reparação de Itens</string>
     <string name="txt_coloque_dedo_sensor_title">Coloque o dedo no sensor</string>
     <string name="txt_coloque_dedo_sensor_description">Coloque o dedo no sensor para iniciar sessão</string>
+    <string name="txt_nao">Não</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="txt_menu_reparacao_de_item">Reparação de Item</string>
+    <string name="txt_menu_pedidos_de_reparacao">Pedidos de Reparação</string>
+    <string name="txt_menu_grupos_de_itens">Grupos de Itens</string>
+    <string name="txt_menu_categorias_de_itens">Categorias de Itens</string>
+
 </resources>

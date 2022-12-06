@@ -1,14 +1,5 @@
 package pt.itassets.android.vistas;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +8,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -87,6 +87,10 @@ public class MenuMainActivity extends AppCompatActivity
             case R.id.listagemItens:
                 fragment = new ListagemItensFragment();
                 setTitle(item.getTitle());
+                break;
+
+            case R.id.registoRequisicaoItem:
+                fragment = new ListagemPedidosRequisicaoFragment();
                 break;
 
             case R.id.itemLogout:

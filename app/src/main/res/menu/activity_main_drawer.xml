@@ -9,28 +9,57 @@
                 android:id="@+id/listagemItens"
                 android:title="@string/txt_menu_lista_de_itens"
                 android:icon="@drawable/ic_action_listaitens"/>
+
             <item
-                android:title="Pedir Item"
+                android:id="@+id/gruposItens"
+                android:title="@string/txt_menu_grupos_de_itens"
                 android:icon="@drawable/icon_white"/>
+
             <item
-                android:title="@string/txt_meus_pedidos"
+                android:id="@+id/categoria"
+                android:title="@string/txt_menu_categorias_de_itens"
+                android:icon="@drawable/icon_white"/>
+        </menu>
+    </item>
+
+    <item android:title="@string/txt_alocacao_itens">
+        <menu>
+            <item
+                android:id="@+id/registoRequisicaoItem"
+                android:title="@string/txt_menu_requisicao_de_item"
+                android:icon="@drawable/ic_action_requisicao"/>
+
+            <item
+                android:id="@+id/meusPedidosRequisicao"
+                android:title="@string/txt_menu_pedidos_requisicao"
                 android:icon="@drawable/ic_action_pedidos"/>
         </menu>
     </item>
 
+    <group android:checkableBehavior ="single">
     <item android:title="@string/txt_reparacao_itens">
         <menu>
             <item
-                android:title="Pedir Reparação de Item"
-                android:icon="@drawable/icon_white" />
+                android:id="@+id/registoReparacaoitem"
+                android:title="@string/txt_menu_reparacao_de_item"
+                android:icon="@drawable/ic_action_reparacao" />
             <item
-                android:title="@string/txt_meus_pedidos"
+                android:id="@+id/meusPedidosReparacao"
+                android:title="@string/txt_menu_pedidos_de_reparacao"
                 android:icon="@drawable/ic_action_pedidos"/>
         </menu>
     </item>
+    </group>
 
-    <item
-        android:id="@+id/itemLogout"
-        android:title="@string/txt_logout"
-        android:icon="@drawable/ic_action_logout"/>
+    <!-- https://stackoverflow.com/questions/30243365/how-to-add-one-section-separator-for-navigation-drawer-in-android -->
+    <group
+        android:id="@+id/menu_bottom"
+        android:checkableBehavior="none">
+
+        <item
+            android:id="@+id/itemLogout"
+            android:title="@string/txt_logout"
+            android:icon="@drawable/ic_action_logout"/>
+    </group>
+
 </menu>

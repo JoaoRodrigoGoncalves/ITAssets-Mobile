@@ -1,6 +1,5 @@
 package pt.itassets.android.vistas;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -40,15 +39,6 @@ public class LoginActivity extends AppCompatActivity {
     private String SYSTEM_DOMAIN = null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-
-        etEmail = findViewById(R.id.etEmail);
-        etPassword = findViewById(R.id.etPassword);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 
@@ -67,25 +57,60 @@ public class LoginActivity extends AppCompatActivity {
 
             if(user_preferences.getString(Helper.USER_TOKEN, null) != null && Helper.IsBiometricAvailable(this))
             {
-                Executor executor = ContextCompat.getMainExecutor(this);
-                BiometricPrompt bioPrompt = new androidx.biometric.BiometricPrompt(this, executor, new androidx.biometric.BiometricPrompt.AuthenticationCallback() {
+                // Instantiate the RequestQueue.
+                RequestQueue queue = Volley.newRequestQueue(this);
+                queue.start();
+
+                // Request a string response from the provided URL.
+                StringRequest stringRequest = new StringRequest(Request.Method.GET, Helper.APP_SYSTEM_DOMAIN_URL + "verifytoken",
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                System.out.println("Response: " + response.toString());
+                                Executor executor = ContextCompat.getMainExecutor(getBaseContext());
+                                BiometricPrompt bioPrompt = new androidx.biometric.BiometricPrompt(LoginActivity.this, executor, new androidx.biometric.BiometricPrompt.AuthenticationCallback() {
+                                    @Override
+                                    public void onAuthenticationSucceeded(@NonNull androidx.biometric.BiometricPrompt.AuthenticationResult result) {
+                                        super.onAuthenticationSucceeded(result);
+                                        Intent autologinIntent = new Intent(getBaseContext(), MenuMainActivity.class);
+                                        startActivity(autologinIntent);
+                                        finish();
+                                    }
+                                });
+                                BiometricPrompt.PromptInfo.Builder prompt = new BiometricPrompt.PromptInfo.Builder()
+                                        .setTitle(getString(R.string.txt_coloque_dedo_sensor_title))
+                                        .setDescription(getString(R.string.txt_coloque_dedo_sensor_description))
+                                        .setNegativeButtonText(getString(R.string.txt_cancelar));
+                                bioPrompt.authenticate(prompt.build());
+                            }
+                        }, new Response.ErrorListener() {
                     @Override
-                    public void onAuthenticationSucceeded(@NonNull androidx.biometric.BiometricPrompt.AuthenticationResult result) {
-                        super.onAuthenticationSucceeded(result);
-                        Intent autologinIntent = new Intent(getBaseContext(), MenuMainActivity.class);
-                        startActivity(autologinIntent);
-                        finish();
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(LoginActivity.this, "Erro", Toast.LENGTH_SHORT).show();
+                        System.out.println("Erro: " + error.getMessage());
                     }
-                });
-
-                BiometricPrompt.PromptInfo.Builder prompt = new BiometricPrompt.PromptInfo.Builder()
-                        .setTitle(getString(R.string.txt_coloque_dedo_sensor_title))
-                        .setDescription(getString(R.string.txt_coloque_dedo_sensor_description))
-                        .setNegativeButtonText(getString(R.string.txt_cancelar));
-
-                bioPrompt.authenticate(prompt.build());
+                }){
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("Authorization", "Bearer " + user_preferences.getString(Helper.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                // Add the request to the RequestQueue.
+                System.out.println("Add to request queue");
+                queue.add(stringRequest);
             }
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+
+        etEmail = findViewById(R.id.etEmail);
+        etPassword = findViewById(R.id.etPassword);
     }
 
     public void onClick_btn_login(View view) {

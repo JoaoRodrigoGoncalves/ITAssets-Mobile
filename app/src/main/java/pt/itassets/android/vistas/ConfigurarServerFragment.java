@@ -81,8 +81,8 @@ public class ConfigurarServerFragment extends DialogFragment implements View.OnC
 
                                 builder.setTitle(R.string.txt_confirmar);
                                 builder.setMessage(getString(R.string.txt_confirmar_empresa_login) + "\n" +
-                                        getString(R.string.txt_empresa) + ": " + objEmpresa.getCompanyNome() + "\n" +
-                                        getString(R.string.txt_nif) + ": " + objEmpresa.getCompanyNIF());
+                                        getString(R.string.txt_empresa) + ": " + objEmpresa.getData().getCompanyNome() + "\n" +
+                                        getString(R.string.txt_nif) + ": " + objEmpresa.getData().getCompanyNIF());
 
                                 builder.setCancelable(false);
 
