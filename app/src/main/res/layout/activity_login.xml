@@ -21,7 +21,14 @@
         android:text="@string/txt_iniciar_sessao"
         android:textStyle="bold"
         android:gravity="center"
-        android:textSize="20dp"/>
+        android:textSize="20sp"/>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressbar_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="invisible" />
 
     <EditText
         android:id="@+id/etEmail"

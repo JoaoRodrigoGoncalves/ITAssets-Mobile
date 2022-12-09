@@ -20,7 +20,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
@@ -28,11 +27,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import pt.itassets.android.Helper;
 import pt.itassets.android.R;
 import pt.itassets.android.adptadores.ListaItensAdaptador;
 import pt.itassets.android.modelos.Item;
 import pt.itassets.android.modelos.Singleton;
+import pt.itassets.android.utils.Helper;
 
 public class ListagemItensFragment extends Fragment {
     private ListView lvItens;
@@ -68,12 +67,6 @@ public class ListagemItensFragment extends Fragment {
         itens = new ArrayList<Item>();
 
         SharedPreferences user_preferences = getContext().getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(getContext());
-        queue.start();
-        Gson gson = new Gson();
-
-        Singleton singleton = Singleton.getInstance(getContext());
 
         // Request a string response from the provided URL.
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, Helper.APP_SYSTEM_DOMAIN_URL + "item", null,
@@ -82,22 +75,22 @@ public class ListagemItensFragment extends Fragment {
                     public void onResponse(JSONObject response) {
 
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
-            }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("Content-Type", "application/json; charset=UTF-8");
-                params.put("Authorization", "Bearer " + user_preferences.getString(Helper.USER_TOKEN, null));
-                return params;
-            }
-        };
+                    }
+            }){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("Content-Type", "application/json; charset=UTF-8");
+                    params.put("Authorization", "Bearer " + user_preferences.getString(Helper.USER_TOKEN, null));
+                    return params;
+                }
+            };
 
-        // Add the request to the RequestQueue.
-        queue.add(jsonObjectRequest);
+        Singleton.getInstance(getContext()).addRequestToQueue(jsonObjectRequest);
     }
 }

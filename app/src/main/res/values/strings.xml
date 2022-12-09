@@ -45,5 +45,10 @@
     <string name="txt_menu_pedidos_de_reparacao">Pedidos de Reparação</string>
     <string name="txt_menu_grupos_de_itens">Grupos de Itens</string>
     <string name="txt_menu_categorias_de_itens">Categorias de Itens</string>
+    <string name="txt_no_connection_cant_login">Ligação à internet indisponível. Não é possível iniciar sessão.</string>
+    <string name="txt_generic_error">Ocurreu um erro</string>
+    <string name="txt_no_connection">Sem Ligação à Internet</string>
+    <string name="txt_validating_url">A validar endereço...</string>
+    <string name="txt_domain_no_api">Endereço indicado não é uma API</string>
 
 </resources>

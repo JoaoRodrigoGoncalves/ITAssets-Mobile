@@ -2,13 +2,14 @@ package pt.itassets.android.modelos;
 
 import android.content.Context;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
 
 public class Singleton {
-    private ArrayList<Item> itens;
+    private final ArrayList<Item> itens;
     private static Singleton instance=null;
     private static RequestQueue volleyQueue=null;
     //private LivroDBHelper livrosDB = null;
@@ -17,13 +18,20 @@ public class Singleton {
         if(instance == null){
             instance = new Singleton(context);
             volleyQueue = Volley.newRequestQueue(context);
+            volleyQueue.start();
         }
         return instance;
     }
 
     private Singleton(Context context){
         itens = new ArrayList<>();
+        volleyQueue = Volley.newRequestQueue(context);
         //livrosDB = new LivroDBHelper(context);
+    }
+
+    public void addRequestToQueue(Request request)
+    {
+        volleyQueue.add(request);
     }
 
     /*

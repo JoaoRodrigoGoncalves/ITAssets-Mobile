@@ -1,11 +1,11 @@
 package pt.itassets.android.vistas;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,13 +15,13 @@ import androidx.fragment.app.FragmentManager;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -29,80 +29,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import pt.itassets.android.Helper;
+import pt.itassets.android.modelos.Singleton;
+import pt.itassets.android.utils.ApiJsonParser;
+import pt.itassets.android.utils.Helper;
 import pt.itassets.android.R;
-import pt.itassets.android.modelos.Login;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText etEmail;
     private EditText etPassword;
+    private LinearProgressIndicator progressbar_login;
     private String SYSTEM_DOMAIN = null;
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        SharedPreferences app_preferences = getSharedPreferences(Helper.APP_STORAGE, MODE_PRIVATE);
-
-        if(app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null) == null){
-            FragmentManager fm = getSupportFragmentManager();
-            ConfigurarServerFragment csf = new ConfigurarServerFragment();
-            csf.show(fm, null); //Tag?
-        }
-        else
-        {
-            SYSTEM_DOMAIN = app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null);
-
-            SharedPreferences user_preferences = getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
-
-            if(user_preferences.getString(Helper.USER_TOKEN, null) != null && Helper.IsBiometricAvailable(this))
-            {
-                // Instantiate the RequestQueue.
-                RequestQueue queue = Volley.newRequestQueue(this);
-                queue.start();
-
-                // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, Helper.APP_SYSTEM_DOMAIN_URL + "verifytoken",
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                System.out.println("Response: " + response.toString());
-                                Executor executor = ContextCompat.getMainExecutor(getBaseContext());
-                                BiometricPrompt bioPrompt = new androidx.biometric.BiometricPrompt(LoginActivity.this, executor, new androidx.biometric.BiometricPrompt.AuthenticationCallback() {
-                                    @Override
-                                    public void onAuthenticationSucceeded(@NonNull androidx.biometric.BiometricPrompt.AuthenticationResult result) {
-                                        super.onAuthenticationSucceeded(result);
-                                        Intent autologinIntent = new Intent(getBaseContext(), MenuMainActivity.class);
-                                        startActivity(autologinIntent);
-                                        finish();
-                                    }
-                                });
-                                BiometricPrompt.PromptInfo.Builder prompt = new BiometricPrompt.PromptInfo.Builder()
-                                        .setTitle(getString(R.string.txt_coloque_dedo_sensor_title))
-                                        .setDescription(getString(R.string.txt_coloque_dedo_sensor_description))
-                                        .setNegativeButtonText(getString(R.string.txt_cancelar));
-                                bioPrompt.authenticate(prompt.build());
-                            }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(LoginActivity.this, "Erro", Toast.LENGTH_SHORT).show();
-                        System.out.println("Erro: " + error.getMessage());
-                    }
-                }){
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("Authorization", "Bearer " + user_preferences.getString(Helper.USER_TOKEN, null));
-                        return params;
-                    }
-                };
-                // Add the request to the RequestQueue.
-                System.out.println("Add to request queue");
-                queue.add(stringRequest);
-            }
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +47,41 @@ public class LoginActivity extends AppCompatActivity {
 
         etEmail = findViewById(R.id.etEmail);
         etPassword = findViewById(R.id.etPassword);
+        progressbar_login = findViewById(R.id.progressbar_login);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        SharedPreferences app_preferences = getSharedPreferences(Helper.APP_STORAGE, MODE_PRIVATE);
+
+        if (app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null) == null) {
+            FragmentManager fm = getSupportFragmentManager();
+            ConfigurarServerFragment csf = new ConfigurarServerFragment();
+            csf.show(fm, null); //Tag?
+        } else {
+            SYSTEM_DOMAIN = app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null);
+            SharedPreferences user_preferences = getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
+
+            if (user_preferences.getString(Helper.USER_TOKEN, null) != null && Helper.isBiometricAvailable(this)) {
+                Executor executor = ContextCompat.getMainExecutor(getBaseContext());
+                BiometricPrompt bioPrompt = new BiometricPrompt(LoginActivity.this, executor, new BiometricPrompt.AuthenticationCallback() {
+                    @Override
+                    public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                        super.onAuthenticationSucceeded(result);
+                        Intent autologinIntent = new Intent(getBaseContext(), MenuMainActivity.class);
+                        startActivity(autologinIntent);
+                        finish();
+                    }
+                });
+                BiometricPrompt.PromptInfo.Builder prompt = new BiometricPrompt.PromptInfo.Builder()
+                        .setTitle(getString(R.string.txt_coloque_dedo_sensor_title))
+                        .setDescription(getString(R.string.txt_coloque_dedo_sensor_description))
+                        .setNegativeButtonText(getString(R.string.txt_cancelar));
+                bioPrompt.authenticate(prompt.build());
+            }
+        }
     }
 
     public void onClick_btn_login(View view) {
@@ -131,78 +102,93 @@ public class LoginActivity extends AppCompatActivity {
             etPassword.setError(getString(R.string.txt_indique_password));
             return;
         }
-
         //Fazer pedido a api com os dados
         if(SYSTEM_DOMAIN != null)
         {
-            RequestQueue queue = Volley.newRequestQueue(this);
-            queue.start();
-            Gson loginJson = new Gson();
-
-            try
+            progressbar_login.setVisibility(View.VISIBLE);
+            if(Helper.isInternetConnectionAvailable(this))
             {
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, SYSTEM_DOMAIN + "login",
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
+                Context thisContext = this;
+                try
+                {
+                    JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, SYSTEM_DOMAIN + "login",null,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    progressbar_login.setVisibility(View.INVISIBLE);
 
-                                if(Helper.isValidJSON(response))
-                                {
-                                    // TODO: uniformizar classes json usadas
-                                    Login loginObj = loginJson.fromJson(response, Login.class);
-
-                                    if(loginObj.status == 200)
+                                    String response_string = response.toString();
+                                    if(Helper.isValidJSON(response_string))
                                     {
-                                        SharedPreferences prefs = getBaseContext().getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
-                                        SharedPreferences.Editor prefEditor = prefs.edit();
-                                        prefEditor.putString(Helper.USER_TOKEN, loginObj.token);
-                                        prefEditor.apply();
+                                        String token = ApiJsonParser.parserJsonLogin(response_string);
+                                        if(token != null)
+                                        {
+                                            SharedPreferences prefs = getBaseContext().getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
+                                            SharedPreferences.Editor prefEditor = prefs.edit();
+                                            prefEditor.putString(Helper.USER_TOKEN, token);
+                                            prefEditor.apply();
 
-                                        Intent mainMenu = new Intent(getBaseContext(), MenuMainActivity.class);
-                                        mainMenu.putExtra(Helper.USER_EMAIL, email);
-                                        startActivity(mainMenu);
-                                        finish();
+                                            Intent mainMenu = new Intent(getBaseContext(), MenuMainActivity.class);
+                                            mainMenu.putExtra(Helper.USER_EMAIL, email);
+                                            startActivity(mainMenu);
+                                            finish();
+                                        }
+                                    }
+                                    // Algum erro ocurreu, mostrar erro
+                                    Snackbar.make(thisContext, view, getString(R.string.txt_erro_login_no_json), Snackbar.LENGTH_LONG).show();
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    progressbar_login.setVisibility(View.INVISIBLE);
+
+                                    String error_string = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+
+                                    if(Helper.isValidJSON(error_string))
+                                    {
+                                        Map<String, Object> errorMap = ApiJsonParser.parseError(error_string);
+
+                                        if((int) errorMap.get("statusCode") == 401)
+                                        {
+                                            etPassword.setError((String) errorMap.get("message"));
+                                        }
+                                        else
+                                        {
+                                            Snackbar.make(thisContext, view, (String) errorMap.get("message"), Snackbar.LENGTH_LONG).show();
+                                        }
                                     }
                                     else
                                     {
-                                        Snackbar.make(getBaseContext(), view, getString(R.string.txt_erro) + ": " + loginObj.getMessage(), Snackbar.LENGTH_LONG).show();
+                                        //Outro erro qualquer, mostrar erro genérico
+                                        Snackbar.make(thisContext, view, getString(R.string.txt_generic_error), Snackbar.LENGTH_LONG).show();
                                     }
                                 }
-                                else
-                                {
-                                    Snackbar.make(getBaseContext(), view, getString(R.string.txt_erro_login_no_json), Snackbar.LENGTH_LONG).show();
-                                }
-                            }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(error.networkResponse.statusCode == 403) {
-                            etPassword.setError(getString(R.string.txt_credenciais_incorretas));
-                        }
-                        else
-                        {
-                            Snackbar.make(getBaseContext(), view, error.toString(), Snackbar.LENGTH_LONG).show();
-                        }
-                    }
-                })  {
-                    // https://stackoverflow.com/a/44049327
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        String authString = email + ":" + pass;
+                            })  {
+                        // https://stackoverflow.com/a/44049327
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            String authString = email + ":" + pass;
 
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("Content-Type", "application/json; charset=UTF-8");
-                        params.put("Authorization", "Basic " + Base64.getEncoder().encodeToString(authString.getBytes(StandardCharsets.UTF_8)));
-                        return params;
-                    }
-                };
-                queue.add(stringRequest);
+                            Map<String, String> params = new HashMap<String, String>();
+                            params.put("Content-Type", "application/json; charset=UTF-8");
+                            params.put("Authorization", "Basic " + Base64.getEncoder().encodeToString(authString.getBytes(StandardCharsets.UTF_8)));
+                            return params;
+                        }
+                    };
+                    // Enviar o application context para não dar problemas
+                    Singleton.getInstance(getApplicationContext()).addRequestToQueue(jsonRequest);
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                    Snackbar.make(this, view, getString(R.string.txt_generic_error), Snackbar.LENGTH_LONG).show();
+                }
             }
-            catch (Exception e)
+            else
             {
-                String erro = e.getMessage() == null ? getString(R.string.txt_erro) : e.getMessage();
-                Snackbar.make(this, view, erro, Snackbar.LENGTH_LONG).show();
-                System.out.println(getString(R.string.txt_erro) + ": " + e.getMessage());
+                // Sem ligação à internet.
+                Snackbar.make(this, view, getString(R.string.txt_no_connection_cant_login), Snackbar.LENGTH_LONG).show();
             }
         }
     }

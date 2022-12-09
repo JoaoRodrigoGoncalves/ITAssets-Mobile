@@ -1,12 +1,17 @@
-package pt.itassets.android;
+package pt.itassets.android.utils;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Patterns;
 
 import androidx.biometric.BiometricManager;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public class Helper {
 
@@ -29,6 +34,17 @@ public class Helper {
             return false;
 
         return Patterns.WEB_URL.matcher(url).matches();
+    }
+
+
+    public static boolean isURLValid_v2(String url)
+    {
+        try {
+            InetAddress.getByName(url);
+            return true;
+        } catch (UnknownHostException e) {
+            return false;
+        }
     }
 
     /**
@@ -64,10 +80,22 @@ public class Helper {
      * @param context
      * @return boolean
      */
-    public static boolean IsBiometricAvailable(Context context)
+    public static boolean isBiometricAvailable(Context context)
     {
         BiometricManager manager = BiometricManager.from(context);
         return (manager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS);
+    }
+
+    /**
+     * Verifica se existe ligação à internet
+     * @param context
+     * @return bool
+     */
+    public static boolean isInternetConnectionAvailable(Context context){
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
+
+        return ni!=null && ni.isConnected();
     }
 
 }

@@ -20,7 +20,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.navigation.NavigationView;
 
-import pt.itassets.android.Helper;
+import pt.itassets.android.utils.Helper;
 import pt.itassets.android.R;
 
 public class MenuMainActivity extends AppCompatActivity
