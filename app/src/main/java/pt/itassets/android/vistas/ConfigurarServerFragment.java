@@ -1,6 +1,5 @@
 package pt.itassets.android.vistas;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import androidx.fragment.app.DialogFragment;
 
@@ -17,6 +15,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -25,6 +24,7 @@ import org.json.JSONObject;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import pt.itassets.android.modelos.Singleton;
 import pt.itassets.android.utils.ApiJsonParser;
@@ -99,36 +99,29 @@ public class ConfigurarServerFragment extends DialogFragment implements View.OnC
 
                                     if(responseMap != null)
                                     {
-                                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                        new MaterialAlertDialogBuilder(getContext())
+                                                .setIcon(R.drawable.ic_action_ligarempresa)
+                                                .setTitle(R.string.txt_confirmar_empresa_login)
+                                                .setMessage(
+                                                        getString(R.string.txt_empresa) + ": " + responseMap.get("companyName") + "\n" +
+                                                                getString(R.string.txt_nif) + ": " + responseMap.get("companyNIF")
+                                                )
+                                                .setCancelable(false)
+                                                .setNegativeButton(R.string.txt_cancelar, (dialogInterface, i) -> dialogInterface.cancel())
+                                                .setPositiveButton(R.string.txt_sim, (dialogInterface, i) -> {
+                                                    //Aceder à sharedPreference e definir o modo de acesso
+                                                    SharedPreferences infoUrl = getContext().getSharedPreferences(Helper.APP_STORAGE, Context.MODE_PRIVATE);
 
-                                        builder.setTitle(R.string.txt_confirmar);
-                                        builder.setMessage(getString(R.string.txt_confirmar_empresa_login) + "\n" +
-                                                getString(R.string.txt_empresa) + ": " + responseMap.get("companyName") + "\n" +
-                                                getString(R.string.txt_nif) + ": " + responseMap.get("companyNIF"));
+                                                    //Definir o Editor para permitir guardar/ alterar o valor
+                                                    SharedPreferences.Editor editor = infoUrl.edit();
+                                                    editor.putString(Helper.APP_SYSTEM_DOMAIN_URL, url);
+                                                    editor.apply();
 
-                                        builder.setCancelable(false);
+                                                    getDialog().dismiss();
 
-                                        // Add the buttons
-                                        builder.setPositiveButton(R.string.txt_sim, (dialog, which)->
-                                        {
-                                            //Aceder à sharedPreference e definir o modo de acesso
-                                            SharedPreferences infoUrl = getContext().getSharedPreferences(Helper.APP_STORAGE, Context.MODE_PRIVATE);
-
-                                            //Definir o Editor para permitir guardar/ alterar o valor
-                                            SharedPreferences.Editor editor = infoUrl.edit();
-                                            editor.putString(Helper.APP_SYSTEM_DOMAIN_URL, url);
-                                            editor.apply();
-
-                                            dismiss();
-                                        });
-                                        builder.setNegativeButton(R.string.txt_cancelar, (dialog, which)->
-                                        {
-                                            dialog.cancel();
-                                        });
-
-                                        // Create the AlertDialog
-                                        AlertDialog dialog = builder.create();
-                                        dialog.show();
+                                                    dismiss();
+                                                })
+                                                .show();
                                     }
                                 }
                                 Snackbar.make(getContext(), view, getString(R.string.txt_generic_error), Snackbar.LENGTH_LONG).show();

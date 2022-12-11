@@ -53,13 +53,15 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         SharedPreferences app_preferences = getSharedPreferences(Helper.APP_STORAGE, MODE_PRIVATE);
 
         if (app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null) == null) {
             FragmentManager fm = getSupportFragmentManager();
-            ConfigurarServerFragment csf = new ConfigurarServerFragment();
-            csf.show(fm, null); //Tag?
+            if(fm.findFragmentByTag("config") == null)
+            {
+                ConfigurarServerFragment csf = new ConfigurarServerFragment();
+                csf.show(fm, "config");
+            }
         } else {
             SYSTEM_DOMAIN = app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null);
             SharedPreferences user_preferences = getSharedPreferences(Helper.USER_STORAGE, MODE_PRIVATE);
