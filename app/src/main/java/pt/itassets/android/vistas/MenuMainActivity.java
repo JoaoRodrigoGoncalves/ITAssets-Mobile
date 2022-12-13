@@ -30,6 +30,10 @@ public class MenuMainActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private FragmentManager fragmentManager;
     private String email;
+    public static final String SHAREDUSER = "DADOS_USER";
+    public static final String EMAIL = "EMAIL";
+    public static final String OPERACAO = "OPERACAO";
+    public static final int ADD = 10, EDIT = 20, DELETE = 30;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

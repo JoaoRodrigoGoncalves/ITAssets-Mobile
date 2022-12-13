@@ -8,11 +8,10 @@
     <string name="txt_configurar_servidor">Configurar servidor</string>
     <string name="txt_abrir">Abrir</string>
     <string name="txt_fechar">Fechar</string>
-    <string name="txt_titulo">Título </string>
-    <string name="txt_numserie">Número de Série </string>
-    <string name="txt_nome">Nome </string>
-    <string name="txt_categoria">Categoria </string>
-    <string name="txt_notas">Notas:</string>
+    <string name="txt_numserie">Número de Série: </string>
+    <string name="txt_nome">Nome: </string>
+    <string name="txt_categoria">Categoria: </string>
+    <string name="txt_notas">Notas: </string>
     <string name="email_invalido">Email Inválido!</string>
     <string name="pass_invalido">Password Inválido!</string>
     <string name="txt_menu_lista_de_itens">Lista de Itens</string>

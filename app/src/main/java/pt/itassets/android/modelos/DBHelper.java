@@ -21,8 +21,8 @@ public class DBHelper extends SQLiteOpenHelper {
         private static final String TABLE_PEDIDOS_REPARACAO = "pedidosreparcao"; // Nome da tabela
 
         // Nome dos campos
-        private static final String NOME = "nome", SERIALNUMBER = "serialNumber", CATEGORIA_ID = "categoria_id",
-                NOTAS = "notas", STATUS = "status", ID = "id";
+        private static final String ID = "id", STATUS = "status", SERIALNUMBER = "serialNumber", CATEGORIA_ID = "categoria_id",
+                NOTAS = "notas", NOME = "nome";
 
 
         public DBHelper(Context context) {
@@ -35,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
             //Criar estrutura da base de dados e tabelas
             String sqlCreateTableItem =
                     "CREATE TABLE " + TABLE_ITENS + "(" +
-                            ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            ID + " INTEGER PRIMARY KEY," +
                             NOME + " TEXT NOT NULL," +
                             SERIALNUMBER + " STRING NOT NULL," +
                             CATEGORIA_ID + " INTEGER," +
@@ -57,11 +57,12 @@ public class DBHelper extends SQLiteOpenHelper {
         {
             ContentValues values = new ContentValues();
 
-            values.put(NOME, item.nome);
-            values.put(SERIALNUMBER, item.serialNumber);
-            values.put(CATEGORIA_ID, item.categoria_id);
-            values.put(NOTAS, item.notas);
-            values.put(STATUS, item.status);
+            values.put(ID, item.getId());
+            values.put(NOME, item.getNome());
+            values.put(SERIALNUMBER, item.getSerialNumber());
+            values.put(CATEGORIA_ID, item.getCategoria_id());
+            values.put(NOTAS, item.getNotas());
+            values.put(STATUS, item.getStatus());
 
             // devolve -1 em caso de erro, ou o id do novo livro (long)
             int id = (int) db.insert(TABLE_ITENS, null, values);
@@ -80,11 +81,11 @@ public class DBHelper extends SQLiteOpenHelper {
         {
             ContentValues values = new ContentValues();
 
-            values.put(NOME, item.nome);
-            values.put(SERIALNUMBER, item.serialNumber);
-            values.put(CATEGORIA_ID, item.categoria_id);
-            values.put(NOTAS, item.notas);
-            values.put(STATUS, item.status);
+            values.put(NOME, item.getNome());
+            values.put(SERIALNUMBER, item.getSerialNumber());
+            values.put(CATEGORIA_ID, item.getCategoria_id());
+            values.put(NOTAS, item.getNotas());
+            values.put(STATUS, item.getStatus());
 
             // devolve o número de linhas atualizadas
             return db.update(TABLE_ITENS, values, ID+"=?", new String[]{String.valueOf(item.getId())})==1;
@@ -96,7 +97,13 @@ public class DBHelper extends SQLiteOpenHelper {
             return db.delete(TABLE_ITENS, ID+"=?", new String[]{String.valueOf(item.getId())})==1;
         }
 
-        public ArrayList<Item> getAllLivrosDB()
+        public void removerAllItemDB()
+        {
+            db.delete(TABLE_ITENS, null, null);
+        }
+
+
+        public ArrayList<Item> getAllItensDB()
         {
             ArrayList<Item> itens = new ArrayList<>();
 

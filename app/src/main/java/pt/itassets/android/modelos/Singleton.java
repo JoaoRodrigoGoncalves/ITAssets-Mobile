@@ -1,18 +1,38 @@
 package pt.itassets.android.modelos;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import pt.itassets.android.listeners.ItensListener;
+import pt.itassets.android.utils.ApiJsonParser;
+import pt.itassets.android.utils.Helper;
 
 public class Singleton {
-    private final ArrayList<Item> itens;
+    private ArrayList<Item> itens;
     private static Singleton instance=null;
     private static RequestQueue volleyQueue=null;
-    //private LivroDBHelper livrosDB = null;
+    private DBHelper itensDB = null;
+    private ItensListener itensListener;
+    private String SYSTEM_DOMAIN = null;
+    private String BAERER = null;
 
     public static synchronized Singleton getInstance(Context context){
         if(instance == null){
@@ -25,62 +45,201 @@ public class Singleton {
 
     private Singleton(Context context){
         itens = new ArrayList<>();
+        itensDB = new DBHelper(context);
         volleyQueue = Volley.newRequestQueue(context);
-        //livrosDB = new LivroDBHelper(context);
     }
 
-    public void addRequestToQueue(Request request)
-    {
-        volleyQueue.add(request);
+    //region Itens
+
+    public void setItensListener(ItensListener itensListener){
+        this.itensListener = itensListener;
     }
 
-    /*
-    public ArrayList<Livro> getLivrosBD() {
-        livros = livrosDB.getAllLivrosDB();
-        return new ArrayList(livros);
-    }
+    public ArrayList<Item> getItensBD() {
+       itens = itensDB.getAllItensDB();
+       return new ArrayList(itens);
+   }
 
-    public Livro getLivro(int id){
-        for(Livro l:livros){
-            if(l.getId()==id){
-                return l;
+    public Item getItem(int id){
+        for(Item i:itens){
+            if(i.getId()==id){
+                return i;
             }
         }
         return null;
     }
 
-    public void adicionarLivroBD(Livro l){
-        Livro auxLivro = livrosDB.adicionarLivroDB(l);
-        if(auxLivro != null){
-            livros.add(auxLivro);
+    public void adicionarItensBD(ArrayList<Item>itens){
+        itensDB.removerAllItemDB();
+        for(Item i : itens){
+            adicionarItemBD(i);
         }
     }
 
-    public void editarLivroBD(Livro l){
-        Livro auxLivro = getLivro(l.getId());
-        if(auxLivro!=null){
-            if(livrosDB.editarLivroDB(l)) {
-                auxLivro.setTitulo(l.getTitulo());
-                auxLivro.setAno(l.getAno());
-                auxLivro.setAutor(l.getAutor());
-                auxLivro.setSerie(l.getSerie());
+    public void adicionarItemBD(Item i){
+        itensDB.adicionarItemDB(i);
+    }
+
+    public void editarItemBD(Item i){
+        Item auxItem = getItem(i.getId());
+        if(auxItem!=null){
+            itensDB.editarItemDB(i);
+        }
+    }
+
+    public void removerItemBD(int id){
+        Item auxItem = getItem(id);
+        if(auxItem != null){
+            itensDB.removerItemDB(auxItem);
+        }
+    }
+
+    //endregion
+
+
+
+    //region Itens_API
+
+    public void adicionarItemAPI(final Item item, final Context context){
+        SharedPreferences app_preferences = context.getSharedPreferences(Helper.APP_STORAGE, Context.MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null);
+
+        if(SYSTEM_DOMAIN != null)
+        {
+            if(!Helper.isInternetConnectionAvailable(context)){
+                Toast.makeText(context, "Erro: Sem ligação à internet!", Toast.LENGTH_LONG).show();
+            }else {
+                StringRequest req = new StringRequest(Request.Method.POST, SYSTEM_DOMAIN + '/' + "item", new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        adicionarItemBD(ApiJsonParser.parserJsonItem(response));
+
+                        //TODO: informar a vista
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+                    @Nullable
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("token", Helper.USER_TOKEN);
+                        params.put("nome", item.getNome());
+                        params.put("serialNumber", item.getSerialNumber());
+                        params.put("categoria_id", String.valueOf(item.getCategoria_id()));
+                        params.put("ano", item.getNotas());
+                        params.put("capa", String.valueOf(item.getStatus()));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
             }
         }
     }
 
-    public void removerLivroBD(int id){
-        Livro auxLivro = getLivro(id);
-        if(auxLivro != null){
-            if(livrosDB.removerLivroDB(getLivro(id))) {
-                livros.remove(auxLivro);
+    public void getAllLivrosAPI(final Context context){
+        SharedPreferences app_preferences = context.getSharedPreferences(Helper.APP_STORAGE, context.MODE_PRIVATE);
+        SharedPreferences user_preferences = context.getSharedPreferences(Helper.USER_STORAGE, context.MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helper.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                if (itensListener != null) {
+                    itensListener.onRefreachListaItens(itensDB.getAllItensDB());
+                }
+            } else {
+                JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, SYSTEM_DOMAIN + "item", null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        itens = ApiJsonParser.parserJsonItens(response);
+                        adicionarItensBD(itens);
+                        if (itensListener != null) {
+                            itensListener.onRefreachListaItens(itens);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + user_preferences.getString(Helper.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
             }
         }
     }
-    */
 
-    public ArrayList<Item> getItens() {
-        return new ArrayList<>(itens);
+    public void removerLivroAPI(final Item item, final Context context){
+        SharedPreferences app_preferences = context.getSharedPreferences(Helper.APP_STORAGE, Context.MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null);
+
+        if(SYSTEM_DOMAIN != null)
+        {
+            if(!Helper.isInternetConnectionAvailable(context)){
+                Toast.makeText(context, "Erro: Sem ligação à internet!", Toast.LENGTH_LONG).show();
+            }else {
+                StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + '/' + "item" + '/' + item.getId(), new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        removerItemBD(item.getId());
+
+                        //TODO: informar a vista
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+                volleyQueue.add(req);
+            }
+        }
     }
 
+    public void editarLivroAPI(final Item item, final Context context){
+        SharedPreferences app_preferences = context.getSharedPreferences(Helper.APP_STORAGE, Context.MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = app_preferences.getString(Helper.APP_SYSTEM_DOMAIN_URL, null);
+
+        if(SYSTEM_DOMAIN != null)
+        {
+            if(!Helper.isInternetConnectionAvailable(context)){
+                Toast.makeText(context, "Erro: Sem ligação à internet!", Toast.LENGTH_LONG).show();
+            }else {
+                StringRequest req = new StringRequest(Request.Method.PUT, SYSTEM_DOMAIN + '/' + "item" + '/' + item.getId(), new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        editarItemBD(item);
+
+                        //TODO: informar a vista
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    public void addRequestToQueue(Request request) {
+        volleyQueue.add(request);
+    }
+    //endregion
 
 }

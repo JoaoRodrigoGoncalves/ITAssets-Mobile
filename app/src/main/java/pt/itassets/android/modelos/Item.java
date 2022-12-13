@@ -2,12 +2,8 @@ package pt.itassets.android.modelos;
 
 public class Item {
 
-    int id;
-    int status;
-    String serialNumber;
-    int categoria_id;
-    String notas;
-    String nome;
+    private int id, status, categoria_id;
+    private String serialNumber, notas, nome;
 
     public Item(int id, int status, String serialNumber, int categoria_id, String notas, String nome) {
         this.id = id;

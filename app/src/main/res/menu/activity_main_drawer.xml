@@ -13,12 +13,12 @@
             <item
                 android:id="@+id/gruposItens"
                 android:title="@string/txt_menu_grupos_de_itens"
-                android:icon="@drawable/icon_white"/>
+                android:icon="@drawable/ic_action_grupoitens"/>
 
             <item
                 android:id="@+id/categoria"
                 android:title="@string/txt_menu_categorias_de_itens"
-                android:icon="@drawable/icon_white"/>
+                android:icon="@drawable/ic_action_categoria"/>
         </menu>
     </item>
 

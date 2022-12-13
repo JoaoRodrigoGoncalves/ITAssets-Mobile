@@ -17,20 +17,29 @@ public class ApiJsonParser {
      * @param response JSONArray
      * @return Lista de itens
      */
-    public static ArrayList<Item> parserJsonItens(JSONArray response){
-        ArrayList<Item> itens = new ArrayList<>();
+    public static ArrayList<Item> parserJsonItens(JSONObject response){
+        ArrayList<Item> itens = null;
         try{
             for(int i=0; i<response.length(); i++){
-                JSONObject item = (JSONObject) response.get(i);
-                int id = item.getInt("id");
-                int status = item.getInt("status");
-                String serialNumber = item.getString("serialNumber");
-                int categoria_id = item.getInt("categoria_id");
-                String notas = item.getString("notas");
-                String nome = item.getString("nome");
 
-                Item auxItem = new Item(id, status, serialNumber, categoria_id, notas, nome);
-                itens.add(auxItem);
+                if(response.getInt("status") == 200)
+                {
+                    JSONArray dados = response.getJSONArray("data");
+                    itens = new ArrayList<>();
+
+                    for (int j = 0; j < dados.length(); j++) {
+                        JSONObject thisObject = dados.getJSONObject(j);
+                        Item auxItem = new Item(
+                                thisObject.getInt("id"),
+                                thisObject.getInt("status"),
+                                thisObject.getString("serialNumber"),
+                                thisObject.getInt("categoria_id"),
+                                thisObject.getString("notas"),
+                                thisObject.getString("nome")
+                        );
+                        itens.add(auxItem);
+                    }
+                }
             }
         }catch (JSONException e){
             e.printStackTrace();

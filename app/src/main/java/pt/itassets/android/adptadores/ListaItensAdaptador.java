@@ -67,16 +67,16 @@ public class ListaItensAdaptador extends BaseAdapter
             tvNome=view.findViewById(R.id.tvNome);
             tvNumSerie=view.findViewById(R.id.tvNumSerie);
             tvCategoria=view.findViewById(R.id.tvCategoria);
-            tvNotas = view.findViewById(R.id.tvNotas);
-            tvStatus = view.findViewById(R.id.tvStatus);
+            //tvNotas = view.findViewById(R.id.tvNotas);
+            //tvStatus = view.findViewById(R.id.tvStatus);
         }
 
         public void update(Item itens){
             tvNome.setText(itens.getNome());
-            tvNumSerie.setText(String.valueOf(itens.getSerialNumber()));
-            tvCategoria.setText(itens.getCategoria_id());
-            tvNotas.setText(itens.getNotas());
-            tvStatus.setText(itens.getStatus());
+            tvNumSerie.setText(itens.getSerialNumber());
+            tvCategoria.setText(String.valueOf(itens.getCategoria_id()));
+            //tvNotas.setText(itens.getNotas());
+            //tvStatus.setText(String.valueOf(itens.getStatus()));
         }
     }
 }
