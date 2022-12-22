@@ -38,7 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
                             ID + " INTEGER PRIMARY KEY," +
                             NOME + " TEXT NOT NULL," +
                             SERIALNUMBER + " STRING NOT NULL," +
-                            CATEGORIA_ID + " INTEGER," +
+                            CATEGORIA_ID + " STRING," +
                             NOTAS + " TEXT," +
                             STATUS + " INTEGER NOT NULL" + ")";
 
@@ -114,7 +114,7 @@ public class DBHelper extends SQLiteOpenHelper {
             {
                 do {
                     Item itemAux = new Item(cursor.getInt(5), cursor.getInt(1), cursor.getString(3),
-                            cursor.getInt(4), cursor.getString(0), cursor.getString(2));
+                            cursor.getString(4), cursor.getString(0), cursor.getString(2));
                     itens.add(itemAux);
                 }while(cursor.moveToNext());
                 cursor.close();

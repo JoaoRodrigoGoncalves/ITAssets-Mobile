@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:layout_margin="5dp"
+    android:layout_margin="50dp"
     tools:context=".vistas.DetalhesItemActivity">
 
     <ScrollView
@@ -17,13 +17,21 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@+id/txtTitulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="35dp"
+                android:layout_marginBottom="25dp"
+                android:text="@string/txt_detalhes"/>
+
             <EditText
                 android:id="@+id/etNome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:hint="" />
+                android:hint="@string/txt_nome" />
 
             <EditText
                 android:id="@+id/etSerialNumber"
@@ -31,24 +39,37 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:hint="" />
+                android:hint="@string/txt_numserie" />
 
             <EditText
-                android:id="@+id/etAutor"
+                android:id="@+id/etCategoria"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:hint="" />
+                android:hint="@string/txt_categoria" />
 
             <EditText
-                android:id="@+id/etAno"
+                android:id="@+id/etNotas"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="number"
-                android:hint="" />
+                android:inputType="textPersonName"
+                android:hint="@string/txt_notas" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.3"/>
         </LinearLayout>
     </ScrollView>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        app:srcCompat="@drawable/ic_action_guardar" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

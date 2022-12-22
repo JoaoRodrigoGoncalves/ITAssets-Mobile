@@ -2,10 +2,10 @@ package pt.itassets.android.modelos;
 
 public class Item {
 
-    private int id, status, categoria_id;
-    private String serialNumber, notas, nome;
+    private int id, status;
+    private String serialNumber, notas, nome, categoria_id;
 
-    public Item(int id, int status, String serialNumber, int categoria_id, String notas, String nome) {
+    public Item(int id, int status, String serialNumber, String categoria_id, String notas, String nome) {
         this.id = id;
         this.status = status;
         this.serialNumber = serialNumber;
@@ -38,11 +38,11 @@ public class Item {
         this.serialNumber = serialNumber;
     }
 
-    public int getCategoria_id() {
+    public String getCategoria_id() {
         return categoria_id;
     }
 
-    public void setCategoria_id(int categoria_id) {
+    public void setCategoria_id(String categoria_id) {
         this.categoria_id = categoria_id;
     }
 

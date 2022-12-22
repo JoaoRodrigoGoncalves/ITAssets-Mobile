@@ -145,25 +145,27 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onErrorResponse(VolleyError error) {
                                     progressbar_login.setVisibility(View.INVISIBLE);
 
-                                    String error_string = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                                    if(error != null){
+                                        String error_string = new String(error.networkResponse.data, StandardCharsets.UTF_8);
 
-                                    if(Helper.isValidJSON(error_string))
-                                    {
-                                        Map<String, Object> errorMap = ApiJsonParser.parseError(error_string);
-
-                                        if((int) errorMap.get("statusCode") == 401)
+                                        if(Helper.isValidJSON(error_string))
                                         {
-                                            etPassword.setError((String) errorMap.get("message"));
+                                            Map<String, Object> errorMap = ApiJsonParser.parseError(error_string);
+
+                                            if((int) errorMap.get("statusCode") == 401)
+                                            {
+                                                etPassword.setError((String) errorMap.get("message"));
+                                            }
+                                            else
+                                            {
+                                                Snackbar.make(thisContext, view, (String) errorMap.get("message"), Snackbar.LENGTH_LONG).show();
+                                            }
                                         }
                                         else
                                         {
-                                            Snackbar.make(thisContext, view, (String) errorMap.get("message"), Snackbar.LENGTH_LONG).show();
+                                            //Outro erro qualquer, mostrar erro genérico
+                                            Snackbar.make(thisContext, view, getString(R.string.txt_generic_error), Snackbar.LENGTH_LONG).show();
                                         }
-                                    }
-                                    else
-                                    {
-                                        //Outro erro qualquer, mostrar erro genérico
-                                        Snackbar.make(thisContext, view, getString(R.string.txt_generic_error), Snackbar.LENGTH_LONG).show();
                                     }
                                 }
                             })  {

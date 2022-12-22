@@ -33,7 +33,7 @@ public class ApiJsonParser {
                                 thisObject.getInt("id"),
                                 thisObject.getInt("status"),
                                 thisObject.getString("serialNumber"),
-                                thisObject.getInt("categoria_id"),
+                                thisObject.getString("categoria_id"),
                                 thisObject.getString("notas"),
                                 thisObject.getString("nome")
                         );
@@ -55,15 +55,15 @@ public class ApiJsonParser {
     public static Item parserJsonItem(String response){
         Item auxItem = null;
         try{
-            JSONObject itens = new JSONObject(response);
-            int id = itens.getInt("id");
-            int status = itens.getInt("status");
-            String serialNumber = itens.getString("serialNumber");
-            int categoria_id = itens.getInt("categoria_id");
-            String notas = itens.getString("notas");
-            String nome = itens.getString("nome");
+                JSONObject itens = new JSONObject(response);
+                int id = itens.getInt("id");
+                int status = itens.getInt("status");
+                String serialNumber = itens.getString("serialNumber");
+                String categoria_id = itens.getString("categoria_id");
+                String notas = itens.getString("notas");
+                String nome = itens.getString("nome");
 
-            auxItem = new Item(id, status, serialNumber, categoria_id, notas, nome);
+                auxItem = new Item(id, status, serialNumber, categoria_id, notas, nome);
         }catch (JSONException e){
             e.printStackTrace();
         }

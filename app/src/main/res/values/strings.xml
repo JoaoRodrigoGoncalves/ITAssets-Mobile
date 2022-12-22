@@ -1,53 +1,85 @@
 <resources>
+    <!-- Título da Aplicação -->
     <string name="app_name">IT Assets</string>
+
+    <!-- Login -->
     <string name="txt_iniciar_sessao">Iniciar Sessão</string>
     <string name="txt_email">Email</string>
     <string name="txt_password">Palavra-Passe</string>
-    <string name="txt_ok">OK</string>
+        <!-- Erros ou Avisos -->
+        <string name="email_invalido">Email Inválido!</string>
+        <string name="pass_invalido">Password Inválido!</string>
+        <string name="default_email">Erro: Email não identificado!</string>
+        <string name="txt_indique_password">Indique uma palavra-passe</string>
+        <string name="txt_credenciais_incorretas">Credenciais incorretas</string>
+
+    <!-- Configurar Servidor -->
     <string name="label_configurar_server">Indique o endereço do servidor ao qual a aplicação se irá ligar</string>
     <string name="txt_configurar_servidor">Configurar servidor</string>
-    <string name="txt_abrir">Abrir</string>
-    <string name="txt_fechar">Fechar</string>
+    <string name="txt_hint_server_domain">api.itassets.pt</string>
+    <string name="txt_confirmar_empresa_login">Tem a certeza se quer ligar a esta empresa?</string>
+    <string name="txt_confirmar">Confirmar</string>
+    <string name="txt_empresa">Empresa</string>
+    <string name="txt_nif">NIF</string>
+    <string name="txt_coloque_dedo_sensor_title">Coloque o dedo no sensor</string>
+    <string name="txt_coloque_dedo_sensor_description">Coloque o dedo no sensor para iniciar sessão</string>
+        <!-- Erros ou Avisos -->
+        <string name="txt_url_invalido">URL inválido</string>
+        <string name="txt_erro">Erro</string>
+        <string name="txt_erro_login_no_json">Ocurreu um erro ao tentar iniciar sessão</string>
+        <string name="txt_url_nao_existe_ou_offline">Dominio não existe ou não há ligação à internet</string>
+        <string name="txt_no_connection_cant_login">Ligação à internet indisponível. Não é possível iniciar sessão.</string>
+        <string name="txt_generic_error">Ocurreu um erro</string>
+        <string name="txt_no_connection">Erro: Sem Ligação à Internet!</string>
+        <string name="txt_domain_no_api">Endereço indicado não é uma API</string>
+        <string name="txt_validating_url">A validar endereço...</string>
+
+    <!-- Itens -->
     <string name="txt_numserie">Número de Série: </string>
     <string name="txt_nome">Nome: </string>
     <string name="txt_categoria">Categoria: </string>
     <string name="txt_notas">Notas: </string>
-    <string name="email_invalido">Email Inválido!</string>
-    <string name="pass_invalido">Password Inválido!</string>
-    <string name="txt_menu_lista_de_itens">Lista de Itens</string>
-    <string name="txt_status_itens">Status:</string>
-    <string name="txt_menu_requisicao_de_item">Requisição de Item</string>
-    <string name="txt_menu_pedidos_requisicao">Pedidos de Requisição</string>
-    <string name="default_email">Erro: Email não identificado!</string>
-    <string name="txt_hint_server_domain">api.itassets.pt</string>
-    <string name="txt_confirmar_empresa_login">Tem a certeza se quer ligar a esta empresa?</string>
+    <string name="txt_status_itens">Status: </string>
+        <!-- Detalhes Item -->
+        <string name="act_Titulo">Detalhes: %1$s</string>
+        <string name="txt_detalhes">Detalhes: </string>
+        <!-- Registar/Adicionar Item -->
+        <string name="txt_registar">Adicionar</string>
+        <string name="adicionar_item_name">Adicionar Item</string>
+        <!-- Remover Item -->
+        <string name="txt_TituloDialogRemover">Remover Item</string>
+        <string name="txt_verificaçãoDialogRemover">Tem a certeza que deseja remover este Item?</string>
+        <!-- Erros ou Avisos -->
+        <string name="Erro_Caracteres_Max">Erro: Máximo de Caracteres Ultrapassado!</string>
+
+    <!-- Menu -->
+        <!-- Hamburguer -->
+        <string name="txt_menu_lista_de_itens">Lista de Itens</string>
+        <string name="txt_menu_grupos_de_itens">Grupos de Itens</string>
+        <string name="txt_menu_categorias_de_itens">Categorias de Itens</string>
+        <string name="txt_menu_alocacao_itens">Pedido de Alocação</string>
+        <string name="txt_menu_requisicao_de_item">Requisição de Item</string>
+        <string name="txt_menu_pedidos_requisicao">Pedidos de Requisição</string>
+        <string name="txt_menu_reparacao_itens">Pedido de Reparação</string>
+        <string name="txt_menu_reparacao_de_item">Reparação de Item</string>
+        <string name="txt_menu_pedidos_de_reparacao">Pedidos de Reparação</string>
+        <string name="txt_logout">Terminar Sessão</string>
+        <!-- Menu Bar -->
+        <string name="menuSearch">Pesquisa</string>
+
+    <!-- Geral -->
     <string name="txt_sim">Sim</string>
-    <string name="txt_confirmar">Confirmar</string>
-    <string name="txt_empresa">Empresa</string>
-    <string name="txt_nif">NIF</string>
-    <string name="txt_cancelar">Cancelar</string>
-    <string name="txt_url_invalido">URL inválido</string>
-    <string name="txt_erro">Erro</string>
-    <string name="txt_erro_login_no_json">Ocurreu um erro ao tentar iniciar sessão</string>
-    <string name="txt_url_nao_existe_ou_offline">Dominio não existe ou não há ligação à internet</string>
-    <string name="txt_indique_password">Indique uma palavra-passe</string>
-    <string name="txt_credenciais_incorretas">Credenciais incorretas</string>
-    <string name="txt_logout">Terminar Sessão</string>
-    <string name="txt_alocacao_itens">Alocação de Itens</string>
-    <string name="txt_reparacao_itens">Reparação de Itens</string>
-    <string name="txt_coloque_dedo_sensor_title">Coloque o dedo no sensor</string>
-    <string name="txt_coloque_dedo_sensor_description">Coloque o dedo no sensor para iniciar sessão</string>
+    <string name="txt_ok">OK</string>
     <string name="txt_nao">Não</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="txt_menu_reparacao_de_item">Reparação de Item</string>
-    <string name="txt_menu_pedidos_de_reparacao">Pedidos de Reparação</string>
-    <string name="txt_menu_grupos_de_itens">Grupos de Itens</string>
-    <string name="txt_menu_categorias_de_itens">Categorias de Itens</string>
-    <string name="txt_no_connection_cant_login">Ligação à internet indisponível. Não é possível iniciar sessão.</string>
-    <string name="txt_generic_error">Ocurreu um erro</string>
-    <string name="txt_no_connection">Sem Ligação à Internet</string>
-    <string name="txt_validating_url">A validar endereço...</string>
-    <string name="txt_domain_no_api">Endereço indicado não é uma API</string>
+    <string name="txt_cancelar">Cancelar</string>
+
+
+
+    <string name="txt_itens_associados">Itens Associados:</string>
+    <string name="txt_abrir">Abrir</string>
+    <string name="txt_fechar">Fechar</string>
+    <string name="txt_item_adicionado_sucesso">Item adicionado com sucesso!</string>
+    <string name="txt_item_modificado_sucesso">Item modificado com sucesso!</string>
+    <string name="txt_item_removido_sucesso">Item removido com sucesso!</string>
 
 </resources>

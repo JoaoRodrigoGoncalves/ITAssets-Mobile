@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -26,7 +29,6 @@ import pt.itassets.android.modelos.Singleton;
 
 public class ListagemItensFragment extends Fragment implements ItensListener {
     private ListView lvItens;
-    private ArrayList<Item> itens;
     private FloatingActionButton fabLista;
     private SearchView searchView;
     public static final int ACT_DETALHES=1;
@@ -49,12 +51,13 @@ public class ListagemItensFragment extends Fragment implements ItensListener {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int positions, long id) {
                 Intent intent = new Intent(getContext(), DetalhesItemActivity.class);
+                intent.putExtra("ID_ITEM", (int) id);
                 startActivityForResult(intent, ACT_DETALHES);//Método Deprecated
             }
         });
 
         Singleton.getInstance(getContext()).setItensListener((ItensListener) this);
-        Singleton.getInstance(container.getContext()).getAllLivrosAPI(getContext());
+        Singleton.getInstance(container.getContext()).getAllItensAPI(getContext());
 
         fabLista.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,26 +66,60 @@ public class ListagemItensFragment extends Fragment implements ItensListener {
                 startActivityForResult(intent, ACT_DETALHES);//Método Deprecated
             }
         });
-
         return view;
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         if(resultCode == Activity.RESULT_OK && requestCode == ACT_DETALHES){
-            Singleton.getInstance(getContext()).getAllLivrosAPI(getContext());
+            Singleton.getInstance(getContext()).getAllItensAPI(getContext());
             switch (intent.getIntExtra(MenuMainActivity.OPERACAO, 0)){
                 case MenuMainActivity.ADD:
-                    Toast.makeText(getContext(), "Item adicionado com sucesso!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), R.string.txt_item_adicionado_sucesso, Toast.LENGTH_SHORT).show();
                     break;
                 case MenuMainActivity.EDIT:
-                    Toast.makeText(getContext(), "Item modificado com sucesso!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), R.string.txt_item_modificado_sucesso, Toast.LENGTH_SHORT).show();
                     break;
                 case MenuMainActivity.DELETE:
-                    Toast.makeText(getContext(), "Item removido com sucesso!", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getContext(), R.string.txt_item_removido_sucesso, Toast.LENGTH_SHORT).show();
                     break;
             }
         }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_pesquisa, menu);
+        MenuItem itemPesquisa = menu.findItem(R.id.itemPesquisa);
+        searchView=(SearchView) itemPesquisa.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                ArrayList<Item> temLista = new ArrayList<>();
+                for(Item i : Singleton.getInstance(getContext()).getItensBD()) {
+                    if (i.getNome().toLowerCase().contains(s.toLowerCase())){
+                        temLista.add(i);
+                    }
+                }
+                lvItens.setAdapter(new ListaItensAdaptador(getContext(),temLista));
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onResume() {
+        // Quando se faz Go Back a searchView fecha-se
+        if(searchView!=null){
+            searchView.onActionViewCollapsed();
+        }
+        super.onResume();
     }
 
     @Override

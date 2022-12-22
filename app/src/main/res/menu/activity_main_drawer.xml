@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <item android:title="@string/txt_alocacao_itens">
+    <item android:title="@string/txt_menu_alocacao_itens">
         <menu>
             <item
                 android:id="@+id/listagemItens"
@@ -22,7 +22,7 @@
         </menu>
     </item>
 
-    <item android:title="@string/txt_alocacao_itens">
+    <item android:title="@string/txt_menu_alocacao_itens">
         <menu>
             <item
                 android:id="@+id/registoRequisicaoItem"
@@ -37,7 +37,7 @@
     </item>
 
     <group android:checkableBehavior ="single">
-    <item android:title="@string/txt_reparacao_itens">
+    <item android:title="@string/txt_menu_reparacao_itens">
         <menu>
             <item
                 android:id="@+id/registoReparacaoitem"

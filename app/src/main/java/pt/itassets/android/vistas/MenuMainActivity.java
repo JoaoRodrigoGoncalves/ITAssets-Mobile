@@ -93,6 +93,10 @@ public class MenuMainActivity extends AppCompatActivity
                 setTitle(item.getTitle());
                 break;
 
+            case R.id.gruposItens:
+                fragment = new ListagemGruposItensFragment();
+                break;
+
             case R.id.registoRequisicaoItem:
                 fragment = new ListagemPedidosRequisicaoFragment();
                 break;
