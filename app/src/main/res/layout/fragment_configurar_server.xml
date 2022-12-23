@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".vistas.ConfigurarServerFragment"
+    tools:context=".views.ConfigurarServerFragment"
     android:orientation="vertical"
     android:padding="10dp">
 
@@ -24,7 +24,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/label_configurar_server"/>
+        android:text="@string/lb_url"/>
 
     <LinearLayout
         android:id="@+id/ll_url_e_btn"
