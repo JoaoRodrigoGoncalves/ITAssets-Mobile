@@ -1,6 +1,7 @@
 package pt.itassets.lite.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import pt.itassets.lite.R;
-import pt.itassets.lite.models.Categoria;
 import pt.itassets.lite.models.DBHelper;
 import pt.itassets.lite.models.Item;
 
@@ -71,19 +71,18 @@ public class ListaItensAdaptador extends BaseAdapter
             tvCategoria=view.findViewById(R.id.tvCategoria);
         }
 
-        public void update(Item itens){
-            tvNome.setText(itens.getNome());
-            tvNumSerie.setText(itens.getSerialNumber());
+        public void update(Item item){
+            tvNome.setText(item.getNome());
+            tvNumSerie.setText(item.getSerialNumber());
 
-            Categoria categoriaItem = new DBHelper(context).getCategoriaDB(itens.getCategoria_id());
-
-            if(categoriaItem != null)
+            if(item.getNome_Categoria() == null)
             {
-                tvCategoria.setText(categoriaItem.getNome());
+                tvCategoria.setText("Não Aplicável");
+                tvCategoria.setTypeface(tvCategoria.getTypeface(), Typeface.ITALIC);
             }
             else
             {
-                tvCategoria.setText(String.valueOf(itens.getCategoria_id()));
+                tvCategoria.setText(String.valueOf(item.getNome_Categoria()));
             }
         }
     }

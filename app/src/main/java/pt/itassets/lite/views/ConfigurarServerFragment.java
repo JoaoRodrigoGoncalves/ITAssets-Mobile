@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.fragment.app.DialogFragment;
 
@@ -26,11 +27,12 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import pt.itassets.lite.R;
+import pt.itassets.lite.listeners.AppSetupListener;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.utils.JSONParsers;
 
-public class ConfigurarServerFragment extends DialogFragment implements View.OnClickListener {
+public class ConfigurarServerFragment extends DialogFragment implements View.OnClickListener, AppSetupListener {
 
     private EditText et_endereco;
     private LinearProgressIndicator progressbar_configServer;
@@ -47,9 +49,10 @@ public class ConfigurarServerFragment extends DialogFragment implements View.OnC
         et_endereco = view.findViewById(R.id.et_endereco_servidor);
         progressbar_configServer = view.findViewById(R.id.progressbar_configServer);
 
+        Singleton.getInstance(getContext()).setAppSetupListener(this);
+
         btnOK.setOnClickListener(this);
         setCancelable(false);
-
         return view;
     }
 
@@ -63,7 +66,7 @@ public class ConfigurarServerFragment extends DialogFragment implements View.OnC
 
         if(!Helpers.isInternetConnectionAvailable(getContext()))
         {
-            Snackbar.make(getContext(), view, getString(R.string.txt_sem_internet), Snackbar.LENGTH_LONG).show();
+            Toast.makeText(getContext(), getString(R.string.txt_sem_internet), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -72,7 +75,12 @@ public class ConfigurarServerFragment extends DialogFragment implements View.OnC
         CompletableFuture.supplyAsync(() -> {
             return Helpers.isURLValid(et_endereco.getText().toString());
         }).thenAccept(result -> {
-            if(result)
+            if(!result)
+            {
+                progressbar_configServer.setVisibility(View.INVISIBLE);
+                Snackbar.make(getContext(),view, getString(R.string.txt_url_invalido), Snackbar.LENGTH_LONG).show();
+            }
+            else
             {
                 if(!et_endereco.getText().toString().contains("http://"))
                 {
@@ -85,89 +93,55 @@ public class ConfigurarServerFragment extends DialogFragment implements View.OnC
                     url += "/";
                 }
 
-                // Request a string response from the provided URL.
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url + "sysinfo", null,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-
-                                if(Helpers.isValidJSON(response.toString()))
-                                {
-                                    Map<String, String> responseMap = JSONParsers.parseJsonLigcaoEmpresa(response.toString());
-
-                                    if(responseMap != null)
-                                    {
-                                        new MaterialAlertDialogBuilder(getContext())
-                                                .setIcon(R.drawable.ic_action_ligar)
-                                                .setTitle(R.string.txt_confirmar_empresa_login)
-                                                .setMessage(
-                                                        getString(R.string.txt_empresa) + ": " + responseMap.get("companyName") + "\n" +
-                                                                getString(R.string.txt_nif) + ": " + responseMap.get("companyNIF")
-                                                )
-                                                .setCancelable(false)
-                                                .setNegativeButton(R.string.txt_cancelar, (dialogInterface, i) -> dialogInterface.cancel())
-                                                .setPositiveButton(R.string.txt_sim, (dialogInterface, i) -> {
-                                                    //Aceder à sharedPreference e definir o modo de acesso
-                                                    SharedPreferences infoUrl = getContext().getSharedPreferences(Helpers.SHAREDPREFERENCES, Context.MODE_PRIVATE);
-
-                                                    //Definir o Editor para permitir guardar/ alterar o valor
-                                                    SharedPreferences.Editor editor = infoUrl.edit();
-                                                    editor.putString(Helpers.DOMAIN, url);
-                                                    editor.apply();
-
-                                                    getDialog().dismiss();
-
-                                                    dismiss();
-                                                })
-                                                .show();
-                                    }
-                                    else
-                                    {
-                                        Snackbar.make(getContext(), view, getString(R.string.txt_generic_error), Snackbar.LENGTH_LONG).show();
-                                    }
-                                }
-                                else
-                                {
-                                    Snackbar.make(getContext(), view, getString(R.string.txt_generic_error), Snackbar.LENGTH_LONG).show();
-                                }
-                            }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(error.networkResponse != null)
-                        {
-                            String errorString = new String(error.networkResponse.data, StandardCharsets.UTF_8);
-
-                            if(Helpers.isValidJSON(errorString))
-                            {
-                                Map<String, Object> errorMap = JSONParsers.parseError(errorString);
-                                if(errorMap == null)
-                                {
-                                    Snackbar.make(getContext(), view, getString(R.string.txt_url_invalido), Snackbar.LENGTH_LONG).show();
-                                }
-                                else
-                                {
-                                    Snackbar.make(getContext(), view, (String) errorMap.get("message"), Snackbar.LENGTH_LONG).show();
-                                }
-                            }
-                            else
-                            {
-                                Snackbar.make(getContext(), view, getString(R.string.txt_url_invalido), Snackbar.LENGTH_LONG).show();
-                            }
-                        }
-                        else
-                        {
-                            Snackbar.make(getContext(), view, getString(R.string.txt_generic_error), Snackbar.LENGTH_LONG).show();
-                        }
-                    }
-                });
-                Singleton.getInstance(getActivity().getApplicationContext()).addRequestToQueue(jsonObjectRequest);
+                Singleton.getInstance(getContext()).setupApp(url, getContext());
             }
-            else
-            {
-                Snackbar.make(getContext(),view, getString(R.string.txt_url_invalido), Snackbar.LENGTH_LONG).show();
-            }
-            progressbar_configServer.setVisibility(View.INVISIBLE);
         }).exceptionally(e -> null);
+    }
+
+    @Override
+    public void onAppSetupSuccess(Map<String, String> responseMap) {
+        progressbar_configServer.setVisibility(View.INVISIBLE);
+        if(responseMap != null)
+        {
+            new MaterialAlertDialogBuilder(getContext())
+                    .setIcon(R.drawable.ic_action_ligar)
+                    .setTitle(R.string.txt_confirmar_empresa_login)
+                    .setMessage(
+                            getString(R.string.txt_empresa) + ": " + responseMap.get("companyName") + "\n" +
+                                    getString(R.string.txt_nif) + ": " + responseMap.get("companyNIF")
+                    )
+                    .setCancelable(false)
+                    .setNegativeButton(R.string.txt_cancelar, (dialogInterface, i) -> dialogInterface.cancel())
+                    .setPositiveButton(R.string.txt_sim, (dialogInterface, i) -> {
+                        //Aceder à sharedPreference e definir o modo de acesso
+                        SharedPreferences infoUrl = getContext().getSharedPreferences(Helpers.SHAREDPREFERENCES, Context.MODE_PRIVATE);
+
+                        //Definir o Editor para permitir guardar/ alterar o valor
+                        SharedPreferences.Editor editor = infoUrl.edit();
+                        editor.putString(Helpers.DOMAIN, url);
+                        editor.apply();
+
+                        getDialog().dismiss();
+                        dismiss();
+                    })
+                    .show();
+        }
+        else
+        {
+            Toast.makeText(getContext(), getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onAppSetupFail(Map<String, Object> errorMap) {
+        progressbar_configServer.setVisibility(View.INVISIBLE);
+        if(errorMap != null)
+        {
+            Toast.makeText(getContext(), (String) errorMap.get("message"), Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            Toast.makeText(getContext(), getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+        }
     }
 }

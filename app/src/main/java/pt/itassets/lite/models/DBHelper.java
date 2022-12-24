@@ -16,7 +16,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private final SQLiteDatabase db;
 
     private static final String TABLE_ITENS = "itens"; // Nome da tabela
-    private static final String TABLE_CATEGORIA = "categorias";
+    private static final String TABLE_SITE = "site";
     private static final String TABLE_GRUPO_ITENS = "grupoitens"; // Nome da tabela
     private static final String TABLE_PEDIDOS_REQUISICAO = "pedidosrequisicao"; // Nome da tabela
     private static final String TABLE_PEDIDOS_REPARACAO = "pedidosreparcao"; // Nome da tabela
@@ -28,8 +28,10 @@ public class DBHelper extends SQLiteOpenHelper {
             SERIALNUMBER = "serialNumber",
             NOTAS = "notas",
             STATUS = "status",
-            CATEGORIA_ID = "categoria_id",
-            SITE_ID = "site_id";
+            NOME_CATEGORIA = "nome_categoria",
+            SITE_ID = "site_id",
+            MORADA = "morada",
+            COORDENADAS = "coordenadas";
 
 
     public DBHelper(Context context) {
@@ -47,18 +49,19 @@ public class DBHelper extends SQLiteOpenHelper {
                         SERIALNUMBER + " TEXT," +
                         NOTAS + " TEXT," +
                         STATUS + " INTEGER NOT NULL," +
-                        CATEGORIA_ID + " INTEGER," +
+                        NOME_CATEGORIA + " TEXT," +
                         SITE_ID + " INTEGER" + ")";
 
         sqlLiteDatabase.execSQL(sqlCreateTableItem);
 
-        String sqlCreateTableCategoria =
-                "CREATE TABLE " + TABLE_CATEGORIA + "(" +
-                    ID + " INTEGER PRIMARY KEY," +
-                    NOME + " TEXT NOT NULL," +
-                    STATUS + " INTEGER NOT NULL" + ")";
+        String sqlCreateTableSite =
+                "CREATE TABLE " + TABLE_SITE + "(" +
+                        ID + " INTEGER PRIMARY KEY," +
+                        NOME + " TEXT NOT NULL," +
+                        MORADA + " TEXT," +
+                        COORDENADAS + " TEXT" + ")";
 
-        sqlLiteDatabase.execSQL(sqlCreateTableCategoria);
+        sqlLiteDatabase.execSQL(sqlCreateTableSite);
     }
 
     @Override
@@ -66,8 +69,8 @@ public class DBHelper extends SQLiteOpenHelper {
         String sqlDropTableItem = "DROP TABLE IF EXISTS " + TABLE_ITENS;
         sqlLiteDatabase.execSQL(sqlDropTableItem);
 
-        String sqlDropTableCategoria = "DROP TABLE IF EXISTS " + TABLE_CATEGORIA;
-        sqlLiteDatabase.execSQL(sqlDropTableCategoria);
+        String sqlDropTableSite = "DROP TABLE IF EXISTS " + TABLE_SITE;
+        sqlLiteDatabase.execSQL(sqlDropTableSite);
 
         onCreate(sqlLiteDatabase);
     }
@@ -81,9 +84,10 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(ID, item.getId());
         values.put(NOME, item.getNome());
         values.put(SERIALNUMBER, item.getSerialNumber());
-        values.put(CATEGORIA_ID, item.getCategoria_id());
+        values.put(NOME_CATEGORIA, item.getNome_Categoria());
         values.put(NOTAS, item.getNotas());
         values.put(STATUS, item.getStatus());
+        values.put(SITE_ID, item.getSite_id());
 
         // devolve -1 em caso de erro, ou o id do novo livro (long)
         int id = (int) db.insert(TABLE_ITENS, null, values);
@@ -104,9 +108,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         values.put(NOME, item.getNome());
         values.put(SERIALNUMBER, item.getSerialNumber());
-        values.put(CATEGORIA_ID, item.getCategoria_id());
+        values.put(NOME_CATEGORIA, item.getNome_Categoria());
         values.put(NOTAS, item.getNotas());
         values.put(STATUS, item.getStatus());
+        values.put(SITE_ID, item.getSite_id());
 
         // devolve o número de linhas atualizadas
         return db.update(TABLE_ITENS, values, ID+"=?", new String[]{String.valueOf(item.getId())})==1;
@@ -127,7 +132,7 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         ArrayList<Item> itens = new ArrayList<>();
 
-        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, CATEGORIA_ID, SITE_ID},
+        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID},
                 null, null, null, null, null);
 
         if(cursor.moveToFirst())
@@ -139,7 +144,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         (cursor.isNull(2) ? null : cursor.getString(2)), //Serial
                         (cursor.isNull(3) ? null : cursor.getString(3)), // Notas
                         cursor.getInt(4), // status
-                        (cursor.isNull(5) ? null : cursor.getInt(5)), // categoria
+                        (cursor.isNull(5) ? null : cursor.getString(5)), // categoria
                         (cursor.isNull(6) ? null : cursor.getInt(6)) // site
                 );
                 itens.add(itemAux);
@@ -151,22 +156,43 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //endregion
 
-    //region Funções Tabela Categoria
+    //region Funções Tabela Sites
 
-    public Categoria adicionarCategoriaDB(Categoria categoria)
+    public Site getSiteDB(Integer id)
+    {
+       Site site = null;
+
+        Cursor cursor = db.query(TABLE_SITE, new String[]{ID, NOME, MORADA, COORDENADAS},
+                ID + "=" + id, null, null, null, null);
+
+        if(cursor.moveToFirst())
+        {
+                site = new Site(
+                        cursor.getInt(0), //ID
+                        cursor.getString(1), //Nome
+                        (cursor.isNull(2) ? null : cursor.getString(2)), //Morada
+                        (cursor.isNull(3) ? null : cursor.getString(3)) // Coordenadas
+                );
+            cursor.close();
+        }
+        return site;
+    }
+
+    public Site adicionarSiteDB(Site site)
     {
         ContentValues values = new ContentValues();
 
-        values.put(ID, categoria.getId());
-        values.put(NOME, categoria.getNome());
-        values.put(STATUS, categoria.getStatus());
+        values.put(ID, site.getId());
+        values.put(NOME, site.getNome());
+        values.put(MORADA, site.getMorada());
+        values.put(COORDENADAS, site.getCoordenadas());
 
-        // devolve -1 em caso de erro, ou o id da nova categoria (long)
-        int id = (int) db.insert(TABLE_CATEGORIA, null, values);
+        // devolve -1 em caso de erro, ou o id do novo site (long)
+        int id = (int) db.insert(TABLE_SITE, null, values);
         if(id != -1)
         {
-            categoria.setId(id);
-            return categoria;
+            site.setId(id);
+            return site;
         }
         else
         {
@@ -174,35 +200,17 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean editarCategoriaDB(Categoria categoria)
+    public boolean editarSiteDB(Site site)
     {
         ContentValues values = new ContentValues();
 
-        values.put(NOME, categoria.getNome());
-        values.put(STATUS, categoria.getStatus());
+        values.put(ID, site.getId());
+        values.put(NOME, site.getNome());
+        values.put(MORADA, site.getMorada());
+        values.put(COORDENADAS, site.getCoordenadas());
 
         // devolve o número de linhas atualizadas
-        return db.update(TABLE_CATEGORIA, values, ID+"=?", new String[]{String.valueOf(categoria.getId())})==1;
-    }
-
-    public Categoria getCategoriaDB(Integer id)
-    {
-        Categoria cat = null;
-
-        Cursor cursor = db.query(TABLE_CATEGORIA, new String[]{ID, NOME, STATUS},
-                ID + " = " + id, null,
-                null, null, null);
-
-        if(cursor.moveToFirst())
-        {
-            cat = new Categoria(
-                    cursor.getInt(0), //ID
-                    cursor.getString(1), //Nome
-                    cursor.getInt(2) // status
-            );
-            cursor.close();
-        }
-        return cat;
+        return db.update(TABLE_SITE, values, ID+"=?", new String[]{String.valueOf(site.getId())})==1;
     }
 
     //endregion

@@ -2,17 +2,22 @@ package pt.itassets.lite.views;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import pt.itassets.lite.R;
+import pt.itassets.lite.utils.Helpers;
 
 public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
     BottomNavigationView bottomNav;
@@ -21,6 +26,9 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(this);
@@ -36,9 +44,14 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, listaItensFragment).commit();
                 return true;
 
-            case R.id.item_reparar:
+            case R.id.item_lista_grupos:
                 Fragment frag = new Frag_B();
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, frag).commit();
+                return true;
+
+            case R.id.item_reparar:
+                Fragment frag_b = new Frag_B();
+                getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, frag_b).commit();
                 return true;
 
             case R.id.item_alocar:
@@ -70,5 +83,13 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                 break;
         }
         return true;
+    }
+
+    public void BTN_Logout(View view) {
+        SharedPreferences preferences = getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+        preferences.edit().putString(Helpers.USER_TOKEN, null).commit();
+        Intent logout = new Intent(this, LoginActivity.class);
+        startActivity(logout);
+        finish();
     }
 }

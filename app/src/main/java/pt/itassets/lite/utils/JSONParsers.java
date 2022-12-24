@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import pt.itassets.lite.models.Categoria;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.models.Site;
 
 public class JSONParsers {
 
@@ -32,6 +32,8 @@ public class JSONParsers {
               "status": 200,
               "data": {
                   "token": "Fr3zCduYo5yAcaJ8Q_Nq-i__NdIj6YSl",
+                  "username": "nome",
+                  "email": "email@itassets.pt",
                   "level": "administrator"
               }
           }
@@ -41,13 +43,13 @@ public class JSONParsers {
             JSONObject login = new JSONObject(response);
             SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 
-            //TODO: Confirmar que isto precisa de estar aqui, visto que
-            // esta função só deverá ser chamada quando receber um HTTP status positivo
             if(login.getInt("status") == 200){
                 JSONObject data = login.getJSONObject("data");
                 SharedPreferences.Editor editor =  preferences.edit();
 
                 editor.putString(Helpers.USER_TOKEN, data.getString("token"));
+                editor.putString(Helpers.USER_NAME, data.getString("username"));
+                editor.putString(Helpers.USER_EMAIL, data.getString("email"));
                 editor.putString(Helpers.USER_ROLE, data.getString("level"));
                 editor.commit();
                 return true;
@@ -96,20 +98,37 @@ public class JSONParsers {
                     for (int j = 0; j < dados.length(); j++) {
                         JSONObject thisObject = dados.getJSONObject(j);
 
-                        Integer categoria_id = null;
+                        String nome_categoria = null;
 
                         if(!thisObject.isNull("categoria"))
                         {
                             JSONObject thisObjectCategoria = thisObject.getJSONObject("categoria");
-                            categoria_id = thisObjectCategoria.getInt("id");
+                            nome_categoria = thisObjectCategoria.getString("nome");
+                        }
 
-                            Categoria tempCat = new Categoria(
-                                    thisObjectCategoria.getInt("id"),
-                                    thisObjectCategoria.getString("nome"),
-                                    thisObjectCategoria.getInt("status")
+                        Site thisSite = null;
+
+                        if(!thisObject.isNull("site"))
+                        {
+                            JSONObject thisSiteObject = thisObject.getJSONObject("site");
+
+                            String morada = null;
+
+                            if(!thisSiteObject.isNull("rua"))
+                            {
+                                morada = thisSiteObject.getString("rua") + ", " +
+                                        thisSiteObject.getString("codPostal") + " " +
+                                        thisSiteObject.getString("localidade");
+                            }
+
+                            thisSite = new Site(
+                                    thisSiteObject.getInt("id"),
+                                    thisSiteObject.getString("nome"),
+                                    morada,
+                                    thisSiteObject.isNull("coordenadas") ? null : thisSiteObject.getString("coordenadas")
                             );
 
-                            Singleton.getInstance(context).atualizarCategoriaDB(tempCat);
+                            Singleton.getInstance(context).atualizarSiteDB(thisSite);
                         }
 
                         Item auxItem = new Item(
@@ -118,8 +137,8 @@ public class JSONParsers {
                                 thisObject.getString("serialNumber"),
                                 thisObject.getString("notas"),
                                 (thisObject.isNull("status") ? 10 : thisObject.getInt("status")),
-                                categoria_id,
-                                (thisObject.isNull("site_id") ? null : thisObject.getInt("site_id"))
+                                nome_categoria,
+                                (thisSite == null ? null : thisSite.getId())
                             );
                         itens.add(auxItem);
                     }

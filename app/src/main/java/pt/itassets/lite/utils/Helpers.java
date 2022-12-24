@@ -16,6 +16,8 @@ public class Helpers {
     public static final String DOMAIN = "IT_ASSETS_DOMAIN";
     public static final String USER_TOKEN = "IT_ASSETS_API_TOKEN";
     public static final String USER_ROLE = "IT_ASSETS_USER_ROLE";
+    public static final String USER_NAME = "IT_ASSETS_USER_NOME";
+    public static final String USER_EMAIL = "IT_ASSETS_USER_EMAIL";
 
     /**
      * Valida se a String indicada é um email válido

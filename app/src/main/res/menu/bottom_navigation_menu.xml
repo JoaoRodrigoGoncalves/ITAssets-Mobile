@@ -5,22 +5,27 @@
         android:id="@+id/item_lista_itens"
         android:enabled="true"
         android:icon="@drawable/ic_item"
-        android:title="Itens"/>
+        android:title="@string/txt_itens"/>
+    <item
+        android:id="@+id/item_lista_grupos"
+        android:enabled="true"
+        android:icon="@drawable/ic_group"
+        android:title="@string/txt_grupo_itens"/>
     <item
         android:id="@+id/item_alocar"
         android:enabled="true"
         android:icon="@drawable/ic_alocate"
-        android:title="Alocar"/>
+        android:title="@string/txt_alocar"/>
 
     <item
         android:id="@+id/item_reparar"
         android:enabled="true"
         android:icon="@drawable/ic_repair"
-        android:title="Reparar"/>
+        android:title="@string/txt_reparar"/>
 
     <item
         android:id="@+id/item_user"
         android:enabled="true"
         android:icon="@drawable/ic_user"
-        android:title="Eu"/>
+        android:title="@string/txt_eu"/>
 </menu>

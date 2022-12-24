@@ -2,14 +2,14 @@ package pt.itassets.lite.models;
 
 public class Item {
 
-    private Integer id, status, categoria_id, site_id;
-    private String nome, serialNumber, notas;
+    private Integer id, status, site_id;
+    private String nome, serialNumber, notas, nome_categoria;
 
-    public Item(Integer id, String nome, String serialNumber, String notas, Integer status, Integer categoria_id, Integer site_id)
+    public Item(Integer id, String nome, String serialNumber, String notas, Integer status, String nome_categoria, Integer site_id)
     {
         this.id = id;
         this.status = status;
-        this.categoria_id = categoria_id;
+        this.nome_categoria = nome_categoria;
         this.site_id = site_id;
         this.nome = nome;
         this.serialNumber = serialNumber;
@@ -32,12 +32,12 @@ public class Item {
         this.status = status;
     }
 
-    public Integer getCategoria_id() {
-        return categoria_id;
+    public String getNome_Categoria() {
+        return nome_categoria;
     }
 
-    public void setCategoria_id(Integer categoria_id) {
-        this.categoria_id = categoria_id;
+    public void setNome_categoria(String nome_categoria) {
+        this.nome_categoria = nome_categoria;
     }
 
     public Integer getSite_id() {
