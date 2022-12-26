@@ -24,4 +24,10 @@
     <string name="txt_alocar">Alocar</string>
     <string name="txt_reparar">Reparar</string>
     <string name="txt_eu">Eu</string>
+    <string name="tv_nome">Nome</string>
+    <string name="tv_nSerie">Nº Serie</string>
+    <string name="tv_categoria">Categoria</string>
+    <string name="tv_nota">Notas</string>
+    <string name="adicionar_item">Adicionar Item</string>
+    <string name="erro_char_ultrapassado">Ultrapassou o Máximo de Caracteres!</string>
 </resources>

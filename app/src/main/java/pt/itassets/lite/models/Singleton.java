@@ -4,7 +4,6 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -13,8 +12,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
 
@@ -322,6 +321,50 @@ public class Singleton {
                         Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }) {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    public void AdicionarItemAPI(final Item item, final Context context){
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+            } else {
+                StringRequest req = new StringRequest(Request.Method.POST, SYSTEM_DOMAIN + "item", new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        adicionarItemBD(JSONParsers.parserJsonItem(response));
+                        if (itensListener != null) {
+                            itensListener.onRefreshListaItens(itens);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params=new HashMap<>();
+                        params.put("nome", item.getNome());
+                        params.put("serialNumber", item.getSerialNumber());
+                        params.put("notas", item.getNotas());
+                        return params;
+                    }
+
                     @Override
                     public Map<String, String> getHeaders() {
                         Map<String, String> params = new HashMap<>();

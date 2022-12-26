@@ -3,11 +3,6 @@ package pt.itassets.lite.views;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +12,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -37,7 +36,7 @@ public class ListaItensFragment extends Fragment implements ItensListener{
     private ListView lvItens;
     private FloatingActionButton fabListaItens;
     private SearchView searchView;
-    public static final int ACTION_DETALHES = 1; //Ações
+    public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
 
     public ListaItensFragment() {
         // Required empty public constructor
@@ -70,8 +69,8 @@ public class ListaItensFragment extends Fragment implements ItensListener{
             @Override
             public void onClick(View view) {
                 //TODO IMPLEMENTAR
-                Intent intent = new Intent(getContext(), DetalhesItemActivity.class);
-                startActivityForResult(intent, ACTION_DETALHES);//Método Deprecated
+                Intent intent = new Intent(getContext(), AdicionarItemActivity.class);
+                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
             }
         });
         return view;

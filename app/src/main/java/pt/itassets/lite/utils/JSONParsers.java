@@ -150,6 +150,24 @@ public class JSONParsers {
         return itens;
     }
 
+    public static Item parserJsonItem(String response) {
+        Item auxItem = null;
+        try{
+            JSONObject item = new JSONObject(response);
+            if(item.getInt("status") == 200)
+            {
+                int id = item.getInt("id");
+                String nome = item.getString("nome");
+                String serialnumber = item.getString("serialnumber");
+                String nota = item.getString("notas");
+                auxItem = new Item(id, nome, serialnumber, nota, auxItem.getStatus(), auxItem.getNome_Categoria(), auxItem.getSite_id());
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return auxItem;
+    }
+
     public static Map<String, String> parseJsonLigcaoEmpresa(String response)
     {
         Map<String, String> data = null;
