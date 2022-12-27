@@ -16,6 +16,14 @@
         android:theme="@style/Theme.ITAssets"
         tools:targetApi="31">
         <activity
+            android:name=".views.EditarItemActivity"
+            android:exported="false"
+            android:parentActivityName=".views.AdicionarItemActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".views.AdicionarItemActivity"
             android:exported="false"
             android:parentActivityName=".views.MenuActivity">
@@ -30,8 +38,8 @@
 
         <activity
             android:name=".views.DetalhesItemActivity"
-            android:parentActivityName=".views.MenuActivity"
-            android:exported="false">
+            android:exported="false"
+            android:parentActivityName=".views.MenuActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

@@ -30,4 +30,7 @@
     <string name="tv_nota">Notas</string>
     <string name="adicionar_item">Adicionar Item</string>
     <string name="erro_char_ultrapassado">Ultrapassou o Máximo de Caracteres!</string>
+    <string name="editar">Editar</string>
+    <string name="remover">Remover</string>
+    <string name="act_Titulo">Editar: %1$s</string>
 </resources>

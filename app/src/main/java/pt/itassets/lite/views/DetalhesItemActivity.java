@@ -1,13 +1,20 @@
 package pt.itassets.lite.views;
 
+import static pt.itassets.lite.views.ListaItensFragment.ACTION_DETALHES;
+
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,6 +40,7 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //Para adicionar o botão back, na actionBar
         setContentView(R.layout.activity_detalhes_item);
+
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -87,6 +95,56 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
                 img_no_site.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    //Icons no menu superior (edit e remove)
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if(item!=null){
+            getMenuInflater().inflate(R.menu.main_top_edit,menu);
+            getMenuInflater().inflate(R.menu.main_top_remove,menu);
+            return super.onCreateOptionsMenu(menu);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem i) {
+        switch (i.getItemId()){
+            case R.id.edit:
+                Intent intent = new Intent(getBaseContext(), EditarItemActivity.class);
+                intent.putExtra("ID_ITEM", item.getId());
+                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                return true;
+
+            case R.id.remove:
+                dialogRemover();
+                return true;
+        }
+        return super.onOptionsItemSelected(i);
+    }
+
+    //Dialog para perguntar se o user pretende mesmo eliminar/ desativar o item
+    private void dialogRemover(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Remover Item")
+                .setMessage("Tem a certeza que deseja remover o item?")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Singleton.getInstance(getApplicationContext()).RemoverItemAPI(item, getApplicationContext());
+                        Intent intent = new Intent(getBaseContext(), MenuActivity.class);
+                        startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Não necessita de se inserir nada
+                    }
+                })
+                .setIcon(android.R.drawable.ic_delete)
+                .show();
     }
 
     @Override

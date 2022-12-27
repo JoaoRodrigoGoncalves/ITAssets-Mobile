@@ -386,5 +386,101 @@ public class Singleton {
         }
     }
 
+    public void EditarItemAPI(final Item item, final Context context){
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+            } else {
+                StringRequest req = new StringRequest(Request.Method.PUT, SYSTEM_DOMAIN + "item/" + item.getId(), new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        editarItemBD(item);
+
+                        if (itensListener != null) {
+                            itensListener.onRefreshListaItens(itens);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if(error != null)
+                        {
+                            if(error.networkResponse != null)
+                            {
+                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("nome", item.getNome());
+                        params.put("serialNumber", item.getSerialNumber());
+                        params.put("notas", item.getNotas());
+                        return params;
+                    }
+
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    public void RemoverItemAPI(final Item item, final Context context){
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+            } else {
+                StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + "item/" + item.getId(), new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        removerItemBD(item.getId());
+
+                        if (itensListener != null) {
+                            itensListener.onRefreshListaItens(itens);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error != null) {
+                            if (error.networkResponse != null) {
+                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+
     //endregion
 }
