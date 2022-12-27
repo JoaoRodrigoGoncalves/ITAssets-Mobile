@@ -7,12 +7,21 @@
     tools:context=".views.DetalhesItemActivity"
     android:orientation="vertical">
 
+
     <fragment
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.25"
         class="com.google.android.gms.maps.SupportMapFragment" />
+
+    <ImageView
+        android:id="@+id/img_no_site"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.25"
+        android:src="@drawable/no_site"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"

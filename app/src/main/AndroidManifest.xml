@@ -30,6 +30,7 @@
 
         <activity
             android:name=".views.DetalhesItemActivity"
+            android:parentActivityName=".views.MenuActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"

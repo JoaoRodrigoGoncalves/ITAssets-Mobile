@@ -353,12 +353,20 @@ public class Singleton {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        //Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                        if(error != null)
+                        {
+                            if(error.networkResponse != null)
+                            {
+                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
                     }
                 }) {
                     @Override
                     protected Map<String, String> getParams() {
-                        Map<String, String> params=new HashMap<>();
+                        Map<String, String> params = new HashMap<>();
                         params.put("nome", item.getNome());
                         params.put("serialNumber", item.getSerialNumber());
                         params.put("notas", item.getNotas());
@@ -368,7 +376,7 @@ public class Singleton {
                     @Override
                     public Map<String, String> getHeaders() {
                         Map<String, String> params = new HashMap<>();
-                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
                         params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
                         return params;
                     }

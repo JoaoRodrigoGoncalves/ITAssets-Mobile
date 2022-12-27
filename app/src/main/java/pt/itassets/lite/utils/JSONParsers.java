@@ -154,7 +154,7 @@ public class JSONParsers {
         Item auxItem = null;
         try{
             JSONObject item = new JSONObject(response);
-            if(item.getInt("status") == 200)
+            if(item.getInt("status") == 200 || item.getInt("status") == 201)
             {
                 int id = item.getInt("id");
                 String nome = item.getString("nome");

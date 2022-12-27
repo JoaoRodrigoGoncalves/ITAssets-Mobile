@@ -2,6 +2,8 @@ package pt.itassets.lite.views;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +26,7 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
 
     private TextView tv_nome, tv_serialNumber, tv_categoria, tv_notas;
     private Item item;
+    private ImageView img_no_site;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +38,12 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
                 (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
         tv_nome = findViewById(R.id.tv_item_nome);
         tv_serialNumber = findViewById(R.id.tv_item_serialNumber);
         tv_categoria = findViewById(R.id.tv_item_categoria);
         tv_notas = findViewById(R.id.tv_item_notas);
+        img_no_site = findViewById(R.id.img_no_site);
 
         Integer itemId = getIntent().getIntExtra("ID_ITEM", -1);
 
@@ -52,6 +57,8 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
             item = Singleton.getInstance(getBaseContext()).getItem(itemId);
 
             tv_nome.setText(String.valueOf(item.getNome()));
+            setTitle(String.valueOf(item.getNome()));
+
             tv_serialNumber.setText(String.valueOf(item.getSerialNumber()));
 
             if(item.getNome_Categoria() == null)
@@ -73,6 +80,12 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
             {
                 tv_notas.setText(String.valueOf(item.getNotas()));
             }
+
+            if(item.getSite_id() == null)
+            {
+                mapFragment.getView().setVisibility(View.GONE);
+                img_no_site.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -92,7 +105,5 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
                     new LatLng(Double.parseDouble(coords[0]), Double.parseDouble(coords[1])), 15));
 
         }
-        //TODO: Não tem local associado. Fazer outra coisa
-
     }
 }

@@ -34,9 +34,16 @@ public class AdicionarItemActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(isItemValido()){
                     if(item == null){
-                        Item itemAux = new Item(0, tiNome.getEditText().getText().toString().trim(), tiNumSerie.getEditText().getText().toString().trim(), tiNota.getEditText().getText().toString().trim(), null, null, null);
-                        Singleton.getInstance(getApplicationContext()).AdicionarItemAPI(itemAux, getApplicationContext());
-
+                        Item itemAux = new Item(
+                                0,
+                                tiNome.getEditText().getText().toString().trim(),
+                                tiNumSerie.getEditText().getText().toString().trim(),
+                                tiNota.getEditText().getText().toString().trim(),
+                                null,
+                                null,
+                                null
+                        );
+                        Singleton.getInstance(getBaseContext()).AdicionarItemAPI(itemAux, getBaseContext());
                     }
                 }
             }
