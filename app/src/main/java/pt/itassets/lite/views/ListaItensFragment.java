@@ -55,7 +55,7 @@ public class ListaItensFragment extends Fragment implements ItensListener{
         lvItens.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int positions, long id) {
-                //TODO: IMPLMENTAr
+                //TODO: IMPLMENTAR
                 Intent intent = new Intent(getContext(), DetalhesItemActivity.class);
                 intent.putExtra("ID_ITEM", (int) id);
                 startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated

@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:layout_margin="5dp"
-    tools:context=".views.AdicionarItemActivity">
+    tools:context=".views.AdicionarGrupoItensActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -23,8 +23,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:textSize="25dp"
-                android:text="@string/adicionar_item"/>
+                android:textSize="25sp"
+                android:text="@string/adicionar_grupo_de_itens"/>
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -51,23 +51,6 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 style="?attr/textInputOutlinedStyle"
-                android:id="@+id/tiNSerie"
-                app:boxStrokeColor="?attr/colorPrimary"
-                app:boxStrokeErrorColor="?attr/colorError"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/tv_nSerie"
-                android:layout_marginBottom="10dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="?attr/textInputOutlinedStyle"
                 android:id="@+id/tiNota"
                 app:boxStrokeColor="?attr/colorPrimary"
                 app:boxStrokeErrorColor="?attr/colorError"
@@ -84,9 +67,8 @@
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
     </ScrollView>
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdicionarItem"
+        android:id="@+id/fabAdicionarGrupoItens"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

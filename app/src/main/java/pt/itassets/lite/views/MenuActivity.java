@@ -1,10 +1,5 @@
 package pt.itassets.lite.views;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +8,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -45,17 +45,17 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                 return true;
 
             case R.id.item_lista_grupos:
-                Fragment frag = new Frag_B();
+                Fragment frag = new ListaGrupoItensFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, frag).commit();
                 return true;
 
             case R.id.item_reparar:
-                Fragment frag_b = new Frag_B();
+                Fragment frag_b = new ListaGrupoItensFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, frag_b).commit();
                 return true;
 
             case R.id.item_alocar:
-                Fragment frag_a = new Frag_B();
+                Fragment frag_a = new ListaGrupoItensFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, frag_a).commit();
                 return true;
 

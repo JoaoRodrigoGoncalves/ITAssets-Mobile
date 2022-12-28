@@ -33,4 +33,5 @@
     <string name="editar">Editar</string>
     <string name="remover">Remover</string>
     <string name="act_Titulo">Editar: %1$s</string>
+    <string name="adicionar_grupo_de_itens">Adicionar Grupo de Itens</string>
 </resources>

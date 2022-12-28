@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.models.Site;
@@ -191,5 +192,51 @@ public class JSONParsers {
         }
 
         return data;
+    }
+
+    public static ArrayList<GrupoItens> parserJsonGruposItens(JSONObject response, Context context) {
+        ArrayList<GrupoItens> grupoItens = null;
+        try{
+            for(int i=0; i<response.length(); i++){
+
+                if(response.getInt("status") == 200)
+                {
+                    JSONArray dados = response.getJSONArray("data");
+                    grupoItens = new ArrayList<>();
+
+                    for (int j = 0; j < dados.length(); j++) {
+                        JSONObject thisObject = dados.getJSONObject(j);
+
+                        GrupoItens auxGrupoItens = new GrupoItens(
+                                thisObject.getInt("id"),
+                                (thisObject.isNull("status") ? 10 : thisObject.getInt("status")),
+                                thisObject.getString("nome"),
+                                thisObject.getString("notas")
+                        );
+                        grupoItens.add(auxGrupoItens);
+                    }
+                }
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return grupoItens;
+    }
+
+    public static GrupoItens parserJsonGrupoItens(String response) {
+        GrupoItens auxGrupoItens = null;
+        try{
+            JSONObject grupoItens = new JSONObject(response);
+            if(grupoItens.getInt("status") == 200 || grupoItens.getInt("status") == 201)
+            {
+                int id = grupoItens.getInt("id");
+                String nome = grupoItens.getString("nome");
+                String nota = grupoItens.getString("notas");
+                auxGrupoItens = new GrupoItens(id, auxGrupoItens.getStatus(), nome, nota);
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return auxGrupoItens;
     }
 }

@@ -62,6 +62,14 @@ public class DBHelper extends SQLiteOpenHelper {
                         COORDENADAS + " TEXT" + ")";
 
         sqlLiteDatabase.execSQL(sqlCreateTableSite);
+
+        String sqlCreateTableGrupoItens =
+                "CREATE TABLE " + TABLE_GRUPO_ITENS + "(" +
+                        ID + " INTEGER PRIMARY KEY," +
+                        NOME + " TEXT NOT NULL," +
+                        NOTAS + " TEXT" + ")";
+
+        sqlLiteDatabase.execSQL(sqlCreateTableGrupoItens);
     }
 
     @Override
@@ -71,6 +79,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String sqlDropTableSite = "DROP TABLE IF EXISTS " + TABLE_SITE;
         sqlLiteDatabase.execSQL(sqlDropTableSite);
+
+        String sqlDropTableGrupoItens = "DROP TABLE IF EXISTS " + TABLE_GRUPO_ITENS;
+        sqlLiteDatabase.execSQL(sqlDropTableGrupoItens);
 
         onCreate(sqlLiteDatabase);
     }
@@ -211,6 +222,78 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // devolve o número de linhas atualizadas
         return db.update(TABLE_SITE, values, ID+"=?", new String[]{String.valueOf(site.getId())})==1;
+    }
+
+    //endregion
+
+    //region Funções Tabela Grupo de Itens
+
+    public GrupoItens adicionarGrupoItensDB(GrupoItens grupoItens)
+    {
+        ContentValues values = new ContentValues();
+
+        values.put(ID, grupoItens.getId());
+        values.put(NOME, grupoItens.getNome());
+        values.put(NOTAS, grupoItens.getNotas());
+        values.put(STATUS, grupoItens.getStatus());
+
+        // devolve -1 em caso de erro, ou o id do novo grupo de itens (long)
+        int id = (int) db.insert(TABLE_GRUPO_ITENS, null, values);
+        if(id != -1)
+        {
+            grupoItens.setId(id);
+            return grupoItens;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public boolean editarGrupoItensDB(GrupoItens grupoItens)
+    {
+        ContentValues values = new ContentValues();
+
+        values.put(NOME, grupoItens.getNome());
+        values.put(NOTAS, grupoItens.getNotas());
+        values.put(STATUS, grupoItens.getStatus());
+
+        // devolve o número de linhas atualizadas
+        return db.update(TABLE_GRUPO_ITENS, values, ID+"=?", new String[]{String.valueOf(grupoItens.getId())})==1;
+    }
+
+    public boolean removerGrupoItensDB(GrupoItens grupoItens)
+    {
+        // db.delete devolve o número de linhas eliminadas
+        return db.delete(TABLE_GRUPO_ITENS, ID+"=?", new String[]{String.valueOf(grupoItens.getId())})==1;
+    }
+
+    public void removerAllGrupoItensDB()
+    {
+        db.delete(TABLE_GRUPO_ITENS, null, null);
+    }
+
+    public ArrayList<GrupoItens> getAllGruposItensDB()
+    {
+        ArrayList<GrupoItens> grupoItens = new ArrayList<>();
+
+        Cursor cursor = db.query(TABLE_GRUPO_ITENS, new String[]{ID, NOME, NOTAS, STATUS},
+                null, null, null, null, null);
+
+        if(cursor.moveToFirst())
+        {
+            do {
+                GrupoItens grupoItensAux = new GrupoItens(
+                        cursor.getInt(0), //ID
+                        cursor.getInt(4), // status
+                        cursor.getString(1), //Nome
+                        (cursor.isNull(3) ? null : cursor.getString(3))// Notas
+                );
+                grupoItens.add(grupoItensAux);
+            }while(cursor.moveToNext());
+            cursor.close();
+        }
+        return grupoItens;
     }
 
     //endregion
