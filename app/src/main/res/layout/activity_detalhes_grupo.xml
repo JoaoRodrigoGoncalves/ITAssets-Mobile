@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".views.DetalhesGrupoActivity"
+    android:orientation="vertical">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.75"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <!-- region Campo Nome -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_nome_Grupo"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_nome_Grupo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Example Text"
+                android:layout_marginStart="5dp"
+                />
+
+        </LinearLayout>
+
+        <!-- endregion -->
+
+        <!-- region Campo Numero de Serie -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_notas"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_notas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Example Text"
+                android:layout_marginStart="5dp"
+                />
+
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            ></Space>
+
+        <!-- endregion -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_itens_associados"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:layout_marginStart="20dp"
+            />
+
+        <!-- region Lista de itens -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+
+            <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/lvGruposItens"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:context="abhiandroid.com.listexample.MainActivity">
+            </ListView>
+
+
+        </LinearLayout>
+
+        <!-- endregion -->
+
+    </LinearLayout>
+
+    <!-- endregion -->
+
+</LinearLayout>
+

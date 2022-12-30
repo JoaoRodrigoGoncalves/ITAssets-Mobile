@@ -613,5 +613,47 @@ public class Singleton {
             }
         }
     }
+
+    public void RemoverGrupoItemAPI(final GrupoItens grupoItem, final Context context){
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+            } else {
+                StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + "grupoitens/" + grupoItem.getId(), new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        removerItemBD(grupoItem.getId());
+
+                        if (grupoItensListener != null) {
+                            grupoItensListener.onRefreshListaGrupoItens(grupoItens);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error != null) {
+                            if (error.networkResponse != null) {
+                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
     //endregion
 }

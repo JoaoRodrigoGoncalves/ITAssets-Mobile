@@ -128,7 +128,7 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
     private void dialogRemover(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Remover Item")
-                .setMessage("Tem a certeza que deseja remover o item?")
+                .setMessage("Tem a certeza que deseja remover o Grupo itens?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

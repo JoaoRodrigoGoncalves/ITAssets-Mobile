@@ -52,9 +52,9 @@ public class ListaGrupoItensFragment extends Fragment implements GrupoItensListe
         lvGruposItens.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int positions, long id) {
-                //Intent intent = new Intent(getContext(), DetalhesItemActivity.class);
-                //intent.putExtra("ID_ITEM", (int) id);
-                //startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                Intent intent = new Intent(getContext(), DetalhesGrupoActivity.class);
+                intent.putExtra("ID_GRUPO", (int) id);
+                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
             }
         });
 
@@ -75,7 +75,7 @@ public class ListaGrupoItensFragment extends Fragment implements GrupoItensListe
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         if(resultCode == Activity.RESULT_OK && requestCode == ACTION_DETALHES){
-            Singleton.getInstance(getContext()).getAllItensAPI(getContext());
+            Singleton.getInstance(getContext()).getAllGrupoItensAPI(getContext());
             Toast.makeText(getContext(), "Operação bem sucedida!", Toast.LENGTH_SHORT).show();
         }
     }

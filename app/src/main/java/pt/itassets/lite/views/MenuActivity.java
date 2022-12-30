@@ -45,8 +45,8 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                 return true;
 
             case R.id.item_lista_grupos:
-                Fragment frag = new ListaGrupoItensFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, frag).commit();
+                Fragment ListaGruposfrag = new ListaGrupoItensFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, ListaGruposfrag).commit();
                 return true;
 
             case R.id.item_reparar:
