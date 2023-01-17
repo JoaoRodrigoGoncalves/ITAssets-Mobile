@@ -33,7 +33,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 style="?attr/textInputOutlinedStyle"
-                android:id="@+id/tiNome"
+                android:id="@+id/tiGrupo"
                 app:boxStrokeColor="?attr/colorPrimary"
                 app:boxStrokeErrorColor="?attr/colorError"
                 android:layout_width="match_parent"
@@ -51,7 +51,7 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 style="?attr/textInputOutlinedStyle"
-                android:id="@+id/tiNota"
+                android:id="@+id/tiNotas"
                 app:boxStrokeColor="?attr/colorPrimary"
                 app:boxStrokeErrorColor="?attr/colorError"
                 android:layout_width="match_parent"
@@ -68,12 +68,12 @@
         </LinearLayout>
     </ScrollView>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdicionarGrupoItens"
+        android:id="@+id/fabEditarGrupoItens"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="25dp"
         android:clickable="true"
-        app:srcCompat="@drawable/ic_add" />
+        app:srcCompat="@drawable/ic_save" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

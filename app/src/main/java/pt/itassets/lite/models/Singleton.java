@@ -636,7 +636,7 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
             } else {
-                StringRequest req = new StringRequest(Request.Method.PUT, SYSTEM_DOMAIN + "item/" + grupoItens.getId(), new Response.Listener<String>() {
+                StringRequest req = new StringRequest(Request.Method.PUT, SYSTEM_DOMAIN + "grupoitens/" + grupoItens.getId(), new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         editarGrupoItensBD(grupoItens);
@@ -670,7 +670,7 @@ public class Singleton {
                     @Override
                     public Map<String, String> getHeaders() {
                         Map<String, String> params = new HashMap<>();
-                        params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                        params.put("Content-Type", "application/json");
                         params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
                         return params;
                     }
@@ -712,7 +712,7 @@ public class Singleton {
                     @Override
                     public Map<String, String> getHeaders() {
                         Map<String, String> params = new HashMap<>();
-                        params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                        params.put("Content-Type", "application/json");
                         params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
                         return params;
                     }
