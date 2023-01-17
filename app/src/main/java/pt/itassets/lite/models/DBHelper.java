@@ -67,7 +67,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + TABLE_GRUPO_ITENS + "(" +
                         ID + " INTEGER PRIMARY KEY," +
                         NOME + " TEXT NOT NULL," +
-                        NOTAS + " TEXT" + ")";
+                        NOTAS + " TEXT" +
+                        STATUS + "INTEGER NOT NULL" + ")";
 
         sqlLiteDatabase.execSQL(sqlCreateTableGrupoItens);
     }
