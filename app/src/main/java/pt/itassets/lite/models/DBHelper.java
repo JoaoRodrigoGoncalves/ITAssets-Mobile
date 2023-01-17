@@ -70,6 +70,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         NOTAS + " TEXT" +
                         STATUS + "INTEGER NOT NULL" + ")";
 
+
         sqlLiteDatabase.execSQL(sqlCreateTableGrupoItens);
     }
 
@@ -286,9 +287,9 @@ public class DBHelper extends SQLiteOpenHelper {
             do {
                 GrupoItens grupoItensAux = new GrupoItens(
                         cursor.getInt(0), //ID
-                        cursor.getInt(4), // status
+                        cursor.getInt(3), // status
                         cursor.getString(1), //Nome
-                        (cursor.isNull(3) ? null : cursor.getString(3))// Notas
+                        (cursor.isNull(2) ? null : cursor.getString(2))// Notas
                 );
                 grupoItens.add(grupoItensAux);
             }while(cursor.moveToNext());

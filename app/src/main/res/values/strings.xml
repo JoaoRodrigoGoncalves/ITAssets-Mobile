@@ -37,4 +37,5 @@
     <string name="tv_nome_Grupo">Nome do Grupo</string>
     <string name="tv_notas">Notas</string>
     <string name="tv_itens_associados">Itens associados</string>
+    <string name="editar_grupo_itens">Editar Grupo Itens</string>
 </resources>

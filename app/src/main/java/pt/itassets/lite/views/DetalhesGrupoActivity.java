@@ -35,7 +35,7 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
     private TextView tv_nome_grupo, tv_notas;
     private GrupoItens grupoItens;
     private ListView lvItens;
-    private ArrayList<Item> item_Grupo;
+    //private ArrayList<Item> item_Grupo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,9 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
         lvItens=findViewById(R.id.lvGruposItens);
 
 
+
         Integer grupoId = getIntent().getIntExtra("ID_GRUPO", -1);
+
 
         if(grupoId == -1)
         {
@@ -107,7 +109,7 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem i) {
         switch (i.getItemId()){
             case R.id.edit:
-                Intent intent = new Intent(getBaseContext(), EditarItemActivity.class);
+                Intent intent = new Intent(getBaseContext(), EditarGrupoItensActivity.class);
                 intent.putExtra("ID_GRUPO", grupoItens.getId());
                 startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
                 return true;
@@ -123,7 +125,7 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
     private void dialogRemover(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Remover Item")
-                .setMessage("Tem a certeza que deseja remover o item?")
+                .setMessage("Tem a certeza que deseja remover o Grupo Itens?")
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

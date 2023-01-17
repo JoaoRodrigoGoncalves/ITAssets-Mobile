@@ -327,6 +327,20 @@ public class Singleton {
         database.adicionarGrupoItensDB(i);
     }
 
+    public void editarGrupoItensBD(GrupoItens i){
+        GrupoItens auxItem = getGrupoItens(i.getId());
+        if(auxItem!=null){
+            database.editarGrupoItensDB(i);
+        }
+    }
+
+    public void removerGrupoItensBD(int id){
+        GrupoItens auxItem = getGrupoItens(id);
+        if(auxItem != null){
+            database.removerGrupoItensDB(auxItem);
+        }
+    }
+
     //endregion
 
     //region Funções Interação com API Itens
@@ -614,6 +628,58 @@ public class Singleton {
         }
     }
 
+    public void EditarGrupoItensAPI(final GrupoItens grupoItens, final Context context){
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+            } else {
+                StringRequest req = new StringRequest(Request.Method.PUT, SYSTEM_DOMAIN + "item/" + grupoItens.getId(), new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        editarGrupoItensBD(grupoItens);
+
+                        if (itensListener != null) {
+                            itensListener.onRefreshListaItens(itens);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if(error != null)
+                        {
+                            if(error.networkResponse != null)
+                            {
+                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("nome", grupoItens.getNome());
+                        params.put("notas", grupoItens.getNotas());
+                        return params;
+                    }
+
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
     public void RemoverGrupoItemAPI(final GrupoItens grupoItem, final Context context){
         SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 
@@ -625,7 +691,7 @@ public class Singleton {
                 StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + "grupoitens/" + grupoItem.getId(), new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        removerItemBD(grupoItem.getId());
+                        removerGrupoItensBD(grupoItem.getId());
 
                         if (grupoItensListener != null) {
                             grupoItensListener.onRefreshListaGrupoItens(grupoItens);
