@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import pt.itassets.lite.models.Alocacao;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
@@ -261,5 +262,58 @@ public class JSONParsers {
             e.printStackTrace();
         }
         return auxGrupoItens;
+    }
+
+    public static ArrayList<Alocacao> parserJsonAlocacoes(JSONObject response, Context context)
+    {
+        ArrayList<Alocacao> alocacoes = null;
+        try{
+            for(int i=0; i<response.length(); i++){
+
+                if(response.getInt("status") == 200)
+                {
+                    JSONArray dados = response.getJSONArray("data");
+                    alocacoes = new ArrayList<>();
+
+                    for (int j = 0; j < dados.length(); j++) {
+                        JSONObject thisObject = dados.getJSONObject(j);
+
+                        String nome_item = null;
+
+                        if(!thisObject.isNull("item"))
+                        {
+                            JSONObject thisObjectItem = thisObject.getJSONObject("item");
+                            nome_item = thisObjectItem.getString("nome");
+                        }
+
+                        String nome_grupoItens = null;
+
+                        if(!thisObject.isNull("grupoItens"))
+                        {
+                            JSONObject thisObjectGrupoItens = thisObject.getJSONObject("grupoItens");
+                            nome_item = thisObjectGrupoItens.getString("nome");
+                        }
+
+                        Alocacao auxAlcoacao = new Alocacao(
+                                thisObject.getInt("id"),
+                                thisObject.getInt("status"),
+                                thisObject.getString("dataPedido"),
+                                thisObject.isNull("dataInicio") ? null : thisObject.getString("dataInicio"),
+                                thisObject.isNull("dataFim") ? null : thisObject.getString("dataFim"),
+                                thisObject.isNull("obs") ? null : thisObject.getString("obs"),
+                                thisObject.isNull("obsResposta") ? null : thisObject.getString("obsResposta"),
+                                thisObject.getInt("requerente_id"),
+                                thisObject.isNull("aprovador_id") ? null : thisObject.getInt("aprovador_id"),
+                                nome_item,
+                                nome_grupoItens
+                        );
+                        alocacoes.add(auxAlcoacao);
+                    }
+                }
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return alocacoes;
     }
 }

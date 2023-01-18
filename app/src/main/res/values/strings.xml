@@ -39,4 +39,7 @@
     <string name="txt_nao_aplicavel">Não Aplicável</string>
     <string name="txt_confirm_remover_item">Tem a certeza que deseja remover o Itens?</string>
     <string name="txt_remover_item">Remover Item</string>
+    <string name="tv_dataPedido">Data Pedido</string>
+    <string name="tv_item">Item</string>
+    <string name="tv_status">Estado</string>
 </resources>

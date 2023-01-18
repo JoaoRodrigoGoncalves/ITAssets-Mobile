@@ -31,8 +31,16 @@ public class DBHelper extends SQLiteOpenHelper {
             NOME_CATEGORIA = "nome_categoria",
             SITE_ID = "site_id",
             MORADA = "morada",
-            COORDENADAS = "coordenadas";
-
+            COORDENADAS = "coordenadas",
+            DATAPEDIDO = "dataPedido",
+            DATAINICIO = "dataInicio",
+            DATAFIM = "dataFim",
+            OBS = "obs",
+            OBSRESPOSTA = "obsResposta",
+            NOME_REQUERENTE = "nome_requerente",
+            NOME_APROVADOR = "nome_aprovador",
+            NOME_ITEM = "nome_item",
+            NOME_GRUPO = "nome_grupoItem";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -70,8 +78,23 @@ public class DBHelper extends SQLiteOpenHelper {
                         NOTAS + " TEXT," +
                         STATUS + " INTEGER NOT NULL" + ")";
 
-
         sqlLiteDatabase.execSQL(sqlCreateTableGrupoItens);
+
+        String sqlCreateTablePedidosAlocacao =
+                "CREATE TABLE " + TABLE_PEDIDOS_REQUISICAO + "(" +
+                        ID + " INTEGER PRIMARY KEY," +
+                        OBS + " TEXT," +
+                        OBSRESPOSTA + " TEXT," +
+                        DATAPEDIDO + " TEXT NOT NULL," +
+                        DATAINICIO + " TEXT," +
+                        DATAFIM + " TEXT," +
+                        NOME_REQUERENTE + " TEXT," +
+                        NOME_APROVADOR + " TEXT," +
+                        NOME_ITEM + " TEXT," +
+                        NOME_GRUPO + " TEXT," +
+                        STATUS + " INTEGER NOT NULL" + ")";
+
+        sqlLiteDatabase.execSQL(sqlCreateTablePedidosAlocacao);
     }
 
     @Override
@@ -84,6 +107,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String sqlDropTableGrupoItens = "DROP TABLE IF EXISTS " + TABLE_GRUPO_ITENS;
         sqlLiteDatabase.execSQL(sqlDropTableGrupoItens);
+
+        String sqlDropTablePedidosAlocacao = "DROP TABLE IF EXISTS " + TABLE_PEDIDOS_REQUISICAO;
+        sqlLiteDatabase.execSQL(sqlDropTablePedidosAlocacao);
 
         onCreate(sqlLiteDatabase);
     }
@@ -296,6 +322,90 @@ public class DBHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return grupoItens;
+    }
+
+    //endregion
+
+    //region Funções Tabela Pedidos de Alocação
+
+    public Alocacao adicionarAlocacaoDB(Alocacao alocacao)
+    {
+        ContentValues values = new ContentValues();
+
+        values.put(ID, alocacao.getId());
+        values.put(OBS, alocacao.getObs());
+        values.put(DATAPEDIDO, String.valueOf(alocacao.getDataPedido()));
+        values.put(STATUS, alocacao.getStatus());
+        values.put(NOME_REQUERENTE, alocacao.getNome_requerente());
+        values.put(NOME_ITEM, alocacao.getNome_item());
+        values.put(NOME_GRUPO, alocacao.getNome_grupoItem());
+
+        // devolve -1 em caso de erro, ou o id do novo pedido de alocação (long)
+        int id = (int) db.insert(TABLE_PEDIDOS_REQUISICAO, null, values);
+        if(id != -1)
+        {
+            alocacao.setId(id);
+            return alocacao;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public boolean editarAlocacaoDB(Alocacao alocacao)
+    {
+        ContentValues values = new ContentValues();
+
+        values.put(OBSRESPOSTA, alocacao.getObsResposta());
+        values.put(DATAINICIO, String.valueOf(alocacao.getDataInicio()));
+        values.put(DATAFIM, String.valueOf(alocacao.getDataFim()));
+        values.put(STATUS, alocacao.getStatus());
+        values.put(NOME_APROVADOR, alocacao.getNome_aprovador());
+
+        // devolve o número de linhas atualizadas
+        return db.update(TABLE_PEDIDOS_REQUISICAO, values, ID+"=?", new String[]{String.valueOf(alocacao.getId())})==1;
+    }
+
+    public boolean removerAlocacaoDB(Alocacao alocacao)
+    {
+        // db.delete devolve o número de linhas eliminadas
+        return db.delete(TABLE_PEDIDOS_REQUISICAO, ID+"=?", new String[]{String.valueOf(alocacao.getId())})==1;
+    }
+
+    public void removerAllAlocacaoDB()
+    {
+        db.delete(TABLE_PEDIDOS_REQUISICAO, null, null);
+    }
+
+    public ArrayList<Alocacao> getAllAlocacoesDB()
+    {
+        ArrayList<Alocacao> alocacoes = new ArrayList<>();
+
+        Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR},
+                null, null, null, null, null);
+
+        if(cursor.moveToFirst())
+        {
+            do {
+                Alocacao alocacaoAux = new Alocacao(
+                        cursor.getInt(0), //ID
+                        cursor.getInt(1), //Status
+                        cursor.getString(2), //DataPedido
+                        cursor.getString(3), //DataInicio
+                        cursor.getString(4), //DataFim
+                        (cursor.isNull(5)? null : cursor.getString(5)), //Obs
+                        (cursor.isNull(6) ? null : cursor.getString(3)), // ObsResposta
+                        cursor.getInt(7), // Requerente
+                        (cursor.isNull(8) ? null : cursor.getInt(8)), // Aprovador
+                        (cursor.isNull(9) ? null : cursor.getString(9)), // Item
+                        (cursor.isNull(10) ? null : cursor.getString(10)) // Grupo
+                );
+                alocacoes.add(alocacaoAux);
+            }while(cursor.moveToNext());
+            cursor.close();
+        }
+        return alocacoes;
     }
 
     //endregion
