@@ -367,7 +367,48 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
+
+                if (itensListener != null) {
+                    itensListener.onRefreshListaItens(database.getAllItensDB());
+                }
+            } else {
+                JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, SYSTEM_DOMAIN + "item", null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        itens = JSONParsers.parserJsonItens(response, context);
+                        adicionarItensBD(itens);
+                        if (itensListener != null) {
+                            itensListener.onRefreshListaItens(itens);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    public void getUserItensAPI(final Context context, Integer userID)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
 
                 if (itensListener != null) {
                     itensListener.onRefreshListaItens(database.getAllItensDB());
@@ -407,7 +448,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
                 try
                 {
@@ -469,7 +510,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
                 Map<String, String> jsonBody = new HashMap<>();
                 jsonBody.put("nome", item.getNome());
@@ -525,7 +566,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
                 JsonObjectRequest req = new JsonObjectRequest(
                     Request.Method.DELETE,
@@ -579,7 +620,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
 
                 if (grupoItensListener != null) {
                     grupoItensListener.onRefreshListaGrupoItens(database.getAllGruposItensDB());
@@ -626,7 +667,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
                 Map<String, String> jsonBody = new HashMap<>();
                 jsonBody.put("nome", gruposItens.getNome());
@@ -680,7 +721,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
                 Map<String, String> jsonBody = new HashMap<>();
                 jsonBody.put("nome", grupoItens.getNome());
@@ -735,7 +776,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
                 JsonObjectRequest req = new JsonObjectRequest(
                     Request.Method.DELETE,

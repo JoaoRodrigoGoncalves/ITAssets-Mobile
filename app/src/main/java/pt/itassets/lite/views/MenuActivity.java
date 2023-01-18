@@ -26,6 +26,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.models.Singleton;
@@ -43,7 +44,17 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        bottomNav = findViewById(R.id.bottom_navigation);
+        SharedPreferences preferences = getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        if(Objects.equals(preferences.getString(Helpers.USER_ROLE, null), "funcionario"))
+        {
+            bottomNav = findViewById(R.id.bottom_navigation_funcionario);
+        }
+        else
+        {
+            bottomNav = findViewById(R.id.bottom_navigation);
+        }
+
         bottomNav.setOnNavigationItemSelectedListener(this);
         bottomNav.setSelectedItemId(R.id.item_lista_itens);
 

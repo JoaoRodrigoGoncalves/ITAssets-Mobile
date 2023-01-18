@@ -19,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_SITE = "site";
     private static final String TABLE_GRUPO_ITENS = "grupoitens"; // Nome da tabela
     private static final String TABLE_PEDIDOS_REQUISICAO = "pedidosrequisicao"; // Nome da tabela
-    private static final String TABLE_PEDIDOS_REPARACAO = "pedidosreparcao"; // Nome da tabela
+    private static final String TABLE_PEDIDO_REPARACAO = "pedido_reparcao"; // Nome da tabela
 
     // Nome dos campos
     private static final String
@@ -31,7 +31,14 @@ public class DBHelper extends SQLiteOpenHelper {
             NOME_CATEGORIA = "nome_categoria",
             SITE_ID = "site_id",
             MORADA = "morada",
-            COORDENADAS = "coordenadas";
+            COORDENADAS = "coordenadas",
+            DATA_PEDIDO = "dataPedido",
+            DATA_INICIO = "dataInicio",
+            DATA_FIM = "dataFim",
+            DESCRICAO_PROBLEMA = "descricaoProblema",
+            REQUERENTE_ID = "requerente_id",
+            RESPONSAVEL_ID = "responsavel_id",
+            RESPOSTA_OBS = "respostaObs";
 
 
     public DBHelper(Context context) {
@@ -70,8 +77,22 @@ public class DBHelper extends SQLiteOpenHelper {
                         NOTAS + " TEXT," +
                         STATUS + " INTEGER NOT NULL" + ")";
 
-
         sqlLiteDatabase.execSQL(sqlCreateTableGrupoItens);
+
+        String sqlCreateTablePedidoReparacao =
+                "CREATE TABLE " + TABLE_PEDIDO_REPARACAO + "(" +
+                        ID + " INTEGER PRIMARY KEY," +
+                        DATA_PEDIDO + " TEXT NOT NULL," +
+                        DATA_INICIO + " TEXT," +
+                        DATA_FIM + " TEXT," +
+                        DESCRICAO_PROBLEMA + " TEXT," +
+                        REQUERENTE_ID + " INTEGER NOT NULL," +
+                        RESPONSAVEL_ID + " INTEGER NOT NULL," +
+                        RESPOSTA_OBS + " TEXT," +
+                        STATUS + " INTEGER NOT NULL" + ")";
+
+        sqlLiteDatabase.execSQL(sqlCreateTablePedidoReparacao);
+
     }
 
     @Override
@@ -84,6 +105,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String sqlDropTableGrupoItens = "DROP TABLE IF EXISTS " + TABLE_GRUPO_ITENS;
         sqlLiteDatabase.execSQL(sqlDropTableGrupoItens);
+
+        String sqlDropTablePedidoReparacao = "DROP TABLE IF EXISTS " + TABLE_PEDIDO_REPARACAO;
+        sqlLiteDatabase.execSQL(sqlDropTablePedidoReparacao);
 
         onCreate(sqlLiteDatabase);
     }
@@ -296,6 +320,89 @@ public class DBHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return grupoItens;
+    }
+
+    //endregion
+
+    //region Funções Tabelas Reparacoes
+
+    public PedidoReparacao adicionarPedidoReparacaoDB(PedidoReparacao pedido)
+    {
+        ContentValues values = new ContentValues();
+
+        values.put(ID, pedido.getId());
+        values.put(REQUERENTE_ID, pedido.getRequerente_id());
+        values.put(RESPONSAVEL_ID, pedido.getResponsavel_id());
+        values.put(STATUS, pedido.getStatus());
+        values.put(DESCRICAO_PROBLEMA, pedido.getDescricaoProblema());
+        values.put(RESPOSTA_OBS, pedido.getRespostaObs());
+        values.put(DATA_PEDIDO, pedido.getDataPedido());
+        values.put(DATA_INICIO, pedido.getDataInicio());
+        values.put(DATA_FIM, pedido.getDataFim());
+
+        // devolve -1 em caso de erro, ou o id do novo objeto (long)
+        int id = (int) db.insert(TABLE_PEDIDO_REPARACAO, null, values);
+        if(id != -1)
+        {
+            pedido.setId(id);
+            return pedido;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public boolean editarPedidoReparacaoDB(Item item)
+    {
+        ContentValues values = new ContentValues();
+
+        values.put(NOME, item.getNome());
+        values.put(SERIALNUMBER, item.getSerialNumber());
+        values.put(NOME_CATEGORIA, item.getNome_Categoria());
+        values.put(NOTAS, item.getNotas());
+        values.put(STATUS, item.getStatus());
+        values.put(SITE_ID, item.getSite_id());
+
+        // devolve o número de linhas atualizadas
+        return db.update(TABLE_ITENS, values, ID+"=?", new String[]{String.valueOf(item.getId())})==1;
+    }
+
+    public boolean removerPedidoReparacaoDB(Item item)
+    {
+        // db.delete devolve o número de linhas eliminadas
+        return db.delete(TABLE_ITENS, ID+"=?", new String[]{String.valueOf(item.getId())})==1;
+    }
+
+    public void removerAllPedidoReparacaoDB()
+    {
+        db.delete(TABLE_PEDIDO_REPARACAO, null, null);
+    }
+
+    public ArrayList<Item> getAllPedidosReparacaoDB()
+    {
+        ArrayList<Item> itens = new ArrayList<>();
+
+        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID},
+                null, null, null, null, null);
+
+        if(cursor.moveToFirst())
+        {
+            do {
+                Item itemAux = new Item(
+                        cursor.getInt(0), //ID
+                        cursor.getString(1), //Nome
+                        (cursor.isNull(2) ? null : cursor.getString(2)), //Serial
+                        (cursor.isNull(3) ? null : cursor.getString(3)), // Notas
+                        cursor.getInt(4), // status
+                        (cursor.isNull(5) ? null : cursor.getString(5)), // categoria
+                        (cursor.isNull(6) ? null : cursor.getInt(6)) // site
+                );
+                itens.add(itemAux);
+            }while(cursor.moveToNext());
+            cursor.close();
+        }
+        return itens;
     }
 
     //endregion
