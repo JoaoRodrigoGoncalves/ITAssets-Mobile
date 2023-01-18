@@ -15,9 +15,7 @@
     <string name="txt_configurar_servidor">Configurar Servidor</string>
     <string name="lb_url">Indique o dominio do servidor a que se pretende ligar.</string>
     <string name="txt_hint_server_domain">api.itassets.pt</string>
-    <string name="txt_ok">Ok</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="txt_ok">OK</string>
     <string name="txt_terminar_sessao">Terminar Sessão</string>
     <string name="txt_itens">Itens</string>
     <string name="txt_grupo_itens">Grupo Itens</string>
@@ -38,4 +36,7 @@
     <string name="tv_notas">Notas</string>
     <string name="tv_itens_associados">Itens associados</string>
     <string name="editar_grupo_itens">Editar Grupo Itens</string>
+    <string name="txt_nao_aplicavel">Não Aplicável</string>
+    <string name="txt_confirm_remover_item">Tem a certeza que deseja remover o Itens?</string>
+    <string name="txt_remover_item">Remover Item</string>
 </resources>

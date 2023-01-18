@@ -19,6 +19,11 @@ public class Helpers {
     public static final String USER_NAME = "IT_ASSETS_USER_NOME";
     public static final String USER_EMAIL = "IT_ASSETS_USER_EMAIL";
 
+    public static final int OPERACAO_ADD = 10;
+    public static final int OPERACAO_EDIT = 20;
+    public static final int OPERACAO_DELETE = 30;
+    public static final String OPERACAO = "OPERACAO";
+
     /**
      * Valida se a String indicada é um email válido
      * @param email String com email a validar

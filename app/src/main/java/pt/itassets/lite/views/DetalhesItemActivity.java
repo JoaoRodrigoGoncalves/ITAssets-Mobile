@@ -25,9 +25,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import pt.itassets.lite.R;
+import pt.itassets.lite.listeners.OperacoesItensListener;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.models.Site;
+import pt.itassets.lite.utils.Helpers;
 
 public class DetalhesItemActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -53,16 +55,16 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
         tv_notas = findViewById(R.id.tv_item_notas);
         img_no_site = findViewById(R.id.img_no_site);
 
-        Integer itemId = getIntent().getIntExtra("ID_ITEM", -1);
+        Integer item_id = getIntent().getIntExtra("ID_ITEM", -1);
 
-        if(itemId == -1)
+        if(item_id == -1)
         {
             Toast.makeText(this, "Item não encontrado!", Toast.LENGTH_SHORT).show();
             finish();
         }
         else
         {
-            item = Singleton.getInstance(getBaseContext()).getItem(itemId);
+            item = Singleton.getInstance(getBaseContext()).getItem(item_id);
 
             tv_nome.setText(String.valueOf(item.getNome()));
             setTitle(String.valueOf(item.getNome()));
@@ -71,7 +73,7 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
 
             if(item.getNome_Categoria() == null)
             {
-                tv_categoria.setText("Não Aplicável");
+                tv_categoria.setText(R.string.txt_nao_aplicavel);
                 tv_categoria.setTypeface(tv_categoria.getTypeface(), Typeface.ITALIC);
             }
             else
@@ -79,9 +81,9 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
                 tv_categoria.setText(String.valueOf(item.getNome_Categoria()));
             }
 
-            if(item.getNotas() == "null") //Sim, texto
+            if(item.getNotas() == null)
             {
-                tv_notas.setText("Não Aplicável");
+                tv_notas.setText(R.string.txt_nao_aplicavel);
                 tv_notas.setTypeface(tv_notas.getTypeface(), Typeface.ITALIC);
             }
             else
@@ -127,8 +129,8 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
     //Dialog para perguntar se o user pretende mesmo eliminar/ desativar o item
     private void dialogRemover(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Remover Item")
-                .setMessage("Tem a certeza que deseja remover o Grupo itens?")
+        builder.setTitle(R.string.txt_remover_item + "")
+                .setMessage(R.string.txt_confirm_remover_item)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

@@ -1,5 +1,6 @@
 package pt.itassets.lite.views;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -9,10 +10,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
 import pt.itassets.lite.R;
+import pt.itassets.lite.listeners.OperacoesItensListener;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.utils.Helpers;
 
-public class AdicionarItemActivity extends AppCompatActivity {
+public class AdicionarItemActivity extends AppCompatActivity implements OperacoesItensListener {
     private Item item;
     private TextInputLayout tiNome, tiNumSerie, tiNota;
     private FloatingActionButton fabAdicionarItem;
@@ -27,7 +30,8 @@ public class AdicionarItemActivity extends AppCompatActivity {
         tiNome = findViewById(R.id.tiNome);
         tiNumSerie = findViewById(R.id.tiNSerie);
         tiNota = findViewById(R.id.tiNota);
-        fabAdicionarItem = findViewById(R.id.fabAdicionarItem);
+        fabAdicionarItem = findViewById(R.id.fabGuardarAlteracoesItem);
+        Singleton.getInstance(getApplicationContext()).setOperacoesItensListener(this);
 
         fabAdicionarItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,5 +62,13 @@ public class AdicionarItemActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onItemOperacaoRefresh(int operacao) {
+        Intent intent = new Intent();
+        intent.putExtra(Helpers.OPERACAO, operacao);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }

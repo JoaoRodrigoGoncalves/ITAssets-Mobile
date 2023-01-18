@@ -26,6 +26,7 @@ import pt.itassets.lite.adapters.ListaItensAdaptador;
 import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.utils.Helpers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,7 +69,7 @@ public class ListaItensFragment extends Fragment implements ItensListener{
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), AdicionarItemActivity.class);
-                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                startActivityForResult(intent, ACTION_ADICIONAR); //Método Deprecated
             }
         });
         return view;
@@ -79,46 +80,18 @@ public class ListaItensFragment extends Fragment implements ItensListener{
         if(resultCode == Activity.RESULT_OK && requestCode == ACTION_DETALHES){
             Singleton.getInstance(getContext()).getAllItensAPI(getContext());
             Toast.makeText(getContext(), "Operação bem sucedida!", Toast.LENGTH_SHORT).show();
-            //TODO: Talvez apagar
-//            switch (intent.getIntExtra(MenuMainActivity.OPERACAO, 0)){
-//                case MenuMainActivity.ADD:
-//                    //Toast.makeText(getContext(), R.string.txt_item_adicionado_sucesso, Toast.LENGTH_SHORT).show();
+//            switch (intent.getIntExtra(Helpers.OPERACAO, 0)){
+//                case Helpers.OPERACAO_ADD:
+//                    Toast.makeText(getContext(), R.string.txt_item_adicionado_sucesso, Toast.LENGTH_SHORT).show();
 //                    break;
-//                case MenuMainActivity.EDIT:
-//                    //Toast.makeText(getContext(), R.string.txt_item_modificado_sucesso, Toast.LENGTH_SHORT).show();
+//                case Helpers.OPERACAO_EDIT:
+//                    Toast.makeText(getContext(), R.string.txt_item_modificado_sucesso, Toast.LENGTH_SHORT).show();
 //                    break;
-//                case MenuMainActivity.DELETE:
-//                    //Toast.makeText(getContext(), R.string.txt_item_removido_sucesso, Toast.LENGTH_SHORT).show();
+//                case Helpers.OPERACAO_DELETE:
+//                    Toast.makeText(getContext(), R.string.txt_item_removido_sucesso, Toast.LENGTH_SHORT).show();
 //                    break;
 //            }
         }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        //TODO: Possivelmente não vou implementar
-//        inflater.inflate(R.menu.menu_pesquisa, menu);
-//        MenuItem itemPesquisa = menu.findItem(R.id.itemPesquisa);
-//        searchView=(SearchView) itemPesquisa.getActionView();
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String s) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String s) {
-//                ArrayList<Item> temLista = new ArrayList<>();
-//                for(Item i : Singleton.getInstance(getContext()).getItensBD()) {
-//                    if (i.getNome().toLowerCase().contains(s.toLowerCase())){
-//                        temLista.add(i);
-//                    }
-//                }
-//                lvItens.setAdapter(new ListaItensAdaptador(getContext(),temLista));
-//                return true;
-//            }
-//        });
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

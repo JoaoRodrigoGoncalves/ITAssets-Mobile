@@ -16,10 +16,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
 import pt.itassets.lite.R;
+import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.utils.Helpers;
 
-public class EditarGrupoItensActivity extends AppCompatActivity {
+public class EditarGrupoItensActivity extends AppCompatActivity implements OperacoesGruposListener {
 
     private TextInputLayout tiNomeGrupo, tiNotas;
     private GrupoItens grupoItens;
@@ -70,6 +72,7 @@ public class EditarGrupoItensActivity extends AppCompatActivity {
                             grupoItens.setNotas(tiNotas.getEditText().getText().toString().trim());
 
                             Singleton.getInstance(getApplicationContext()).EditarGrupoItensAPI(grupoItens, getApplicationContext());
+
                             Intent intent = new Intent(getBaseContext(), MenuActivity.class);
                             startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
                         }
@@ -89,4 +92,12 @@ public class EditarGrupoItensActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onGrupoOperacoesRefresh(int operacao)
+    {
+        Intent intent = new Intent();
+        intent.putExtra(Helpers.OPERACAO, operacao);
+        setResult(RESULT_OK, intent);
+        finish();
+    }
 }

@@ -15,6 +15,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -28,6 +29,8 @@ import pt.itassets.lite.listeners.AppSetupListener;
 import pt.itassets.lite.listeners.GrupoItensListener;
 import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.listeners.LoginListener;
+import pt.itassets.lite.listeners.OperacoesGruposListener;
+import pt.itassets.lite.listeners.OperacoesItensListener;
 import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.utils.JSONParsers;
 
@@ -40,11 +43,13 @@ public class Singleton {
     private AppSetupListener appSetupListener;
     private LoginListener loginListener;
     private ItensListener itensListener;
+    private OperacoesItensListener operacoesItensListener;
     private GrupoItensListener grupoItensListener;
-//    private DetalhesItensListener detalhesItensListener;
+    private OperacoesGruposListener operacoesGruposListener;
     private String SYSTEM_DOMAIN = null;
 
-    public static synchronized Singleton getInstance(Context context){
+    public static synchronized Singleton getInstance(Context context)
+    {
         if(instance == null){
             instance = new Singleton(context);
             volleyQueue = Volley.newRequestQueue(context);
@@ -204,14 +209,25 @@ public class Singleton {
 
     //region Listeners
 
-    public void setItensListener(ItensListener itensListener){
+    public void setItensListener(ItensListener itensListener)
+    {
         this.itensListener = itensListener;
     }
 
-    public void setGrupoItensListener(GrupoItensListener grupoItensListener){
+    public void setOperacoesItensListener(OperacoesItensListener operacoesItensListener)
+    {
+        this.operacoesItensListener = operacoesItensListener;
+    }
+
+    public void setGrupoItensListener(GrupoItensListener grupoItensListener)
+    {
         this.grupoItensListener = grupoItensListener;
     }
 
+    public void setOperacoesGruposListener(OperacoesGruposListener operacoesGruposListener)
+    {
+        this.operacoesGruposListener = operacoesGruposListener;
+    }
 
     public void setLoginListener(LoginListener loginListener)
     {
@@ -393,46 +409,56 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
             } else {
-                StringRequest req = new StringRequest(Request.Method.POST, SYSTEM_DOMAIN + "item", new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        adicionarItemBD(JSONParsers.parserJsonItem(response));
-                        if (itensListener != null) {
-                            itensListener.onRefreshListaItens(itens);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(error != null)
-                        {
-                            if(error.networkResponse != null)
-                            {
-                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                return;
-                            }
-                        }
-                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
-                    }
-                }) {
-                    @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> params = new HashMap<>();
-                        params.put("nome", item.getNome());
-                        params.put("serialNumber", item.getSerialNumber());
-                        params.put("notas", item.getNotas());
-                        return params;
-                    }
+                try
+                {
+                    Map<String, String> jsonBody = new HashMap<>();
+                    jsonBody.put("nome", item.getNome());
+                    jsonBody.put("serialNumber", item.getSerialNumber());
+                    jsonBody.put("notas", item.getNotas());
 
-                    @Override
-                    public Map<String, String> getHeaders() {
-                        Map<String, String> params = new HashMap<>();
-                        params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
-                        return params;
-                    }
-                };
-                volleyQueue.add(req);
+                    JsonObjectRequest req = new JsonObjectRequest(
+                            Request.Method.POST,
+                            SYSTEM_DOMAIN + "item",
+                            new JSONObject(jsonBody),
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    adicionarItemBD(JSONParsers.parserJsonItem(response.toString()));
+                                    if (operacoesItensListener != null) {
+                                        operacoesItensListener.onItemOperacaoRefresh(Helpers.OPERACAO_ADD);
+                                    }
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    if(error != null)
+                                    {
+                                        if(error.networkResponse != null)
+                                        {
+                                            Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                            return;
+                                        }
+                                    }
+                                    Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                    )
+                    {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            Map<String, String> params = new HashMap<>();
+                            params.put("Content-Type", "application/json; charset=UTF-8");
+                            params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                            return params;
+                        }
+                    };
+                    volleyQueue.add(req);
+                }
+                catch (Exception exception)
+                {
+                    exception.printStackTrace();
+                }
             }
         }
     }
@@ -445,42 +471,45 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
             } else {
-                StringRequest req = new StringRequest(Request.Method.PUT, SYSTEM_DOMAIN + "item/" + item.getId(), new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        editarItemBD(item);
+                Map<String, String> jsonBody = new HashMap<>();
+                jsonBody.put("nome", item.getNome());
+                jsonBody.put("serialNumber", item.getSerialNumber());
+                jsonBody.put("notas", item.getNotas());
 
-                        if (itensListener != null) {
-                            itensListener.onRefreshListaItens(itens);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(error != null)
-                        {
-                            if(error.networkResponse != null)
-                            {
-                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                return;
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.PUT,
+                        SYSTEM_DOMAIN + "item/" + item.getId(),
+                        new JSONObject(jsonBody),
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                editarItemBD(item);
+
+                                if (operacoesItensListener != null) {
+                                    operacoesItensListener.onItemOperacaoRefresh(Helpers.OPERACAO_EDIT);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if(error != null)
+                                {
+                                    if(error.networkResponse != null)
+                                    {
+                                        Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                }
+                                Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
                             }
                         }
-                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
-                    }
-                }) {
+                )
+                {
                     @Override
-                    protected Map<String, String> getParams() {
+                    public Map<String, String> getHeaders() throws AuthFailureError {
                         Map<String, String> params = new HashMap<>();
-                        params.put("nome", item.getNome());
-                        params.put("serialNumber", item.getSerialNumber());
-                        params.put("notas", item.getNotas());
-                        return params;
-                    }
-
-                    @Override
-                    public Map<String, String> getHeaders() {
-                        Map<String, String> params = new HashMap<>();
-                        params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                        params.put("Content-Type", "application/json; charset=UTF-8");
                         params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
                         return params;
                     }
@@ -498,31 +527,38 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
             } else {
-                StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + "item/" + item.getId(), new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        removerItemBD(item.getId());
+                JsonObjectRequest req = new JsonObjectRequest(
+                    Request.Method.DELETE,
+                    SYSTEM_DOMAIN + "item/" + item.getId(),
+                    null,
+                     new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            removerItemBD(item.getId());
 
-                        if (itensListener != null) {
-                            itensListener.onRefreshListaItens(itens);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (error != null) {
-                            if (error.networkResponse != null) {
-                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                return;
+                            if (itensListener != null) {
+                                itensListener.onRefreshListaItens(itens);
                             }
                         }
-                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            if (error != null) {
+                                if (error.networkResponse != null) {
+                                    Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            }
+                            Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }) {
+                )
+                {
                     @Override
                     public Map<String, String> getHeaders() {
                         Map<String, String> params = new HashMap<>();
-                        params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                        params.put("Content-Type", "application/json; charset=UTF-8");
                         params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
                         return params;
                     }
@@ -549,21 +585,28 @@ public class Singleton {
                     grupoItensListener.onRefreshListaGrupoItens(database.getAllGruposItensDB());
                 }
             } else {
-                JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, SYSTEM_DOMAIN + "grupoitens", null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        grupoItens = JSONParsers.parserJsonGruposItens(response, context);
-                        adicionarGruposItensBD(grupoItens);
-                        if (grupoItensListener != null) {
-                            grupoItensListener.onRefreshListaGrupoItens(grupoItens);
+                JsonObjectRequest req = new JsonObjectRequest(
+                    Request.Method.GET,
+                    SYSTEM_DOMAIN + "grupoitens",
+                    null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            grupoItens = JSONParsers.parserJsonGruposItens(response);
+                            adicionarGruposItensBD(grupoItens);
+                            if (grupoItensListener != null) {
+                                grupoItensListener.onRefreshListaGrupoItens(grupoItens);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                }) {
+                )
+                {
                     @Override
                     public Map<String, String> getHeaders() {
                         Map<String, String> params = new HashMap<>();
@@ -585,40 +628,43 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
             } else {
-                StringRequest req = new StringRequest(Request.Method.POST, SYSTEM_DOMAIN + "grupoitens", new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        adicionarGrupoItensBD(JSONParsers.parserJsonGrupoItens(response));
-                        if (grupoItensListener != null) {
-                            grupoItensListener.onRefreshListaGrupoItens(grupoItens);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(error != null)
-                        {
-                            if(error.networkResponse != null)
-                            {
-                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                return;
+                Map<String, String> jsonBody = new HashMap<>();
+                jsonBody.put("nome", gruposItens.getNome());
+                jsonBody.put("notas", gruposItens.getNotas());
+
+                JsonObjectRequest req = new JsonObjectRequest(
+                    Request.Method.POST,
+                    SYSTEM_DOMAIN + "grupoitens",
+                    new JSONObject(jsonBody),
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            adicionarGrupoItensBD(JSONParsers.parserJsonGrupoItens(response.toString()));
+                            if (operacoesGruposListener != null) {
+                                operacoesGruposListener.onGrupoOperacoesRefresh(Helpers.OPERACAO_ADD);
                             }
                         }
-                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            if(error != null)
+                            {
+                                if(error.networkResponse != null)
+                                {
+                                    Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            }
+                            Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }) {
-                    @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> params = new HashMap<>();
-                        params.put("nome", gruposItens.getNome());
-                        params.put("notas", gruposItens.getNotas());
-                        return params;
-                    }
-
+                )
+                {
                     @Override
                     public Map<String, String> getHeaders() {
                         Map<String, String> params = new HashMap<>();
-                        params.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+                        params.put("Content-Type", "application/json; charset=UTF-8");
                         params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
                         return params;
                     }
@@ -636,37 +682,40 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
             } else {
-                StringRequest req = new StringRequest(Request.Method.PUT, SYSTEM_DOMAIN + "grupoitens/" + grupoItens.getId(), new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        editarGrupoItensBD(grupoItens);
+                Map<String, String> jsonBody = new HashMap<>();
+                jsonBody.put("nome", grupoItens.getNome());
+                jsonBody.put("notas", grupoItens.getNotas());
 
-                        if (itensListener != null) {
-                            itensListener.onRefreshListaItens(itens);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if(error != null)
-                        {
-                            if(error.networkResponse != null)
-                            {
-                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                return;
+                JsonObjectRequest req = new JsonObjectRequest(
+                    Request.Method.PUT,
+                    SYSTEM_DOMAIN + "grupoitens/" + grupoItens.getId(),
+                    new JSONObject(jsonBody),
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            editarGrupoItensBD(grupoItens);
+
+                            if (operacoesGruposListener != null) {
+                                operacoesGruposListener.onGrupoOperacoesRefresh(Helpers.OPERACAO_EDIT);
                             }
                         }
-                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            if(error != null)
+                            {
+                                if(error.networkResponse != null)
+                                {
+                                    Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            }
+                            Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }) {
-                    @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> params = new HashMap<>();
-                        params.put("nome", grupoItens.getNome());
-                        params.put("notas", grupoItens.getNotas());
-                        return params;
-                    }
-
+                )
+                {
                     @Override
                     public Map<String, String> getHeaders() {
                         Map<String, String> params = new HashMap<>();
@@ -688,27 +737,34 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
             } else {
-                StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + "grupoitens/" + grupoItem.getId(), new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        removerGrupoItensBD(grupoItem.getId());
+                JsonObjectRequest req = new JsonObjectRequest(
+                    Request.Method.DELETE,
+                    SYSTEM_DOMAIN + "grupoitens/" + grupoItem.getId(),
+                    null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            removerGrupoItensBD(grupoItem.getId());
 
-                        if (grupoItensListener != null) {
-                            grupoItensListener.onRefreshListaGrupoItens(grupoItens);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        if (error != null) {
-                            if (error.networkResponse != null) {
-                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                return;
+                            if (grupoItensListener != null) {
+                                grupoItensListener.onRefreshListaGrupoItens(grupoItens);
                             }
                         }
-                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            if (error != null) {
+                                if (error.networkResponse != null) {
+                                    Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                            }
+                            Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                        }
                     }
-                }) {
+                )
+                {
                     @Override
                     public Map<String, String> getHeaders() {
                         Map<String, String> params = new HashMap<>();

@@ -25,7 +25,8 @@ public class JSONParsers {
      * @param response String JSON
      * @return String|null token
      */
-    public static boolean parserJsonLogin(String response, Context context){
+    public static boolean parserJsonLogin(String response, Context context)
+    {
         /*
           Exemplo de resposta:
 
@@ -86,7 +87,8 @@ public class JSONParsers {
         return error;
     }
 
-    public static ArrayList<Item> parserJsonItens(JSONObject response, Context context) {
+    public static ArrayList<Item> parserJsonItens(JSONObject response, Context context)
+    {
         ArrayList<Item> itens = null;
         try{
             for(int i=0; i<response.length(); i++){
@@ -135,8 +137,8 @@ public class JSONParsers {
                         Item auxItem = new Item(
                                 thisObject.getInt("id"),
                                 thisObject.getString("nome"),
-                                thisObject.getString("serialNumber"),
-                                thisObject.getString("notas"),
+                                thisObject.isNull("serialNumber") ? null : thisObject.getString("serialNumber"),
+                                thisObject.isNull("notas") ? null : thisObject.getString("notas"),
                                 (thisObject.isNull("status") ? 10 : thisObject.getInt("status")),
                                 nome_categoria,
                                 (thisSite == null ? null : thisSite.getId())
@@ -151,17 +153,36 @@ public class JSONParsers {
         return itens;
     }
 
-    public static Item parserJsonItem(String response) {
+    public static Item parserJsonItem(String response)
+    {
         Item auxItem = null;
         try{
             JSONObject item = new JSONObject(response);
             if(item.getInt("status") == 200 || item.getInt("status") == 201)
             {
-                int id = item.getInt("id");
-                String nome = item.getString("nome");
-                String serialnumber = item.getString("serialnumber");
-                String nota = item.getString("notas");
-                auxItem = new Item(id, nome, serialnumber, nota, auxItem.getStatus(), auxItem.getNome_Categoria(), auxItem.getSite_id());
+                JSONObject data = item.getJSONObject("data");
+                JSONObject data_categoria = null;
+                JSONObject data_site = null;
+
+                if(!data.isNull("categoria"))
+                {
+                    data_categoria = data.getJSONObject("categoria");
+                }
+
+                if(!data.isNull("site"))
+                {
+                    data_site = data.getJSONObject("site");
+                }
+
+                auxItem = new Item(
+                        data.getInt("id"),
+                        data.getString("nome"),
+                        data.isNull("serialNumber") ? null : data.getString("serialNumber"),
+                        data.isNull("notas") ? null : data.getString("notas"),
+                        data.isNull("status") ? 10 : data.getInt("status"),
+                        data_categoria == null ? null : data_categoria.getString("nome"),
+                        data_site == null ? null : data_site.getInt("id")
+                );
             }
         }catch (JSONException e){
             e.printStackTrace();
@@ -194,7 +215,8 @@ public class JSONParsers {
         return data;
     }
 
-    public static ArrayList<GrupoItens> parserJsonGruposItens(JSONObject response, Context context) {
+    public static ArrayList<GrupoItens> parserJsonGruposItens(JSONObject response)
+    {
         ArrayList<GrupoItens> grupoItens = null;
         try{
             for(int i=0; i<response.length(); i++){
@@ -223,7 +245,8 @@ public class JSONParsers {
         return grupoItens;
     }
 
-    public static GrupoItens parserJsonGrupoItens(String response) {
+    public static GrupoItens parserJsonGrupoItens(String response)
+    {
         GrupoItens auxGrupoItens = null;
         try{
             JSONObject grupoItens = new JSONObject(response);

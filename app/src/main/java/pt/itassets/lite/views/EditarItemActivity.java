@@ -4,7 +4,6 @@ import static pt.itassets.lite.views.ListaItensFragment.ACTION_DETALHES;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,14 +14,16 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
 import pt.itassets.lite.R;
+import pt.itassets.lite.listeners.OperacoesItensListener;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.utils.Helpers;
 
-public class EditarItemActivity extends AppCompatActivity {
+public class EditarItemActivity extends AppCompatActivity  implements OperacoesItensListener {
     private Item item;
     private TextInputLayout tiNome, tiNumSerie, tiNota;
     private TextView tvTitulo;
-    private FloatingActionButton fabAdicionarItem;
+    private FloatingActionButton fabGuardarAlteracoes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,8 @@ public class EditarItemActivity extends AppCompatActivity {
         tiNome = findViewById(R.id.tiNome);
         tiNumSerie = findViewById(R.id.tiNSerie);
         tiNota = findViewById(R.id.tiNota);
-        fabAdicionarItem = findViewById(R.id.fabAdicionarItem);
+        fabGuardarAlteracoes = findViewById(R.id.fabGuardarAlteracoesItem);
+        Singleton.getInstance(getApplicationContext()).setOperacoesItensListener(this);
 
         Integer itemId = getIntent().getIntExtra("ID_ITEM", -1);
 
@@ -54,7 +56,7 @@ public class EditarItemActivity extends AppCompatActivity {
                 tiNota.getEditText().setText(item.getNotas());
             }
 
-            fabAdicionarItem.setOnClickListener(new View.OnClickListener() {
+            fabGuardarAlteracoes.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (isItemValido()) {
@@ -64,6 +66,7 @@ public class EditarItemActivity extends AppCompatActivity {
                             item.setSerialNumber(tiNumSerie.getEditText().getText().toString().trim());
                             item.setNotas(tiNota.getEditText().getText().toString().trim());
                             Singleton.getInstance(getApplicationContext()).EditarItemAPI(item, getApplicationContext());
+
                             Intent intent = new Intent(getBaseContext(), MenuActivity.class);
                             startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
                         }
@@ -81,5 +84,13 @@ public class EditarItemActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onItemOperacaoRefresh(int operacao) {
+        Intent intent = new Intent();
+        intent.putExtra(Helpers.OPERACAO, operacao);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
