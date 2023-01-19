@@ -356,12 +356,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public boolean editarAlocacaoDB(Alocacao alocacao)
     {
         ContentValues values = new ContentValues();
-
-        values.put(OBSRESPOSTA, alocacao.getObsResposta());
+        ;
         values.put(DATAINICIO, String.valueOf(alocacao.getDataInicio()));
         values.put(DATAFIM, String.valueOf(alocacao.getDataFim()));
         values.put(STATUS, alocacao.getStatus());
-        values.put(NOME_APROVADOR, alocacao.getNome_aprovador());
 
         // devolve o número de linhas atualizadas
         return db.update(TABLE_PEDIDOS_REQUISICAO, values, ID+"=?", new String[]{String.valueOf(alocacao.getId())})==1;

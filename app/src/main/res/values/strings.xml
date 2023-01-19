@@ -19,7 +19,7 @@
     <string name="txt_terminar_sessao">Terminar Sessão</string>
     <string name="txt_itens">Itens</string>
     <string name="txt_grupo_itens">Grupo Itens</string>
-    <string name="txt_alocar">Alocar</string>
+    <string name="txt_alocar">Requisitar</string>
     <string name="txt_reparar">Reparar</string>
     <string name="txt_eu">Eu</string>
     <string name="tv_nome">Nome</string>
@@ -38,7 +38,9 @@
     <string name="editar_grupo_itens">Editar Grupo Itens</string>
     <string name="txt_nao_aplicavel">Não Aplicável</string>
     <string name="txt_confirm_remover_item">Tem a certeza que deseja remover o Itens?</string>
+    <string name="txt_confirm_remover_alocacao">Tem a certeza que deseja cancelar este Pedido de Alocação?</string>
     <string name="txt_remover_item">Remover Item</string>
+    <string name="txt_remover_alocacao">Cancelar Pedido de Alocação</string>
     <string name="tv_dataPedido">Data Pedido</string>
     <string name="tv_item">Item</string>
     <string name="tv_status">Estado</string>
@@ -57,4 +59,5 @@
     <string name="txt_obs">Observações</string>
     <string name="heading_dados_resposta">Dados Resposta</string>
     <string name="txt_aprovador">Aprovador</string>
+    <string name="devolver">Devolver</string>
 </resources>

@@ -12,6 +12,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
@@ -27,6 +28,7 @@ import pt.itassets.lite.listeners.AppSetupListener;
 import pt.itassets.lite.listeners.GrupoItensListener;
 import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.listeners.LoginListener;
+import pt.itassets.lite.listeners.OpearacoesPedidosAlocacaoListener;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.listeners.OperacoesItensListener;
 import pt.itassets.lite.listeners.PedidosAlcoacaoListener;
@@ -47,6 +49,7 @@ public class Singleton {
     private GrupoItensListener grupoItensListener;
     private OperacoesGruposListener operacoesGruposListener;
     private PedidosAlcoacaoListener pedidosAlcoacaoListener;
+    private OpearacoesPedidosAlocacaoListener opearacoesPedidosAlocacaoListener;
 
     private String SYSTEM_DOMAIN = null;
 
@@ -243,6 +246,10 @@ public class Singleton {
 
     public void setPedidosAlcoacaoListener(PedidosAlcoacaoListener pedidosAlcoacaoListener) {
         this.pedidosAlcoacaoListener = pedidosAlcoacaoListener;
+    }
+
+    public void setOpearacoesPedidosAlocacaoListener(OpearacoesPedidosAlocacaoListener opearacoesPedidosAlocacaoListener) {
+        this.opearacoesPedidosAlocacaoListener = opearacoesPedidosAlocacaoListener;
     }
 
     //endregion
@@ -877,5 +884,99 @@ public class Singleton {
         }
     }
 
+    public void EditarAlocacaoAPI(final Alocacao alocacao, final Context context){
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+            } else {
+                Map<String, String> jsonBody = new HashMap<>();
+                jsonBody.put("dataFim", alocacao.getDataFim());
+                jsonBody.put("status", String.valueOf(alocacao.getStatus()));
+
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.PUT,
+                        SYSTEM_DOMAIN + "pedidoalocacao/" + alocacao.getId(),
+                        new JSONObject(jsonBody),
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                editarAlocacaoBD(alocacao);
+
+                                if (opearacoesPedidosAlocacaoListener != null) {
+                                    opearacoesPedidosAlocacaoListener.onPedidosAlocacaoOperacaoRefresh(Helpers.OPERACAO_EDIT);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if (error != null) {
+                                    if (error.networkResponse != null) {
+                                        Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                }
+                                Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    public void RemoverAlocacaoAPI(final Alocacao alocacao, final Context context){
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+            } else {
+                StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + "pedidoalocacao/" + alocacao.getId(), new Response.Listener<String>(){
+                    @Override
+                    public void onResponse(String response) {
+                        removerAlocacaoBD(alocacao.getId());
+
+                        if (pedidosAlcoacaoListener != null) {
+                            pedidosAlcoacaoListener.onRefreshListaAlocacoes(alocacoes);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error != null) {
+                            if (error.networkResponse != null) {
+                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
     //endregion
 }

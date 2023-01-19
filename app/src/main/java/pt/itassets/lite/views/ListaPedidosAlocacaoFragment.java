@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SearchView;
 
 import androidx.fragment.app.Fragment;
 
@@ -29,7 +28,6 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlc
 
     private ListView lvAlocacoes;
     private FloatingActionButton fabListaPedidosAlocacao;
-    private SearchView searchView;
     public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
 
     public ListaPedidosAlocacaoFragment() {
@@ -68,16 +66,6 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlc
 
         return view;
     }
-
-    @Override
-    public void onResume() {
-        // Quando se faz Go Back a searchView fecha-se
-        if(searchView!=null){
-            searchView.onActionViewCollapsed();
-        }
-        super.onResume();
-    }
-
 
     @Override
     public void onRefreshListaAlocacoes(ArrayList<Alocacao> listaAlocacoes) {

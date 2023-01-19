@@ -1,26 +1,38 @@
 package pt.itassets.lite.views;
 
-import androidx.appcompat.app.AppCompatActivity;
+import static pt.itassets.lite.views.ListaItensFragment.ACTION_DETALHES;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import pt.itassets.lite.R;
+import pt.itassets.lite.listeners.OpearacoesPedidosAlocacaoListener;
 import pt.itassets.lite.models.Alocacao;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.utils.Helpers;
 
-public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity {
+public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements OpearacoesPedidosAlocacaoListener {
 
     private TextView TV_id_pedido, TV_estado_pedido, TV_requerente, TV_data_pedido, TV_objeto,
                      TV_observacoes, TV_aprovador, TV_data_inicio, TV_data_fim,
                      TV_observacoes_resposta;
-
+    private Button btn_Devolver, btn_Cancelar;
     private LinearLayout LL_dados_resposta;
     private Alocacao pedidoAlocacao;
+    private SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +50,9 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity {
         TV_data_fim = findViewById(R.id.TV_data_fim);
         TV_observacoes_resposta = findViewById(R.id.TV_observacoes_resposta);
         LL_dados_resposta = findViewById(R.id.LL_dados_resposta);
+        btn_Devolver = findViewById(R.id.btnDevolver);
+        btn_Cancelar = findViewById(R.id.btnCancelar);
+
 
         Integer id_pedido = getIntent().getIntExtra("ID_PEDIDO", -1);
 
@@ -51,12 +66,16 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity {
             TV_data_pedido.setText(String.valueOf(pedidoAlocacao.getDataPedido()));
 
             // Objeto
-
             TV_observacoes.setText(String.valueOf(pedidoAlocacao.getObs()));
+
+            //Botão
+            btn_Cancelar.setVisibility(View.VISIBLE);
 
             if(pedidoAlocacao.getStatus() != 10)
             {
                 LL_dados_resposta.setVisibility(View.VISIBLE);
+                btn_Cancelar.setVisibility(View.INVISIBLE);
+                btn_Devolver.setVisibility(View.VISIBLE);
 
                 // region Campo Aprovador
                 if(pedidoAlocacao.getNome_aprovador() != null)
@@ -103,5 +122,94 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity {
             Toast.makeText(this, "Pedido não encontrado", Toast.LENGTH_SHORT).show();
             finish();
         }
+    }
+
+    public void onClick_btn_devolver(View view) {
+        Date data = new Date();
+        String dataFormatada = formatoData.format(data);
+
+        Singleton.getInstance(getApplicationContext()).setOpearacoesPedidosAlocacaoListener(this);
+
+        if(pedidoAlocacao.getId() == -1)
+        {
+            Toast.makeText(this, "Pedido de Alocação não encontrado!", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        else {
+            pedidoAlocacao = Singleton.getInstance(getBaseContext()).getAlocacao(pedidoAlocacao.getId());
+
+            if(pedidoAlocacao != null){
+                if (isPedidoAlocacaoDevolverValido()) {
+                    if (pedidoAlocacao != null) {
+                        pedidoAlocacao.setDataFim(dataFormatada);
+                        pedidoAlocacao.setStatus(7);
+
+                        Singleton.getInstance(getApplicationContext()).EditarAlocacaoAPI(pedidoAlocacao, getApplicationContext());
+
+                        Intent intent = new Intent(getBaseContext(), MenuActivity.class);
+                        startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                    }
+                }
+            }
+        }
+    }
+
+    public void onClick_btn_cancelar(View view) {
+        if (isPedidoAlocacaoCancelarValido()) {
+            dialogRemover();
+        }
+    }
+
+    //Dialog para perguntar se o user pretende mesmo eliminar/ desativar o item
+    private void dialogRemover(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.txt_remover_alocacao))
+                .setMessage(R.string.txt_confirm_remover_alocacao)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Singleton.getInstance(getApplicationContext()).RemoverAlocacaoAPI(pedidoAlocacao, getApplicationContext());
+                        Intent intent = new Intent(getBaseContext(), MenuActivity.class);
+                        startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                    }
+                })
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        // Não necessita de se inserir nada
+                    }
+                })
+                .setIcon(android.R.drawable.ic_delete)
+                .show();
+    }
+
+
+    private boolean isPedidoAlocacaoDevolverValido(){
+        Integer Estado = pedidoAlocacao.getStatus();
+
+        if(Estado != 9) {
+            Toast.makeText(getApplicationContext(), "Erro: Não é possível devolver este Pedido de Alocação!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isPedidoAlocacaoCancelarValido(){
+        Integer Estado = pedidoAlocacao.getStatus();
+
+        if(Estado != 10) {
+            Toast.makeText(getApplicationContext(), "Erro: Não é possível cancelar este Pedido de Alocação!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+
+    @Override
+    public void onPedidosAlocacaoOperacaoRefresh(int operacao) {
+        Intent intent = new Intent();
+        intent.putExtra(Helpers.OPERACAO, operacao);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
