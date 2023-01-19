@@ -39,4 +39,9 @@
     <string name="txt_nao_aplicavel">Não Aplicável</string>
     <string name="txt_confirm_remover_item">Tem a certeza que deseja remover o Itens?</string>
     <string name="txt_remover_item">Remover Item</string>
+    <string name="eliminar_grupo_item">Tem a certeza que deseja remover o Grupo Itens?</string>
+    <string name="titulo_eliminar_grupo_item">Remover Item</string>
+    <string name="grupo_item_nao_encontrado">Grupo de itens não encontrado!</string>
+    <string name="nao_aplicavel">Não Aplicável</string>
+    <string name="grupo_eliminado_sucesso">Grupo Eliminado com Sucesso</string>
 </resources>

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pt.itassets.lite.models.GrupoItens;
+import pt.itassets.lite.models.GrupoItensItem;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.models.Site;
@@ -215,6 +216,25 @@ public class JSONParsers {
         return data;
     }
 
+
+    public static GrupoItens parserJsonGrupoItens(String response)
+    {
+        GrupoItens auxGrupoItens = null;
+        try{
+            JSONObject grupoItens = new JSONObject(response);
+            if(grupoItens.getInt("status") == 200 || grupoItens.getInt("status") == 201)
+            {
+                int id = grupoItens.getInt("id");
+                String nome = grupoItens.getString("nome");
+                String nota = grupoItens.getString("notas");
+                auxGrupoItens = new GrupoItens(id, auxGrupoItens.getStatus(), nome, nota);
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return auxGrupoItens;
+    }
+
     public static ArrayList<GrupoItens> parserJsonGruposItens(JSONObject response)
     {
         ArrayList<GrupoItens> grupoItens = null;
@@ -245,21 +265,42 @@ public class JSONParsers {
         return grupoItens;
     }
 
-    public static GrupoItens parserJsonGrupoItens(String response)
+    public static ArrayList<GrupoItensItem> parserJsonGruposItensItem(JSONObject response)
     {
-        GrupoItens auxGrupoItens = null;
+        ArrayList<GrupoItensItem> grupoItensItems = null;
         try{
-            JSONObject grupoItens = new JSONObject(response);
-            if(grupoItens.getInt("status") == 200 || grupoItens.getInt("status") == 201)
-            {
-                int id = grupoItens.getInt("id");
-                String nome = grupoItens.getString("nome");
-                String nota = grupoItens.getString("notas");
-                auxGrupoItens = new GrupoItens(id, auxGrupoItens.getStatus(), nome, nota);
+
+            for(int i=0; i<response.length(); i++){
+                grupoItensItems = new  ArrayList<>();
+                if(response.getInt("status") == 200)
+                {
+                    JSONArray dados = response.getJSONArray("data");
+
+
+                    for (int j = 0; j < dados.length(); j++) {
+
+
+                        JSONObject thisObject = dados.getJSONObject(j);
+                        JSONArray itens=thisObject.getJSONArray("itens");
+
+                        for (int k=0;k<itens.length();k++)
+                        {
+                            JSONObject thisitem = itens.getJSONObject(k);
+
+                                GrupoItensItem auxGrupoItensItem=new GrupoItensItem(
+                                        k,
+                                        thisObject.getInt("id"),
+                                        thisitem.getInt("id")
+                                );
+                                grupoItensItems.add(auxGrupoItensItem);
+                        }
+
+                    }
+                }
             }
         }catch (JSONException e){
             e.printStackTrace();
         }
-        return auxGrupoItens;
+        return grupoItensItems;
     }
 }

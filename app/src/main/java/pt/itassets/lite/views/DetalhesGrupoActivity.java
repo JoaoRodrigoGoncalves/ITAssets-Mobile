@@ -27,6 +27,7 @@ import java.util.List;
 import pt.itassets.lite.R;
 import pt.itassets.lite.adapters.ListaItensAdaptador;
 import pt.itassets.lite.models.GrupoItens;
+import pt.itassets.lite.models.GrupoItensItem;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 
@@ -34,6 +35,7 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
 
     private TextView tv_nome_grupo, tv_notas;
     private GrupoItens grupoItens;
+    private ArrayList<GrupoItensItem> item;
     private ListView lvItens;
     //private ArrayList<Item> item_Grupo;
 
@@ -54,44 +56,31 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
 
         if(grupoId == -1)
         {
-            Toast.makeText(this, "Item não encontrado!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.grupo_item_nao_encontrado+"", Toast.LENGTH_SHORT).show();
             finish();
         }
         else
         {
             grupoItens = Singleton.getInstance(getBaseContext()).getGrupoItens(grupoId);
 
+
             tv_nome_grupo.setText(String.valueOf(grupoItens.getNome()));
             setTitle(String.valueOf(grupoItens.getNome()));
 
             if(grupoItens.getNotas() == "null") //Sim, texto
             {
-                tv_notas.setText("Não Aplicável");
+                tv_notas.setText(R.string.nao_aplicavel);
                 tv_notas.setTypeface(tv_notas.getTypeface(), Typeface.ITALIC);
             }
             else
             {
                 tv_notas.setText(String.valueOf(grupoItens.getNotas()));
             }
+
+
+            onRefreshListaItens(Singleton.getInstance(this).getItensdoGrupoItem(grupoId));
+
         }
-
-        //TODO: Fazer os itens aparecer na view
-        /*ArrayList<Item> item = Singleton.getInstance(this).getItensBD();
-
-        for (Item i:item) {
-            if(grupoItens.getNome().equals(i.getNome_Categoria()))
-            {
-                item_Grupo.addAll(item);
-            }
-        }
-
-        lvItens.setAdapter(new ListaItensAdaptador(this, item_Categoria));
-
-        System.out.println(grupoItens);*/
-
-
-
-        //vItens.setAdapter();
     }
 
     //Icons no menu superior (edit e remove)
@@ -124,8 +113,8 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
     //Dialog para perguntar se o user pretende mesmo eliminar/ desativar o item
     private void dialogRemover(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Remover Item")
-                .setMessage("Tem a certeza que deseja remover o Grupo Itens?")
+        builder.setTitle(getString(R.string.titulo_eliminar_grupo_item))
+                .setMessage(R.string.eliminar_grupo_item)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -142,5 +131,12 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
                 })
                 .setIcon(android.R.drawable.ic_delete)
                 .show();
+    }
+
+
+    public void onRefreshListaItens(ArrayList<Item> listaItens) {
+        if(listaItens != null){
+            lvItens.setAdapter(new ListaItensAdaptador(this, listaItens));
+        }
     }
 }

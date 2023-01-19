@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import pt.itassets.lite.R;
 import pt.itassets.lite.adapters.ListaGruposItensAdaptador;
 import pt.itassets.lite.listeners.GrupoItensListener;
+import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.Singleton;
 
@@ -60,6 +61,9 @@ public class ListaGrupoItensFragment extends Fragment implements GrupoItensListe
 
         Singleton.getInstance(getContext()).setGrupoItensListener((GrupoItensListener) this);
         Singleton.getInstance(container.getContext()).getAllGrupoItensAPI(getContext());
+
+
+        //Singleton.getInstance(container.getContext()).getAllGrupoItensItemAPI(getContext());
 
         fabListaGruposItens.setOnClickListener(new View.OnClickListener() {
             @Override

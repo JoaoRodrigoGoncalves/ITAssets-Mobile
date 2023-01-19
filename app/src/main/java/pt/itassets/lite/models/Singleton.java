@@ -37,6 +37,7 @@ import pt.itassets.lite.utils.JSONParsers;
 public class Singleton {
     private ArrayList<Item> itens;
     private ArrayList<GrupoItens> grupoItens;
+    private ArrayList<GrupoItensItem> grupoItensItems;
     private static Singleton instance=null;
     private static RequestQueue volleyQueue=null;
     private DBHelper database = null;
@@ -316,6 +317,18 @@ public class Singleton {
 
     //endregion
 
+    // region Funções interação com a tabela local de Grupo Item Itens
+
+    public void adicionarGrupoItensItemBD(ArrayList<GrupoItensItem> grupoItensItems){
+        database.removerAllGrupoItensItemDB();
+        for(GrupoItensItem i : grupoItensItems){
+            database.adicionarGrupoItensItemDB(i);
+        }
+    }
+
+
+    //endregion
+
     //region Funções Interação com tabela local de Grupos de Itens
 
     public ArrayList<GrupoItens> getGrupoItensBD() {
@@ -339,6 +352,8 @@ public class Singleton {
         }
     }
 
+
+
     public void adicionarGrupoItensBD(GrupoItens i){
         database.adicionarGrupoItensDB(i);
     }
@@ -359,6 +374,8 @@ public class Singleton {
 
     //endregion
 
+
+
     //region Funções Interação com API Itens
 
     public void getAllItensAPI(final Context context){
@@ -367,7 +384,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
 
                 if (itensListener != null) {
                     itensListener.onRefreshListaItens(database.getAllItensDB());
@@ -407,7 +424,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
                 try
                 {
@@ -469,7 +486,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
                 Map<String, String> jsonBody = new HashMap<>();
                 jsonBody.put("nome", item.getNome());
@@ -525,7 +542,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
                 JsonObjectRequest req = new JsonObjectRequest(
                     Request.Method.DELETE,
@@ -579,21 +596,20 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
 
                 if (grupoItensListener != null) {
                     grupoItensListener.onRefreshListaGrupoItens(database.getAllGruposItensDB());
                 }
             } else {
-                JsonObjectRequest req = new JsonObjectRequest(
-                    Request.Method.GET,
-                    SYSTEM_DOMAIN + "grupoitens",
-                    null,
-                    new Response.Listener<JSONObject>() {
+                JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,SYSTEM_DOMAIN + "grupoitens",null,new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             grupoItens = JSONParsers.parserJsonGruposItens(response);
                             adicionarGruposItensBD(grupoItens);
+                            //faz a tanela de relações
+                            grupoItensItems = JSONParsers.parserJsonGruposItensItem(response);
+                            adicionarGrupoItensItemBD(grupoItensItems);
                             if (grupoItensListener != null) {
                                 grupoItensListener.onRefreshListaGrupoItens(grupoItens);
                             }
@@ -626,7 +642,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
                 Map<String, String> jsonBody = new HashMap<>();
                 jsonBody.put("nome", gruposItens.getNome());
@@ -680,7 +696,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
                 Map<String, String> jsonBody = new HashMap<>();
                 jsonBody.put("nome", grupoItens.getNome());
@@ -735,15 +751,15 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
-                JsonObjectRequest req = new JsonObjectRequest(
+                StringRequest req = new StringRequest(
                     Request.Method.DELETE,
                     SYSTEM_DOMAIN + "grupoitens/" + grupoItem.getId(),
-                    null,
-                    new Response.Listener<JSONObject>() {
+
+                    new Response.Listener<String>() {
                         @Override
-                        public void onResponse(JSONObject response) {
+                        public void onResponse(String response) {
                             removerGrupoItensBD(grupoItem.getId());
 
                             if (grupoItensListener != null) {
@@ -757,6 +773,11 @@ public class Singleton {
                             if (error != null) {
                                 if (error.networkResponse != null) {
                                     Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                                else
+                                {
+                                    Toast.makeText(context, context.getString(R.string.grupo_eliminado_sucesso), Toast.LENGTH_LONG).show();
                                     return;
                                 }
                             }
@@ -778,4 +799,25 @@ public class Singleton {
         }
     }
     //endregion
+
+    //region Grupo Itens Item
+
+    public ArrayList<Item> getItensdoGrupoItem(Integer grupoitem_id)
+    {
+        ArrayList<Item> item=new ArrayList<>();
+        ArrayList<GrupoItensItem> grupoItensItems=database.findGrupoItensItem(grupoitem_id);
+
+        for (int i=0; i<grupoItensItems.size();i++)
+        {
+            Integer aux=grupoItensItems.get(i).getItem_id();
+            item.add(database.FindItemDB(aux));
+
+        }
+        return item;
+
+    }
+
+    //endregion
+
+
 }
