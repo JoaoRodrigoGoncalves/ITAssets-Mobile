@@ -44,4 +44,7 @@
     <string name="grupo_item_nao_encontrado">Grupo de itens não encontrado!</string>
     <string name="nao_aplicavel">Não Aplicável</string>
     <string name="grupo_eliminado_sucesso">Grupo Eliminado com Sucesso</string>
+    <string name="tv_dataPedido">Data Pedido</string>
+    <string name="tv_item">Item</string>
+    <string name="tv_status">Estado</string>
 </resources>

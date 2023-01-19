@@ -36,7 +36,15 @@ public class DBHelper extends SQLiteOpenHelper {
             COORDENADAS = "coordenadas",
             GRUPOITENSID ="grupoitensid",
             ITEMID="itemid";
-
+            DATAPEDIDO = "dataPedido",
+            DATAINICIO = "dataInicio",
+            DATAFIM = "dataFim",
+            OBS = "obs",
+            OBSRESPOSTA = "obsResposta",
+            NOME_REQUERENTE = "nome_requerente",
+            NOME_APROVADOR = "nome_aprovador",
+            NOME_ITEM = "nome_item",
+            NOME_GRUPO = "nome_grupoItem";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -74,7 +82,6 @@ public class DBHelper extends SQLiteOpenHelper {
                         NOTAS + " TEXT," +
                         STATUS + " INTEGER NOT NULL" + ")";
 
-
         sqlLiteDatabase.execSQL(sqlCreateTableGrupoItens);
 
         String  sqlCreateTableGrupoItensItem=
@@ -83,8 +90,22 @@ public class DBHelper extends SQLiteOpenHelper {
                         GRUPOITENSID + " INTEGER NOT NULL," +
                         ITEMID + " INTEGER NOT NULL" +")";
 
-
         sqlLiteDatabase.execSQL(sqlCreateTableGrupoItensItem);
+        String sqlCreateTablePedidosAlocacao =
+                "CREATE TABLE " + TABLE_PEDIDOS_REQUISICAO + "(" +
+                        ID + " INTEGER PRIMARY KEY," +
+                        OBS + " TEXT," +
+                        OBSRESPOSTA + " TEXT," +
+                        DATAPEDIDO + " TEXT NOT NULL," +
+                        DATAINICIO + " TEXT," +
+                        DATAFIM + " TEXT," +
+                        NOME_REQUERENTE + " TEXT," +
+                        NOME_APROVADOR + " TEXT," +
+                        NOME_ITEM + " TEXT," +
+                        NOME_GRUPO + " TEXT," +
+                        STATUS + " INTEGER NOT NULL" + ")";
+
+        sqlLiteDatabase.execSQL(sqlCreateTablePedidosAlocacao);
     }
 
     @Override
@@ -101,6 +122,8 @@ public class DBHelper extends SQLiteOpenHelper {
         String sqlDropTableGrupoItensItem = "DROP TABLE IF EXISTS " + TABLE_ITENS_GRUPO;
         sqlLiteDatabase.execSQL(sqlDropTableGrupoItensItem);
 
+        String sqlDropTablePedidosAlocacao = "DROP TABLE IF EXISTS " + TABLE_PEDIDOS_REQUISICAO;
+        sqlLiteDatabase.execSQL(sqlDropTablePedidosAlocacao);
 
         onCreate(sqlLiteDatabase);
     }
@@ -342,6 +365,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //endregion
 
+    //region GrupoItensItem
+
     public ArrayList<GrupoItensItem> findGrupoItensItem(Integer idGrupoItem)
     {
         ArrayList<GrupoItensItem> grupoItensItems = new ArrayList<>();
@@ -379,10 +404,6 @@ public class DBHelper extends SQLiteOpenHelper {
             grupoItensItem.setItem_id(id);
             return grupoItensItem;
         }
-        else
-        {
-            return null;
-        }
     }
 
     public void removerAllGrupoItensItemDB()
@@ -390,11 +411,36 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_ITENS_GRUPO, null, null);
     }
 
+    //endregion
 
 
+    //region Funções Tabela Pedidos de Alocação
 
+    public Alocacao adicionarAlocacaoDB(Alocacao alocacao)
+    {
+        ContentValues values = new ContentValues();
 
+        values.put(ID, alocacao.getId());
+        values.put(OBS, alocacao.getObs());
+        values.put(DATAPEDIDO, String.valueOf(alocacao.getDataPedido()));
+        values.put(STATUS, alocacao.getStatus());
+        values.put(NOME_REQUERENTE, alocacao.getNome_requerente());
+        values.put(NOME_ITEM, alocacao.getNome_item());
+        values.put(NOME_GRUPO, alocacao.getNome_grupoItem());
 
-
-
+        // devolve -1 em caso de erro, ou o id do novo pedido de alocação (long)
+        int id = (int) db.insert(TABLE_PEDIDOS_REQUISICAO, null, values);
+        if(id != -1)
+        {
+            alocacao.setId(id);
+            return alocacao;
+        }
+        else
+        {
+            return null;
+        }
+    }
+    
+    //endregion
+    
 }

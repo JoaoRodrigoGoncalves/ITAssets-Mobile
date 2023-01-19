@@ -12,10 +12,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -31,6 +29,7 @@ import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.listeners.LoginListener;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.listeners.OperacoesItensListener;
+import pt.itassets.lite.listeners.PedidosAlcoacaoListener;
 import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.utils.JSONParsers;
 
@@ -38,6 +37,7 @@ public class Singleton {
     private ArrayList<Item> itens;
     private ArrayList<GrupoItens> grupoItens;
     private ArrayList<GrupoItensItem> grupoItensItems;
+    private ArrayList<Alocacao> alocacoes;
     private static Singleton instance=null;
     private static RequestQueue volleyQueue=null;
     private DBHelper database = null;
@@ -47,6 +47,8 @@ public class Singleton {
     private OperacoesItensListener operacoesItensListener;
     private GrupoItensListener grupoItensListener;
     private OperacoesGruposListener operacoesGruposListener;
+    private PedidosAlcoacaoListener pedidosAlcoacaoListener;
+
     private String SYSTEM_DOMAIN = null;
 
     public static synchronized Singleton getInstance(Context context)
@@ -240,6 +242,10 @@ public class Singleton {
         this.appSetupListener = appSetupListener;
     }
 
+    public void setPedidosAlcoacaoListener(PedidosAlcoacaoListener pedidosAlcoacaoListener) {
+        this.pedidosAlcoacaoListener = pedidosAlcoacaoListener;
+    }
+
     //endregion
 
     //region Funções Interação com tabela local de Itens
@@ -374,7 +380,48 @@ public class Singleton {
 
     //endregion
 
+    //region Funções Interação com tabela local de Pedidos de Alocação
 
+    public ArrayList<PedidosAlcoacaoListener> getAlocacoesBD() {
+        alocacoes = database.getAllAlocacoesDB();
+        return new ArrayList(alocacoes);
+    }
+
+    public Alocacao getAlocacao(Integer id){
+        for(Alocacao i:alocacoes){
+            if(i.getId()==id){
+                return i;
+            }
+        }
+        return null;
+    }
+
+    public void adicionarAlocacoesBD(ArrayList<Alocacao> alocacoes){
+        database.removerAllAlocacaoDB();
+        for(Alocacao i : alocacoes){
+            adicionarAlocacaoBD(i);
+        }
+    }
+
+    public void adicionarAlocacaoBD(Alocacao i){
+        database.adicionarAlocacaoDB(i);
+    }
+
+    public void editarAlocacaoBD(Alocacao i){
+        Alocacao auxAlocacao = getAlocacao(i.getId());
+        if(auxAlocacao!=null){
+            database.editarAlocacaoDB(i);
+        }
+    }
+
+    public void removerAlocacaoBD(int id){
+        Alocacao auxAlocacao = getAlocacao(id);
+        if(auxAlocacao != null){
+            database.removerAlocacaoDB(auxAlocacao);
+        }
+    }
+
+    //endregion
 
     //region Funções Interação com API Itens
 
@@ -820,4 +867,51 @@ public class Singleton {
     //endregion
 
 
+    //region Funções Interação com API Pedidos Alocação/ Requisição
+
+    public void getAllAlocacoesAPI(final Context context){
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+
+                if (pedidosAlcoacaoListener != null) {
+                    pedidosAlcoacaoListener.onRefreshListaAlocacoes(database.getAllAlocacoesDB());
+                }
+            } else {
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.GET, SYSTEM_DOMAIN + "pedidoalocacao", null, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                alocacoes = JSONParsers.parserJsonAlocacoes(response, context);
+                                adicionarAlocacoesBD(alocacoes);
+                                if (pedidosAlcoacaoListener!= null) {
+                                    pedidosAlcoacaoListener.onRefreshListaAlocacoes(alocacoes);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                )
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    //endregion
 }
