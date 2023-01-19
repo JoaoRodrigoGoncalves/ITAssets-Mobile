@@ -1,5 +1,6 @@
 package pt.itassets.lite.models;
 
+
 public class Item {
 
     private Integer id, status, site_id;

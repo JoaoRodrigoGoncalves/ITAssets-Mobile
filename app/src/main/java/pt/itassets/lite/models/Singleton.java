@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.LayoutInflater;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -807,12 +808,29 @@ public class Singleton {
         ArrayList<Item> item=new ArrayList<>();
         ArrayList<GrupoItensItem> grupoItensItems=database.findGrupoItensItem(grupoitem_id);
 
-        for (int i=0; i<grupoItensItems.size();i++)
+        for (int i=0; i<=grupoItensItems.size();i++)
         {
             Integer aux=grupoItensItems.get(i).getItem_id();
-            item.add(database.FindItemDB(aux));
+            //item.add(database.FindItemDB(aux));
 
         }
+        return item;
+
+    }
+
+    public ArrayList<Item> getItensSemGrupoItem()
+    {
+        ArrayList<Item> item=getItensBD();
+        ArrayList<Item> ItemSemGrupo=new ArrayList<>();
+
+        for (int i=0;i<=item.size();i++)
+        {
+            Integer aux=item.get(i).getId();
+
+        }
+
+        //LayoutInflater layoutInflater= new LayoutInflater();
+
         return item;
 
     }
