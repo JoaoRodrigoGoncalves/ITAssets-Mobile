@@ -61,7 +61,8 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlc
         fabListaPedidosAlocacao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Implementar criar pedido
+                Intent adicionar = new Intent(getContext(), AdicionarPedidoAlocacaoActivity.class);
+                startActivity(adicionar);
             }
         });
 
