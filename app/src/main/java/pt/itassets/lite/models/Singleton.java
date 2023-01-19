@@ -869,7 +869,7 @@ public class Singleton {
 
     //region Funções Interação com API Pedidos Alocação/ Requisição
 
-    public void getAllAlocacoesAPI(final Context context){
+    public void getUserAlocacoesAPI(final Context context){
         SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
@@ -882,22 +882,25 @@ public class Singleton {
                 }
             } else {
                 JsonObjectRequest req = new JsonObjectRequest(
-                        Request.Method.GET, SYSTEM_DOMAIN + "pedidoalocacao", null, new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                alocacoes = JSONParsers.parserJsonAlocacoes(response, context);
-                                adicionarAlocacoesBD(alocacoes);
-                                if (pedidosAlcoacaoListener!= null) {
-                                    pedidosAlcoacaoListener.onRefreshListaAlocacoes(alocacoes);
-                                }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                    Request.Method.GET,
+                    SYSTEM_DOMAIN + "pedidoalocacao/user/" + preferences.getInt(Helpers.USER_ID, -1),
+                    null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            alocacoes = JSONParsers.parserJsonAlocacoes(response, context);
+                            adicionarAlocacoesBD(alocacoes);
+                            if (pedidosAlcoacaoListener!= null) {
+                                pedidosAlcoacaoListener.onRefreshListaAlocacoes(alocacoes);
                             }
                         }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
                 )
                 {
                     @Override

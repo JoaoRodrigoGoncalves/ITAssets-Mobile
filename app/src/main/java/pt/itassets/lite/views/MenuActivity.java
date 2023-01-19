@@ -58,16 +58,19 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.item_lista_itens:
                 Fragment listaItensFragment = new ListaItensFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, listaItensFragment).commit();
+                setTitle(R.string.txt_itens);
                 return true;
 
             case R.id.item_lista_grupos:
                 Fragment ListaGruposfrag = new ListaGrupoItensFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, ListaGruposfrag).commit();
+                setTitle(R.string.txt_grupo_itens);
                 return true;
 
             case R.id.item_alocar:
                 Fragment ListaAlocacoes = new ListaPedidosAlocacaoFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, ListaAlocacoes).commit();
+                setTitle(R.string.txt_alocar);
                 return true;
 
             case R.id.item_reparar:
