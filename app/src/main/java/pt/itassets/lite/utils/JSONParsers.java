@@ -36,7 +36,6 @@ public class JSONParsers {
               "status": 200,
               "data": {
                   "token": "Fr3zCduYo5yAcaJ8Q_Nq-i__NdIj6YSl",
-                  "userID": 1,
                   "username": "nome",
                   "email": "email@itassets.pt",
                   "level": "administrator"
@@ -53,7 +52,6 @@ public class JSONParsers {
                 SharedPreferences.Editor editor =  preferences.edit();
 
                 editor.putString(Helpers.USER_TOKEN, data.getString("token"));
-                editor.putInt(Helpers.USER_ID, data.getInt("userID"));
                 editor.putString(Helpers.USER_NAME, data.getString("username"));
                 editor.putString(Helpers.USER_EMAIL, data.getString("email"));
                 editor.putString(Helpers.USER_ROLE, data.getString("level"));

@@ -1,19 +1,9 @@
 package pt.itassets.lite.models;
 
-import android.content.Context;
-import android.content.res.Resources;
-
-import pt.itassets.lite.R;
-
 public class Alocacao {
 
-    public static final int STATUS_ABERTO = 10;
-    public static final int STATUS_APROVADO = 9;
-    public static final int STATUS_NEGADO = 8;
-    public static final int STATUS_DEVOLVIDO = 7;
-    public static final int STATUS_CANCELADO = 0;
-
     private Integer id, status, nome_requerente, nome_aprovador;
+    //private Date dataPedido, dataInicio, dataFim;
     private String obs, obsResposta, nome_item, nome_grupoItem,  dataPedido, dataInicio, dataFim;
 
     public Alocacao(Integer id, Integer status, String dataPedido, String dataInicio, String dataFim, String obs, String obsResposta, Integer nome_requerente, Integer nome_aprovador, String nome_item, String nome_grupoItem) {
@@ -29,32 +19,6 @@ public class Alocacao {
         this.nome_item = nome_item;
         this.nome_grupoItem = nome_grupoItem;
     }
-
-    public String humanReadableStatus(final Context context)
-    {
-        switch (this.status)
-        {
-            case STATUS_ABERTO:
-                return context.getString(R.string.txt_aberto);
-
-            case STATUS_APROVADO:
-                return context.getString(R.string.txt_aprovado);
-
-            case STATUS_NEGADO:
-                return context.getString(R.string.txt_negado);
-
-            case STATUS_DEVOLVIDO:
-                return context.getString(R.string.txt_devolvido);
-
-            case STATUS_CANCELADO:
-                return context.getString(R.string.txt_cancelado);
-
-            default:
-                return String.valueOf(this.status);
-        }
-    }
-
-    // region Getters e setters
 
     public Integer getId() {
         return id;
@@ -141,5 +105,4 @@ public class Alocacao {
     public void setNome_grupoItem(String nome_grupoItem) {
         this.nome_grupoItem = nome_grupoItem;
     }
-    //endregion
 }

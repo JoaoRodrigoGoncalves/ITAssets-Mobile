@@ -47,19 +47,4 @@
     <string name="tv_dataPedido">Data Pedido</string>
     <string name="tv_item">Item</string>
     <string name="tv_status">Estado</string>
-    <string name="txt_aberto">Aberto</string>
-    <string name="txt_aprovado">Aprovado</string>
-    <string name="txt_negado">Negado</string>
-    <string name="txt_devolvido">Devolvido</string>
-    <string name="txt_cancelado">Cancelado</string>
-    <string name="txt_requerente">Requerente</string>
-    <string name="txt_pedido_num">Pedido Nº</string>
-    <string name="txt_estado">Estado</string>
-    <string name="txt_responsavel">Responsável</string>
-    <string name="txt_data_pedido">Data Pedido</string>
-    <string name="txt_data_inicio">Data Inicio</string>
-    <string name="txt_data_fim">Data Fim</string>
-    <string name="txt_obs">Observações</string>
-    <string name="heading_dados_resposta">Dados Resposta</string>
-    <string name="txt_aprovador">Aprovador</string>
 </resources>

@@ -1,6 +1,5 @@
 package pt.itassets.lite.views;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,19 +48,17 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlc
         lvAlocacoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int positions, long id) {
-                Intent detalhes = new Intent(getContext(), DetalhesPedidoAlocacaoActivity.class);
-                detalhes.putExtra("ID_PEDIDO", (int) id);
-                startActivity(detalhes);
+
             }
         });
 
-        Singleton.getInstance(getContext()).setPedidosAlcoacaoListener(this);
-        Singleton.getInstance(container.getContext()).getUserAlocacoesAPI(getContext());
+        Singleton.getInstance(getContext()).setPedidosAlcoacaoListener((PedidosAlcoacaoListener) this);
+        Singleton.getInstance(container.getContext()).getAllAlocacoesAPI(getContext());
 
         fabListaPedidosAlocacao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Implementar criar pedido
+
             }
         });
 

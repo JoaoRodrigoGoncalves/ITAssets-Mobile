@@ -74,17 +74,17 @@ public class ListaPedidosAlocacaoAdaptador extends BaseAdapter {
         public void update(Alocacao alocacao){
             tvId.setText(String.valueOf(alocacao.getId()));
             tvData.setText(String.valueOf(alocacao.getDataPedido()));
-
+            //tvItem.setText(alocacao.getNome_item());
             if(alocacao.getNome_item() == null)
             {
-                tvItem.setText(R.string.txt_nao_aplicavel);
+                tvItem.setText("Não Aplicável");
                 tvItem.setTypeface(tvItem.getTypeface(), Typeface.ITALIC);
             }
             else
             {
                 tvItem.setText(String.valueOf(alocacao.getNome_item()));
             }
-            tvStatus.setText(alocacao.humanReadableStatus(context));
+            tvStatus.setText(String.valueOf(alocacao.getStatus()));
         }
     }
 }
