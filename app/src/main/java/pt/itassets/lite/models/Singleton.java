@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import pt.itassets.lite.R;
@@ -808,30 +809,20 @@ public class Singleton {
         ArrayList<Item> item=new ArrayList<>();
         ArrayList<GrupoItensItem> grupoItensItems=database.findGrupoItensItem(grupoitem_id);
 
-        for (int i=0; i<=grupoItensItems.size();i++)
+        for (int i=0; i<grupoItensItems.size();i++)
         {
             Integer aux=grupoItensItems.get(i).getItem_id();
-            //item.add(database.FindItemDB(aux));
-
+            item.add(database.FindItemDB(aux));
         }
         return item;
 
     }
 
-    public ArrayList<Item> getItensSemGrupoItem()
+    public ArrayList getItensSemGrupoItem()
     {
         ArrayList<Item> item=getItensBD();
-        ArrayList<Item> ItemSemGrupo=new ArrayList<>();
-
-        for (int i=0;i<=item.size();i++)
-        {
-            Integer aux=item.get(i).getId();
-
-        }
-
-        //LayoutInflater layoutInflater= new LayoutInflater();
-
-        return item;
+        ArrayList<Item> itensSemGrupo=database.checkItemGrupo(item);
+        return itensSemGrupo;
 
     }
 

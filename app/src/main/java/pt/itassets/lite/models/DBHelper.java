@@ -365,6 +365,37 @@ public class DBHelper extends SQLiteOpenHelper {
         return grupoItensItems;
     }
 
+    public ArrayList<Item> checkItemGrupo(ArrayList<Item> items) {
+        ArrayList<Item> itensSemGrupo = new ArrayList<>();
+        for (int i = 0; i < getAllItensDB().size(); i++) {
+            int j = 0;
+            Cursor cursorGR = db.query(TABLE_ITENS_GRUPO, new String[]{ID, GRUPOITENSID, ITEMID},
+                    ITEMID + "=" + items.get(i).getId(), null, null, null, null);
+
+            if (!cursorGR.moveToFirst())
+            {
+                Cursor cursorItem = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID},
+                        ID + "=" + items.get(i).getId(), null, null, null, null);
+
+                Item itemAux = null;
+                if (cursorItem.moveToFirst())
+                {
+                    itemAux = new Item(
+                            cursorItem.getInt(0), //ID
+                            cursorItem.getString(1), //Nome
+                            (cursorItem.isNull(2) ? null : cursorItem.getString(2)), //Serial
+                            (cursorItem.isNull(3) ? null : cursorItem.getString(3)), // Notas
+                            cursorItem.getInt(4), // status
+                            (cursorItem.isNull(5) ? null : cursorItem.getString(5)), // categoria
+                            (cursorItem.isNull(6) ? null : cursorItem.getInt(6)) // site
+                    );
+                    itensSemGrupo.add(itemAux);
+                }
+            }
+        }
+        return itensSemGrupo;
+    }
+
     public GrupoItensItem adicionarGrupoItensItemDB(GrupoItensItem grupoItensItem)
     {
         ContentValues values = new ContentValues();
