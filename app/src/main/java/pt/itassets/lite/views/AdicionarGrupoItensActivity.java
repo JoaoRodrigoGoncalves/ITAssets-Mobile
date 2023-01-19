@@ -11,11 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import pt.itassets.lite.R;
-import pt.itassets.lite.adapters.MyAdaptar;
+import pt.itassets.lite.adapters.MyAdapter;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.Item;
@@ -27,7 +26,7 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
     private GrupoItens grupoItens;
     private TextInputLayout tiNome, tiNota;
     private FloatingActionButton fabAdicionarGrupoItens;
-    RecyclerView recyclerView= findViewById(R.id.recyclerview);
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +37,15 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
         tiNome = findViewById(R.id.tiNome);
         tiNota = findViewById(R.id.tiNota);
         fabAdicionarGrupoItens = findViewById(R.id.fabAdicionarGrupoItens);
+        recyclerView = findViewById(R.id.rv);
         Singleton.getInstance(getApplicationContext()).setOperacoesGruposListener(this);
 
         List<Item> items=Singleton.getInstance(this).getItensBD();
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new MyAdaptar(getBaseContext(),items));
+        MyAdapter adapter = new MyAdapter(this, items);
+        recyclerView.setAdapter(adapter);
 
         fabAdicionarGrupoItens.setOnClickListener(new View.OnClickListener() {
             @Override
