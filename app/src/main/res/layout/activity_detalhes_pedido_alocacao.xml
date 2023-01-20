@@ -192,6 +192,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <Button
+        android:id="@+id/btnCancelar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClick_btn_cancelar"
+        android:text="@string/txt_cancelar"
+        style="@style/Widget.MaterialComponents.Button"/>
+
     <!-- endregion -->
 
     <!-- Separação partes -->
@@ -334,8 +342,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
+        <Button
+            android:id="@+id/btnDevolver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/devolver"
+            android:onClick="onClick_btn_devolver"
+            style="@style/Widget.MaterialComponents.Button"/>
+
         <!-- endregion -->
 
     </LinearLayout>
-
 </LinearLayout>

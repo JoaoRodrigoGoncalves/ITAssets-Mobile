@@ -38,7 +38,9 @@
     <string name="txt_editar_grupo_itens">Editar Grupo Itens</string>
     <string name="txt_nao_aplicavel">Não Aplicável</string>
     <string name="txt_confirm_remover_item">Tem a certeza que deseja remover o Itens?</string>
+    <string name="txt_confirm_remover_alocacao">Tem a certeza que deseja cancelar este Pedido de Alocação?</string>
     <string name="txt_remover_item">Remover Item</string>
+    <string name="txt_remover_alocacao">Cancelar Pedido de Alocação</string>
     <string name="txt_dataPedido">Data Pedido</string>
     <string name="txt_item">Item</string>
     <string name="txt_status">Estado</string>
@@ -59,4 +61,5 @@
     <string name="txt_aprovador">Aprovador</string>
     <string name="txt_guardar">Guardar</string>
     <string name="txt_campo_obrigatorio">Campo obrigatório</string>
+    <string name="devolver">Devolver</string>
 </resources>

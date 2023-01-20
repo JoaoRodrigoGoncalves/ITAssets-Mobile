@@ -12,6 +12,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONObject;
@@ -30,7 +31,7 @@ import pt.itassets.lite.listeners.LoginListener;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.listeners.OperacoesItensListener;
 import pt.itassets.lite.listeners.OperacoesPedidoAlocacaoListener;
-import pt.itassets.lite.listeners.PedidosAlcoacaoListener;
+import pt.itassets.lite.listeners.PedidosAlocacaoListener;
 import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.utils.JSONParsers;
 
@@ -47,7 +48,7 @@ public class Singleton {
     private OperacoesItensListener operacoesItensListener;
     private GrupoItensListener grupoItensListener;
     private OperacoesGruposListener operacoesGruposListener;
-    private PedidosAlcoacaoListener pedidosAlcoacaoListener;
+    private PedidosAlocacaoListener pedidosAlocacaoListener;
     private OperacoesPedidoAlocacaoListener operacoesPedidoAlocacaoListener;
 
     private String SYSTEM_DOMAIN = null;
@@ -243,9 +244,9 @@ public class Singleton {
         this.appSetupListener = appSetupListener;
     }
 
-    public void setPedidosAlcoacaoListener(PedidosAlcoacaoListener pedidosAlcoacaoListener)
+    public void setPedidosAlocacaoListener(PedidosAlocacaoListener pedidosAlocacaoListener)
     {
-        this.pedidosAlcoacaoListener = pedidosAlcoacaoListener;
+        this.pedidosAlocacaoListener = pedidosAlocacaoListener;
     }
 
     public void setOperacoesPedidoAlocacaoListener(OperacoesPedidoAlocacaoListener operacoesPedidoAlocacaoListener)
@@ -375,7 +376,7 @@ public class Singleton {
 
     //region Funções Interação com tabela local de Pedidos de Alocação
 
-    public ArrayList<PedidosAlcoacaoListener> getAlocacoesBD() {
+    public ArrayList<PedidosAlocacaoListener> getAlocacoesBD() {
         alocacoes = database.getAllAlocacoesDB();
         return new ArrayList(alocacoes);
     }
@@ -846,8 +847,8 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
 
-                if (pedidosAlcoacaoListener != null) {
-                    pedidosAlcoacaoListener.onRefreshListaAlocacoes(database.getAllAlocacoesDB());
+                if (pedidosAlocacaoListener != null) {
+                    pedidosAlocacaoListener.onRefreshListaAlocacoes(database.getAllAlocacoesDB());
                 }
             } else {
                 JsonObjectRequest req = new JsonObjectRequest(
@@ -859,8 +860,8 @@ public class Singleton {
                         public void onResponse(JSONObject response) {
                             alocacoes = JSONParsers.parserJsonAlocacoes(response, context);
                             adicionarAlocacoesBD(alocacoes);
-                            if (pedidosAlcoacaoListener!= null) {
-                                pedidosAlcoacaoListener.onRefreshListaAlocacoes(alocacoes);
+                            if (pedidosAlocacaoListener != null) {
+                                pedidosAlocacaoListener.onRefreshListaAlocacoes(alocacoes);
                             }
                         }
                     },
@@ -929,5 +930,101 @@ public class Singleton {
         }
     }
 
+    public void EditarAlocacaoAPI(final Alocacao alocacao, final Context context)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
+            } else {
+                Map<String, String> jsonBody = new HashMap<>();
+                jsonBody.put("dataFim", alocacao.getDataFim());
+                jsonBody.put("status", String.valueOf(alocacao.getStatus()));
+
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.PUT,
+                        SYSTEM_DOMAIN + "pedidoalocacao/" + alocacao.getId(),
+                        new JSONObject(jsonBody),
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                editarAlocacaoBD(alocacao);
+
+                                if (operacoesPedidoAlocacaoListener != null) {
+                                    operacoesPedidoAlocacaoListener.onAlocacaoOperacaoRefresh(Helpers.OPERACAO_EDIT);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if (error != null) {
+                                    if (error.networkResponse != null) {
+                                        Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                }
+                                Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    public void RemoverAlocacaoAPI(final Alocacao alocacao, final Context context)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
+            } else {
+                StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + "pedidoalocacao/" + alocacao.getId(), new Response.Listener<String>(){
+                    @Override
+                    public void onResponse(String response) {
+                        removerAlocacaoBD(alocacao.getId());
+
+                        if (pedidosAlocacaoListener != null) {
+                            pedidosAlocacaoListener.onRefreshListaAlocacoes(alocacoes);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        if (error != null) {
+                            if (error.networkResponse != null) {
+                                Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+                        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
     //endregion
 }
