@@ -318,4 +318,49 @@ public class JSONParsers {
         }
         return alocacoes;
     }
+
+    public static Alocacao parserJsonAlocacao(JSONObject response)
+    {
+        Alocacao pedidoAlocacao = null;
+
+        try
+        {
+            if(response.getInt("status") == 200 || response.getInt("status") == 201)
+            {
+                JSONObject data = response.getJSONObject("data");
+
+                String item = null, grupo = null;
+
+                if(!data.isNull("item"))
+                {
+                    item = data.getJSONObject("item").getString("nome");
+                }
+
+                if(!data.isNull("grupoItens"))
+                {
+                    grupo = data.getJSONObject("grupoItens").getString("nome");
+                }
+
+                pedidoAlocacao = new Alocacao(
+                        data.getInt("id"),
+                        data.getInt("status"),
+                        data.getString("dataPedido"),
+                        data.isNull("dataInicio") ? null : data.getString("dataInicio"),
+                        data.isNull("dataFim") ? null : data.getString("dataFim"),
+                        data.isNull("obs") ? null : data.getString("obs"),
+                        data.isNull("obsResposta") ? null : data.getString("obsResposta"),
+                        data.getInt("requerente_id"),
+                        data.isNull("aprovador_id") ? null : data.getInt("aprovador_id"),
+                        item,
+                        grupo
+                );
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        return pedidoAlocacao;
+    }
 }

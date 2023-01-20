@@ -42,7 +42,7 @@
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tv_dataPedido"
+                android:text="@string/txt_dataPedido"
                 android:textStyle="bold"
                 android:textSize="15sp" />
 
@@ -64,7 +64,7 @@
                 android:id="@+id/textView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tv_item"
+                android:text="@string/txt_item"
                 android:textStyle="bold"
                 android:textSize="15sp" />
 
@@ -86,7 +86,7 @@
                 android:id="@+id/textView9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tv_status"
+                android:text="@string/txt_status"
                 android:textStyle="bold"
                 android:textSize="15sp" />
 

@@ -29,6 +29,7 @@ import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.listeners.LoginListener;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.listeners.OperacoesItensListener;
+import pt.itassets.lite.listeners.OperacoesPedidoAlocacaoListener;
 import pt.itassets.lite.listeners.PedidosAlcoacaoListener;
 import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.utils.JSONParsers;
@@ -47,6 +48,7 @@ public class Singleton {
     private GrupoItensListener grupoItensListener;
     private OperacoesGruposListener operacoesGruposListener;
     private PedidosAlcoacaoListener pedidosAlcoacaoListener;
+    private OperacoesPedidoAlocacaoListener operacoesPedidoAlocacaoListener;
 
     private String SYSTEM_DOMAIN = null;
 
@@ -241,8 +243,14 @@ public class Singleton {
         this.appSetupListener = appSetupListener;
     }
 
-    public void setPedidosAlcoacaoListener(PedidosAlcoacaoListener pedidosAlcoacaoListener) {
+    public void setPedidosAlcoacaoListener(PedidosAlcoacaoListener pedidosAlcoacaoListener)
+    {
         this.pedidosAlcoacaoListener = pedidosAlcoacaoListener;
+    }
+
+    public void setOperacoesPedidoAlocacaoListener(OperacoesPedidoAlocacaoListener operacoesPedidoAlocacaoListener)
+    {
+        this.operacoesPedidoAlocacaoListener = operacoesPedidoAlocacaoListener;
     }
 
     //endregion
@@ -836,7 +844,7 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
 
                 if (pedidosAlcoacaoListener != null) {
                     pedidosAlcoacaoListener.onRefreshListaAlocacoes(database.getAllAlocacoesDB());
@@ -862,6 +870,50 @@ public class Singleton {
                             Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
+                )
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    public void createPedidoAlocacao(final Context context, final JSONObject jsonBody)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
+            } else {
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.POST,
+                        SYSTEM_DOMAIN + "pedidoalocacao",
+                        jsonBody,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                adicionarAlocacaoBD(JSONParsers.parserJsonAlocacao(response));
+
+                                if (operacoesPedidoAlocacaoListener!= null) {
+                                    operacoesPedidoAlocacaoListener.onAlocacaoOperacaoRefresh(Helpers.OPERACAO_ADD);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }
                 )
                 {
                     @Override

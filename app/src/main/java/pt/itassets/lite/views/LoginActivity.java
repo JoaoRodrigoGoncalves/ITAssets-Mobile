@@ -1,38 +1,22 @@
 package pt.itassets.lite.views;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONObject;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.listeners.LoginListener;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
-import pt.itassets.lite.utils.JSONParsers;
 
 public class LoginActivity extends AppCompatActivity implements LoginListener {
     private EditText etEmail;
@@ -93,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         etPassword.setError(null);
 
         if(!Helpers.isEmailValido(email)) {
-            etEmail.setError(getString(R.string.email_invalido));
+            etEmail.setError(getString(R.string.txt_email_invalido));
             return;
         }
 
