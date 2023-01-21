@@ -16,11 +16,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -638,7 +640,7 @@ public class Singleton {
         }
     }
 
-    public void AdicionarGrupoItensAPI(final GrupoItens gruposItens, final Context context){
+    public void AdicionarGrupoItensAPI(final GrupoItens gruposItens,final ArrayList<Integer> itemSelected, final Context context){
         SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
@@ -646,9 +648,18 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
-                Map<String, String> jsonBody = new HashMap<>();
+
+
+                Map<String, Object> jsonBody = new HashMap<>();
                 jsonBody.put("nome", gruposItens.getNome());
-                jsonBody.put("notas", gruposItens.getNotas());
+                if (gruposItens.getNotas() != null)
+                {
+                    jsonBody.put("notas", gruposItens.getNotas());
+                }
+                jsonBody.put("itens", itemSelected);
+
+                JSONObject teste =new JSONObject(jsonBody);
+
 
                 JsonObjectRequest req = new JsonObjectRequest(
                     Request.Method.POST,

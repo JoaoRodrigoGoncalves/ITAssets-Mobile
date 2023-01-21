@@ -61,9 +61,9 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
                                 tiNota.getEditText().getText().toString().trim()
 
                         );
-                        //TODO:Passar esta merda para o singelton adicionar grupo itens API
-                        ArrayList<Item> items1 = adapter.getArrayitems();
-                        Singleton.getInstance(getBaseContext()).AdicionarGrupoItensAPI(grupoItensAux, getBaseContext());
+
+                        ArrayList<Integer> itemSelected = adapter.getArrayitems();
+                        Singleton.getInstance(getBaseContext()).AdicionarGrupoItensAPI(grupoItensAux,itemSelected, getBaseContext());
                     }
                 }
             }

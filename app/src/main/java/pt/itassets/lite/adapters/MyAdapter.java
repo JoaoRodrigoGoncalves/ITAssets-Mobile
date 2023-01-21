@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,27 +18,28 @@ import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 
 public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
-    Context c;
-    ArrayList<Item> mdata;
-    ArrayList<Item> itens;
+    
+    Context context;
+    ArrayList<Item> item;
+    ArrayList<Integer> itens;
 
-    public MyAdapter(Context c, ArrayList<Item> mdata) {
-        this.c = c;
-        this.mdata = mdata;
+    public MyAdapter(Context context, ArrayList<Item> item) {
+        this.context = context;
+        this.item = item;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(c).inflate(R.layout.list_view, viewGroup, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.list_view, viewGroup, false);
         itens=new ArrayList<>();
         return new MyViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int i) {
-        holder.checkbox_Item.setText(mdata.get(i).getNome());
-        holder.checkbox_Item.setId(mdata.get(i).getId());
+        holder.checkbox_Item.setText(item.get(i).getNome());
+        holder.checkbox_Item.setId(item.get(i).getId());
 
 
         holder.checkbox_Item.setOnClickListener(new View.OnClickListener() {
@@ -46,21 +48,21 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
                 if(holder.checkbox_Item.isChecked())
                 {
-                    Item item= Singleton.getInstance(c.getApplicationContext()).getItem(holder.checkbox_Item.getId());
-                    itens.add(item);
-                    itens.size();
+
+                    itens.add(holder.checkbox_Item.getId());
                 }
                 else
                 {
-                    Item item= Singleton.getInstance(c.getApplicationContext()).getItem(holder.checkbox_Item.getId());
-                    itens.remove(item.getId());
+                    Integer itemId=holder.checkbox_Item.getId();
+                    itens.remove(itemId);
+                    itens.size();
                 }
             }
         });
     }
 
     public List getListItems() {
-        return mdata;
+        return item;
     }
 
     public ArrayList getArrayitems()
@@ -70,7 +72,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     @Override
     public int getItemCount() {
-        return mdata.size();
+        return item.size();
     }
 
 }
