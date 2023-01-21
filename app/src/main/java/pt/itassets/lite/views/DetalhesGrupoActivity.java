@@ -75,23 +75,7 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
             }
         }
 
-        //TODO: Fazer os itens aparecer na view
-        /*ArrayList<Item> item = Singleton.getInstance(this).getItensBD();
-
-        for (Item i:item) {
-            if(grupoItens.getNome().equals(i.getNome_Categoria()))
-            {
-                item_Grupo.addAll(item);
-            }
-        }
-
-        lvItens.setAdapter(new ListaItensAdaptador(this, item_Categoria));
-
-        System.out.println(grupoItens);*/
-
-
-
-        //vItens.setAdapter();
+        onRefreshListaItens(Singleton.getInstance(this).getItensdoGrupoItem(grupoId));
     }
 
     //Icons no menu superior (edit e remove)
@@ -142,5 +126,11 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
                 })
                 .setIcon(android.R.drawable.ic_delete)
                 .show();
+    }
+
+    public void onRefreshListaItens(ArrayList<Item> listaItens) {
+        if(listaItens != null){
+            lvItens.setAdapter(new ListaItensAdaptador(this, listaItens));
+        }
     }
 }

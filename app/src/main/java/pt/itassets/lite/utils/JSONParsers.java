@@ -15,6 +15,7 @@ import java.util.Map;
 
 import pt.itassets.lite.models.Alocacao;
 import pt.itassets.lite.models.GrupoItens;
+import pt.itassets.lite.models.GrupoItensItem;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.models.Site;
@@ -362,5 +363,44 @@ public class JSONParsers {
         }
 
         return pedidoAlocacao;
+    }
+
+    public static ArrayList<GrupoItensItem> parserJsonGruposItensItem(JSONObject response)
+    {
+        ArrayList<GrupoItensItem> grupoItensItems = null;
+        try{
+
+            for(int i=0; i<response.length(); i++){
+                grupoItensItems = new  ArrayList<>();
+                if(response.getInt("status") == 200)
+                {
+                    JSONArray dados = response.getJSONArray("data");
+
+
+                    for (int j = 0; j < dados.length(); j++) {
+
+
+                        JSONObject thisObject = dados.getJSONObject(j);
+                        JSONArray itens=thisObject.getJSONArray("itens");
+
+                        for (int k=0;k<itens.length();k++)
+                        {
+                            JSONObject thisitem = itens.getJSONObject(k);
+
+                            GrupoItensItem auxGrupoItensItem=new GrupoItensItem(
+                                    k,
+                                    thisObject.getInt("id"),
+                                    thisitem.getInt("id")
+                            );
+                            grupoItensItems.add(auxGrupoItensItem);
+                        }
+
+                    }
+                }
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return grupoItensItems;
     }
 }

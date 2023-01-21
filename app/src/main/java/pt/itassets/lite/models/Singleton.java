@@ -39,6 +39,7 @@ public class Singleton {
     private ArrayList<Item> itens;
     private ArrayList<GrupoItens> grupoItens;
     private ArrayList<Alocacao> alocacoes;
+    private ArrayList<GrupoItensItem> grupoItensItems;
     private static Singleton instance=null;
     private static RequestQueue volleyQueue=null;
     private DBHelper database = null;
@@ -317,6 +318,15 @@ public class Singleton {
     {
         Site aux = database.getSiteDB(id);
         return aux;
+    }
+
+    // region Funções interação com a tabela local de Grupo Item Itens
+
+    public void adicionarGrupoItensItemBD(ArrayList<GrupoItensItem> grupoItensItems){
+        database.removerAllGrupoItensItemDB();
+        for(GrupoItensItem i : grupoItensItems){
+            database.adicionarGrupoItensItemDB(i);
+        }
     }
 
     public void adicionarSiteDB(Site site)
@@ -637,32 +647,31 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
 
                 if (grupoItensListener != null) {
                     grupoItensListener.onRefreshListaGrupoItens(database.getAllGruposItensDB());
                 }
             } else {
-                JsonObjectRequest req = new JsonObjectRequest(
-                    Request.Method.GET,
-                    SYSTEM_DOMAIN + "grupoitens",
-                    null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            grupoItens = JSONParsers.parserJsonGruposItens(response);
-                            adicionarGruposItensBD(grupoItens);
-                            if (grupoItensListener != null) {
-                                grupoItensListener.onRefreshListaGrupoItens(grupoItens);
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,SYSTEM_DOMAIN + "grupoitens",null,new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        grupoItens = JSONParsers.parserJsonGruposItens(response);
+                        adicionarGruposItensBD(grupoItens);
+                        //faz a tanela de relações
+                        grupoItensItems = JSONParsers.parserJsonGruposItensItem(response);
+                        adicionarGrupoItensItemBD(grupoItensItems);
+                        if (grupoItensListener != null) {
+                            grupoItensListener.onRefreshListaGrupoItens(grupoItens);
                         }
                     }
+                },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }
                 )
                 {
                     @Override
@@ -930,6 +939,7 @@ public class Singleton {
         }
     }
 
+
     public void EditarAlocacaoAPI(final Alocacao alocacao, final Context context)
     {
         SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
@@ -1027,4 +1037,91 @@ public class Singleton {
         }
     }
     //endregion
+
+    //region Grupo Itens Item
+
+    public ArrayList<Item> getItensdoGrupoItem(Integer grupoitem_id)
+    {
+        ArrayList<Item> item=new ArrayList<>();
+        ArrayList<GrupoItensItem> grupoItensItems=database.findGrupoItensItem(grupoitem_id);
+
+        for (int i=0; i<grupoItensItems.size();i++)
+        {
+            Integer aux=grupoItensItems.get(i).getItem_id();
+            item.add(database.FindItemDB(aux));
+        }
+        return item;
+
+    }
+
+    public ArrayList getItensSemGrupoItem()
+    {
+        ArrayList<Item> item=getItensBD();
+        ArrayList<Item> itensSemGrupo=database.checkItemGrupo(item);
+        return itensSemGrupo;
+
+    }
+
+    public void AdicionarGrupoItensAPI(final GrupoItens gruposItens,final ArrayList<Integer> itemSelected, final Context context){
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
+            } else {
+
+
+                Map<String, Object> jsonBody = new HashMap<>();
+                jsonBody.put("nome", gruposItens.getNome());
+                if (gruposItens.getNotas() != null)
+                {
+                    jsonBody.put("notas", gruposItens.getNotas());
+                }
+                jsonBody.put("itens", itemSelected);
+
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.POST,
+                        SYSTEM_DOMAIN + "grupoitens",
+                        new JSONObject(jsonBody),
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                adicionarGrupoItensBD(JSONParsers.parserJsonGrupoItens(response.toString()));
+                                if (operacoesGruposListener != null) {
+                                    operacoesGruposListener.onGrupoOperacoesRefresh(Helpers.OPERACAO_ADD);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if(error != null)
+                                {
+                                    if(error.networkResponse != null)
+                                    {
+                                        Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+                                }
+                                Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                )
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+    //endregion
+
+
 }
