@@ -17,6 +17,7 @@ import pt.itassets.lite.models.Alocacao;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.GrupoItensItem;
 import pt.itassets.lite.models.Item;
+import pt.itassets.lite.models.PedidoReparacao;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.models.Site;
 
@@ -410,5 +411,40 @@ public class JSONParsers {
             e.printStackTrace();
         }
         return grupoItensItems;
+    }
+
+    public static ArrayList<PedidoReparacao> parserJsonReparacoes(JSONObject response, Context context)
+    {
+        ArrayList<PedidoReparacao> reparacoes = null;
+        try{
+            for(int i=0; i<response.length(); i++){
+
+                if(response.getInt("status") == 200)
+                {
+                    JSONArray dados = response.getJSONArray("data");
+                    reparacoes = new ArrayList<>();
+
+                    for (int j = 0; j < dados.length(); j++) {
+                        JSONObject thisObject = dados.getJSONObject(j);
+
+                        PedidoReparacao auxReparacao = new PedidoReparacao(
+                                thisObject.getInt("id"),
+                                thisObject.getInt("requerente_id"),
+                                thisObject.isNull("responsavel_id") ? null : thisObject.getInt("responsavel_id"),
+                                thisObject.getInt("status"),
+                                thisObject.isNull("descricaoProblema") ? null : thisObject.getString("descricaoProblema"),
+                                thisObject.isNull("respostaObs") ? null : thisObject.getString("respostaObs"),
+                                thisObject.getString("dataPedido"),
+                                thisObject.isNull("dataInicio") ? null : thisObject.getString("dataInicio"),
+                                thisObject.isNull("dataFim") ? null : thisObject.getString("dataFim")
+                        );
+                        reparacoes.add(auxReparacao);
+                    }
+                }
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return reparacoes;
     }
 }

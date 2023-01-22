@@ -20,7 +20,7 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/Num_Pedido_Alocacao"
+                android:text="@string/Num_Pedido_Reparacao"
                 android:textStyle="bold"
                 android:textSize="15sp" />
 
@@ -48,28 +48,6 @@
 
             <TextView
                 android:id="@+id/tvDataPedido"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:layout_marginStart="5dp"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="5dp">
-
-            <TextView
-                android:id="@+id/TV_tipo_objeto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/txt_item"
-                android:textStyle="bold"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/tvItemNome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"

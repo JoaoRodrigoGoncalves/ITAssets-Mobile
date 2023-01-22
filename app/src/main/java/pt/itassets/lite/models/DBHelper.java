@@ -33,13 +33,13 @@ public class DBHelper extends SQLiteOpenHelper {
             SITE_ID = "site_id",
             MORADA = "morada",
             COORDENADAS = "coordenadas",
-            DATA_PEDIDO = "dataPedido",
-            DATA_INICIO = "dataInicio",
-            DATA_FIM = "dataFim",
+            DATAPEDIDO = "dataPedido",
+            DATAINICIO = "dataInicio",
+            DATAFIM = "dataFim",
             DESCRICAO_PROBLEMA = "descricaoProblema",
             REQUERENTE_ID = "requerente_id",
             RESPONSAVEL_ID = "responsavel_id",
-            RESPOSTA_OBS = "respostaObs";
+            RESPOSTA_OBS = "respostaObs",
             OBS = "obs",
             OBSRESPOSTA = "obsResposta",
             NOME_REQUERENTE = "nome_requerente",
@@ -118,9 +118,9 @@ public class DBHelper extends SQLiteOpenHelper {
         String sqlCreateTablePedidoReparacao =
                 "CREATE TABLE " + TABLE_PEDIDO_REPARACAO + "(" +
                         ID + " INTEGER PRIMARY KEY," +
-                        DATA_PEDIDO + " TEXT NOT NULL," +
-                        DATA_INICIO + " TEXT," +
-                        DATA_FIM + " TEXT," +
+                        DATAPEDIDO + " TEXT NOT NULL," +
+                        DATAINICIO + " TEXT," +
+                        DATAFIM + " TEXT," +
                         DESCRICAO_PROBLEMA + " TEXT," +
                         REQUERENTE_ID + " INTEGER NOT NULL," +
                         RESPONSAVEL_ID + " INTEGER NOT NULL," +
@@ -409,9 +409,9 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(STATUS, pedido.getStatus());
         values.put(DESCRICAO_PROBLEMA, pedido.getDescricaoProblema());
         values.put(RESPOSTA_OBS, pedido.getRespostaObs());
-        values.put(DATA_PEDIDO, pedido.getDataPedido());
-        values.put(DATA_INICIO, pedido.getDataInicio());
-        values.put(DATA_FIM, pedido.getDataFim());
+        values.put(DATAPEDIDO, pedido.getDataPedido());
+        values.put(DATAINICIO, pedido.getDataInicio());
+        values.put(DATAFIM, pedido.getDataFim());
 
         // devolve -1 em caso de erro, ou o id do novo objeto (long)
         int id = (int) db.insert(TABLE_PEDIDO_REPARACAO, null, values);
@@ -420,27 +420,29 @@ public class DBHelper extends SQLiteOpenHelper {
             pedido.setId(id);
             return pedido;
         }
+        else
+        {
+            return null;
+        }
     }
     
-    public boolean editarPedidoReparacaoDB(Item item)
+    public boolean editarPedidoReparacaoDB(PedidoReparacao pedido)
     {
         ContentValues values = new ContentValues();
 
-        values.put(NOME, item.getNome());
-        values.put(SERIALNUMBER, item.getSerialNumber());
-        values.put(NOME_CATEGORIA, item.getNome_Categoria());
-        values.put(NOTAS, item.getNotas());
-        values.put(STATUS, item.getStatus());
-        values.put(SITE_ID, item.getSite_id());
+        values.put(STATUS, pedido.getStatus());
+        values.put(RESPOSTA_OBS, pedido.getRespostaObs());
+        values.put(DATAINICIO, pedido.getDataInicio());
+        values.put(DATAFIM, pedido.getDataFim());
 
         // devolve o número de linhas atualizadas
-        return db.update(TABLE_ITENS, values, ID+"=?", new String[]{String.valueOf(item.getId())})==1;
+        return db.update(TABLE_PEDIDO_REPARACAO, values, ID+"=?", new String[]{String.valueOf(pedido.getId())})==1;
     }
 
-    public boolean removerPedidoReparacaoDB(Item item)
+    public boolean removerPedidoReparacaoDB(PedidoReparacao pedido)
     {
         // db.delete devolve o número de linhas eliminadas
-        return db.delete(TABLE_ITENS, ID+"=?", new String[]{String.valueOf(item.getId())})==1;
+        return db.delete(TABLE_PEDIDO_REPARACAO, ID+"=?", new String[]{String.valueOf(pedido.getId())})==1;
     }
 
     public void removerAllPedidoReparacaoDB()
@@ -448,29 +450,32 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_PEDIDO_REPARACAO, null, null);
     }
 
-    public ArrayList<Item> getAllPedidosReparacaoDB()
+    public ArrayList<PedidoReparacao> getAllPedidosReparacaoDB()
     {
-        ArrayList<Item> itens = new ArrayList<>();
+        ArrayList<PedidoReparacao> pedidos = new ArrayList<>();
 
-        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID}, null, null, null, null, null);
+        Cursor cursor = db.query(TABLE_PEDIDO_REPARACAO, new String[]{ID, REQUERENTE_ID, RESPONSAVEL_ID, STATUS, DESCRICAO_PROBLEMA, RESPOSTA_OBS, DATAPEDIDO, DATAINICIO, DATAFIM},
+                null, null, null, null, null);
 
         if(cursor.moveToFirst())
         {
             do {
-                Item itemAux = new Item(
+                PedidoReparacao pedidoAux = new PedidoReparacao(
                                 cursor.getInt(0), //ID
-                                cursor.getString(1), //Nome
-                                (cursor.isNull(2) ? null : cursor.getString(2)), //Serial
-                                (cursor.isNull(3) ? null : cursor.getString(3)), // Notas
-                                cursor.getInt(4), // status
-                                (cursor.isNull(5) ? null : cursor.getString(5)), // categoria
-                                (cursor.isNull(6) ? null : cursor.getInt(6)) // site
+                                cursor.getInt(1), //Requerente
+                                (cursor.isNull(2) ? null : cursor.getInt(8)), // Aprovador
+                                cursor.getInt(3), // status
+                                (cursor.isNull(4) ? null : cursor.getString(5)), //descriçãoProblema
+                                (cursor.isNull(5) ? null : cursor.getString(6)), //respostaObs
+                                cursor.getString(6), //DataPedido
+                                cursor.getString(7), //DataInicio
+                                cursor.getString(8) //DataFim
                         );
-                        itens.add(itemAux);
+                        pedidos.add(pedidoAux);
             }while(cursor.moveToNext());
                 cursor.close();
         }
-        return itens;
+        return pedidos;
     }
 
     //endregion

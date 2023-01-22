@@ -32,6 +32,7 @@ import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.listeners.OperacoesItensListener;
 import pt.itassets.lite.listeners.OperacoesPedidoAlocacaoListener;
 import pt.itassets.lite.listeners.PedidosAlocacaoListener;
+import pt.itassets.lite.listeners.PedidosReparacaoListener;
 import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.utils.JSONParsers;
 
@@ -40,6 +41,7 @@ public class Singleton {
     private ArrayList<GrupoItens> grupoItens;
     private ArrayList<Alocacao> alocacoes;
     private ArrayList<GrupoItensItem> grupoItensItems;
+    private ArrayList<PedidoReparacao> reparacoes;
     private static Singleton instance=null;
     private static RequestQueue volleyQueue=null;
     private DBHelper database = null;
@@ -51,6 +53,7 @@ public class Singleton {
     private OperacoesGruposListener operacoesGruposListener;
     private PedidosAlocacaoListener pedidosAlocacaoListener;
     private OperacoesPedidoAlocacaoListener operacoesPedidoAlocacaoListener;
+    private PedidosReparacaoListener pedidosReparacaoListener;
 
     private String SYSTEM_DOMAIN = null;
 
@@ -255,6 +258,11 @@ public class Singleton {
         this.operacoesPedidoAlocacaoListener = operacoesPedidoAlocacaoListener;
     }
 
+    public void setPedidosReparacaoListener(PedidosReparacaoListener pedidosReparacaoListener)
+    {
+        this.pedidosReparacaoListener = pedidosReparacaoListener;
+    }
+
     //endregion
 
     //region Funções Interação com tabela local de Itens
@@ -450,6 +458,49 @@ public class Singleton {
         Alocacao auxAlocacao = getAlocacao(id);
         if(auxAlocacao != null){
             database.removerAlocacaoDB(auxAlocacao);
+        }
+    }
+
+    //endregion
+
+    //region Funções Interação com tabela local de Pedidos de Reparação
+
+    public ArrayList<PedidosReparacaoListener> getReparacoesBD() {
+        reparacoes = database.getAllPedidosReparacaoDB();
+        return new ArrayList(reparacoes);
+    }
+
+    public PedidoReparacao getReparacao(Integer id){
+        for(PedidoReparacao i:reparacoes){
+            if(i.getId()==id){
+                return i;
+            }
+        }
+        return null;
+    }
+
+    public void adicionarReparacoesBD(ArrayList<PedidoReparacao> reparacoes){
+        database.removerAllPedidoReparacaoDB();
+        for(PedidoReparacao i : reparacoes){
+            adicionarReparacaoBD(i);
+        }
+    }
+
+    public void adicionarReparacaoBD(PedidoReparacao i){
+        database.adicionarPedidoReparacaoDB(i);
+    }
+
+    public void editarReparacaoBD(PedidoReparacao i){
+        PedidoReparacao auxReparacao = getReparacao(i.getId());
+        if(auxReparacao!=null){
+            database.editarPedidoReparacaoDB(i);
+        }
+    }
+
+    public void removerReparacaoBD(int id){
+        PedidoReparacao auxReparacao = getReparacao(id);
+        if(auxReparacao != null){
+            database.removerPedidoReparacaoDB(auxReparacao);
         }
     }
 
@@ -1060,6 +1111,57 @@ public class Singleton {
 
     public GrupoItens getActiveGrupoForItem(Integer item_id) {
         return database.getActiveGrupoForItem(item_id);
+    }
+    //endregion
+
+    //region Funções Interação com API Pedidos de Reparação
+
+    public void getUserReparacoesAPI(final Context context)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
+                reparacoes = database.getAllPedidosReparacaoDB();
+                if (pedidosReparacaoListener != null) {
+                    pedidosReparacaoListener.onRefreshListaReparacoes(reparacoes);
+                }
+            } else {
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.GET,
+                        SYSTEM_DOMAIN + "pedidoreparacao/user/" + preferences.getInt(Helpers.USER_ID, -1),
+                        null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                reparacoes = JSONParsers.parserJsonReparacoes(response, context);
+                                adicionarReparacoesBD(reparacoes);
+                                if (pedidosReparacaoListener != null) {
+                                    pedidosReparacaoListener.onRefreshListaReparacoes(reparacoes);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Helpers.parseVolleyErrors(context, error);
+                            }
+                        }
+                )
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
     }
     //endregion
 

@@ -1,9 +1,19 @@
 package pt.itassets.lite.models;
 
+import android.content.Context;
+
+import pt.itassets.lite.R;
+
 public class PedidoReparacao
 {
     private Integer id, requerente_id, responsavel_id, status;
     private String descricaoProblema, respostaObs, dataPedido, dataInicio, dataFim;
+
+    public static final int STATUS_ABERTO = 8;
+    public static final int STATUS_EM_PREPARACAO = 10;
+    public static final int STATUS_CONCLUIDO = 4;
+    public static final int STATUS_EM_REVISAO = 6;
+    public static final int STATUS_CANCELADO = 0;
 
     public PedidoReparacao(
             Integer id, Integer requerente_id, Integer responsavel_id, Integer status,
@@ -19,6 +29,30 @@ public class PedidoReparacao
         this.dataPedido = dataPedido;
         this.dataInicio = dataInicio;
         this.dataFim = dataFim;
+    }
+
+    public String humanReadableStatus(final Context context)
+    {
+        switch (this.status)
+        {
+            case STATUS_ABERTO:
+                return context.getString(R.string.txt_aberto);
+
+            case STATUS_EM_PREPARACAO:
+                return context.getString(R.string.txt_emPreparacao);
+
+            case STATUS_CONCLUIDO:
+                return context.getString(R.string.txt_concluido);
+
+            case STATUS_EM_REVISAO:
+                return context.getString(R.string.txt_emRevisao);
+
+            case STATUS_CANCELADO:
+                return context.getString(R.string.txt_cancelado);
+
+            default:
+                return String.valueOf(this.status);
+        }
     }
 
     public Integer getId() {

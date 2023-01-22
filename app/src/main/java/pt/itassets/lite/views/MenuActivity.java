@@ -28,6 +28,7 @@ import java.util.Objects;
 import pt.itassets.lite.R;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
+import pt.itassets.lite.views.reparacao.ListaReparacoesFragment;
 
 public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
     BottomNavigationView bottomNav;
@@ -85,8 +86,9 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                 return true;
 
             case R.id.item_reparar:
-                Fragment frag_b = new ListaGrupoItensFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, frag_b).commit();
+                Fragment ListaReparacoes = new ListaReparacoesFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, ListaReparacoes).commit();
+                setTitle(R.string.txt_reparar);
                 return true;
 
             case R.id.item_user:

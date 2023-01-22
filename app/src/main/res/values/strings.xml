@@ -68,4 +68,9 @@
     <string name="devolver">Devolver</string>
     <string name="adicionar_grupo_de_itens">Adicionar Grupo de Itens</string>
     <string name="txt_grupo">Grupo</string>
+    <string name="txt_emRevisao">Em Revisão</string>
+    <string name="txt_emPreparacao">Em Preparação</string>
+    <string name="txt_concluido">Concluído</string>
+    <string name="Num_Pedido_Reparacao">Pedido de Reparação Nº</string>
+    <string name="Num_Pedido_Alocacao">Pedido Nº</string>
 </resources>
