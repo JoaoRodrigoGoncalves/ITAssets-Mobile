@@ -5,13 +5,21 @@ import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import pt.itassets.lite.R;
+import pt.itassets.lite.adapters.MyAdapter;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.models.GrupoItens;
+import pt.itassets.lite.models.GrupoItensItem;
+import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
 
@@ -20,6 +28,7 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
     private GrupoItens grupoItens;
     private TextInputLayout tiNome, tiNota;
     private FloatingActionButton fabAdicionarGrupoItens;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +39,15 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
         tiNome = findViewById(R.id.tiNome);
         tiNota = findViewById(R.id.tiNota);
         fabAdicionarGrupoItens = findViewById(R.id.fabAdicionarGrupoItens);
+        recyclerView = findViewById(R.id.rv);
         Singleton.getInstance(getApplicationContext()).setOperacoesGruposListener(this);
+
+        ArrayList<Item> items = Singleton.getInstance(this).getItensSemGrupoItem();
+
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        MyAdapter adapter = new MyAdapter(this, items);
+        recyclerView.setAdapter(adapter);
 
         fabAdicionarGrupoItens.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,9 +58,12 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
                                 0,
                                 null,
                                 tiNome.getEditText().getText().toString().trim(),
-                                tiNota.getEditText().getText().toString().trim()
+                                tiNota.getEditText().getText().toString().trim(),
+                                null
                         );
-                        Singleton.getInstance(getBaseContext()).AdicionarGrupoItensAPI(grupoItensAux, getBaseContext());
+
+                        ArrayList<Integer> itemSelected = adapter.getArrayitems();
+                        Singleton.getInstance(getBaseContext()).AdicionarGrupoItensAPI(grupoItensAux,itemSelected, getBaseContext());
                     }
                 }
             }

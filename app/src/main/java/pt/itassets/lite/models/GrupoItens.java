@@ -2,14 +2,15 @@ package pt.itassets.lite.models;
 
 public class GrupoItens {
 
-    private Integer id, status;
+    private Integer id, status, pedido_alocacao_id;
     private String nome, notas;
 
-    public GrupoItens(Integer id, Integer status, String nome, String notas) {
+    public GrupoItens(Integer id, Integer status, String nome, String notas, Integer pedido_alocacao_id) {
         this.id = id;
         this.status = status;
         this.nome = nome;
         this.notas = notas;
+        this.pedido_alocacao_id = pedido_alocacao_id;
     }
 
 
@@ -43,5 +44,13 @@ public class GrupoItens {
 
     public void setNotas(String notas) {
         this.notas = notas;
+    }
+
+    public Integer getPedido_alocacao_id() {
+        return pedido_alocacao_id;
+    }
+
+    public void setPedido_alocacao_id(Integer pedido_alocacao_id) {
+        this.pedido_alocacao_id = pedido_alocacao_id;
     }
 }

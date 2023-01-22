@@ -15,7 +15,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -31,12 +30,16 @@ import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.listeners.LoginListener;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.listeners.OperacoesItensListener;
+import pt.itassets.lite.listeners.OperacoesPedidoAlocacaoListener;
+import pt.itassets.lite.listeners.PedidosAlocacaoListener;
 import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.utils.JSONParsers;
 
 public class Singleton {
     private ArrayList<Item> itens;
     private ArrayList<GrupoItens> grupoItens;
+    private ArrayList<Alocacao> alocacoes;
+    private ArrayList<GrupoItensItem> grupoItensItems;
     private static Singleton instance=null;
     private static RequestQueue volleyQueue=null;
     private DBHelper database = null;
@@ -46,6 +49,9 @@ public class Singleton {
     private OperacoesItensListener operacoesItensListener;
     private GrupoItensListener grupoItensListener;
     private OperacoesGruposListener operacoesGruposListener;
+    private PedidosAlocacaoListener pedidosAlocacaoListener;
+    private OperacoesPedidoAlocacaoListener operacoesPedidoAlocacaoListener;
+
     private String SYSTEM_DOMAIN = null;
 
     public static synchronized Singleton getInstance(Context context)
@@ -239,6 +245,16 @@ public class Singleton {
         this.appSetupListener = appSetupListener;
     }
 
+    public void setPedidosAlocacaoListener(PedidosAlocacaoListener pedidosAlocacaoListener)
+    {
+        this.pedidosAlocacaoListener = pedidosAlocacaoListener;
+    }
+
+    public void setOperacoesPedidoAlocacaoListener(OperacoesPedidoAlocacaoListener operacoesPedidoAlocacaoListener)
+    {
+        this.operacoesPedidoAlocacaoListener = operacoesPedidoAlocacaoListener;
+    }
+
     //endregion
 
     //region Funções Interação com tabela local de Itens
@@ -304,6 +320,17 @@ public class Singleton {
         return aux;
     }
 
+    //endregion
+
+    // region Funções interação com a tabela local de Grupo Item Itens
+
+    public void adicionarGrupoItensItemBD(ArrayList<GrupoItensItem> grupoItensItems){
+        database.removerAllGrupoItensItemDB();
+        for(GrupoItensItem i : grupoItensItems){
+            database.adicionarGrupoItensItemDB(i);
+        }
+    }
+
     public void adicionarSiteDB(Site site)
     {
         database.adicionarSiteDB(site);
@@ -359,6 +386,75 @@ public class Singleton {
 
     //endregion
 
+    //region Funções Interação com tabela local de Itens de um Grupo Itens
+
+    public ArrayList<Item> getItensdoGrupoItem(Integer grupoitem_id)
+    {
+        ArrayList<Item> item=new ArrayList<>();
+        ArrayList<GrupoItensItem> grupoItensItems=database.findGrupoItensItem(grupoitem_id);
+
+        for (int i=0; i<grupoItensItems.size();i++)
+        {
+            Integer aux=grupoItensItems.get(i).getItem_id();
+            item.add(database.FindItemDB(aux));
+        }
+        return item;
+
+    }
+
+    public ArrayList<Item> getItensSemGrupoItem()
+    {
+        ArrayList<Item> item=getItensBD();
+        ArrayList<Item> itensSemGrupo = database.checkItemGrupo(item);
+        return itensSemGrupo;
+
+    }
+
+    //endregion
+
+    //region Funções Interação com tabela local de Pedidos de Alocação
+
+    public ArrayList<PedidosAlocacaoListener> getAlocacoesBD() {
+        alocacoes = database.getAllAlocacoesDB();
+        return new ArrayList(alocacoes);
+    }
+
+    public Alocacao getAlocacao(Integer id){
+        for(Alocacao i:alocacoes){
+            if(i.getId()==id){
+                return i;
+            }
+        }
+        return null;
+    }
+
+    public void adicionarAlocacoesBD(ArrayList<Alocacao> alocacoes){
+        database.removerAllAlocacaoDB();
+        for(Alocacao i : alocacoes){
+            adicionarAlocacaoBD(i);
+        }
+    }
+
+    public void adicionarAlocacaoBD(Alocacao i){
+        database.adicionarAlocacaoDB(i);
+    }
+
+    public void editarAlocacaoBD(Alocacao i){
+        Alocacao auxAlocacao = getAlocacao(i.getId());
+        if(auxAlocacao!=null){
+            database.editarAlocacaoDB(i);
+        }
+    }
+
+    public void removerAlocacaoBD(int id){
+        Alocacao auxAlocacao = getAlocacao(id);
+        if(auxAlocacao != null){
+            database.removerAlocacaoDB(auxAlocacao);
+        }
+    }
+
+    //endregion
+
     //region Funções Interação com API Itens
 
     public void getAllItensAPI(final Context context){
@@ -408,10 +504,12 @@ public class Singleton {
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
-                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
+            
+                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                itens = database.getAllItensDB();
 
                 if (itensListener != null) {
-                    itensListener.onRefreshListaItens(database.getAllItensDB());
+                    itensListener.onRefreshListaItens(itens);
                 }
             } else {
                 JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, SYSTEM_DOMAIN + "item", null, new Response.Listener<JSONObject>() {
@@ -426,7 +524,7 @@ public class Singleton {
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                        Helpers.parseVolleyErrors(context, error);
                     }
                 }) {
                     @Override
@@ -473,15 +571,7 @@ public class Singleton {
                             new Response.ErrorListener() {
                                 @Override
                                 public void onErrorResponse(VolleyError error) {
-                                    if(error != null)
-                                    {
-                                        if(error.networkResponse != null)
-                                        {
-                                            Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                            return;
-                                        }
-                                    }
-                                    Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                                    Helpers.parseVolleyErrors(context, error);
                                 }
                             }
                     )
@@ -534,15 +624,7 @@ public class Singleton {
                         new Response.ErrorListener() {
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                if(error != null)
-                                {
-                                    if(error.networkResponse != null)
-                                    {
-                                        Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-                                }
-                                Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                                Helpers.parseVolleyErrors(context, error);
                             }
                         }
                 )
@@ -560,7 +642,8 @@ public class Singleton {
         }
     }
 
-    public void RemoverItemAPI(final Item item, final Context context){
+    public void RemoverItemAPI(final Item item, final Context context)
+    {
         SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
@@ -568,13 +651,12 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
-                JsonObjectRequest req = new JsonObjectRequest(
+                StringRequest req = new StringRequest(
                     Request.Method.DELETE,
                     SYSTEM_DOMAIN + "item/" + item.getId(),
-                    null,
-                     new Response.Listener<JSONObject>() {
+                     new Response.Listener<String>() {
                         @Override
-                        public void onResponse(JSONObject response) {
+                        public void onResponse(String response) {
                             removerItemBD(item.getId());
 
                             if (itensListener != null) {
@@ -585,13 +667,7 @@ public class Singleton {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            if (error != null) {
-                                if (error.networkResponse != null) {
-                                    Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-                            }
-                            Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                            Helpers.parseVolleyErrors(context, error);
                         }
                     }
                 )
@@ -621,31 +697,30 @@ public class Singleton {
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
-
+                grupoItens = database.getAllGruposItensDB();//ver se isto estava aqui antes
                 if (grupoItensListener != null) {
-                    grupoItensListener.onRefreshListaGrupoItens(database.getAllGruposItensDB());
+                    grupoItensListener.onRefreshListaGrupoItens(grupoItens);
                 }
             } else {
-                JsonObjectRequest req = new JsonObjectRequest(
-                    Request.Method.GET,
-                    SYSTEM_DOMAIN + "grupoitens",
-                    null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            grupoItens = JSONParsers.parserJsonGruposItens(response);
-                            adicionarGruposItensBD(grupoItens);
-                            if (grupoItensListener != null) {
-                                grupoItensListener.onRefreshListaGrupoItens(grupoItens);
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(context, error.getMessage(), Toast.LENGTH_LONG).show();
+                JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET,SYSTEM_DOMAIN + "grupoitens",null,new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        grupoItens = JSONParsers.parserJsonGruposItens(response);
+                        adicionarGruposItensBD(grupoItens);
+                        //faz a tanela de relações
+                        grupoItensItems = JSONParsers.parserJsonGruposItensItem(response);
+                        adicionarGrupoItensItemBD(grupoItensItems);
+                        if (grupoItensListener != null) {
+                            grupoItensListener.onRefreshListaGrupoItens(grupoItens);
                         }
                     }
+                },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Helpers.parseVolleyErrors(context, error);
+                            }
+                        }
                 )
                 {
                     @Override
@@ -661,7 +736,7 @@ public class Singleton {
         }
     }
 
-    public void AdicionarGrupoItensAPI(final GrupoItens gruposItens, final Context context){
+    public void AdicionarGrupoItensAPI(final GrupoItens gruposItens,final ArrayList<Integer> itemSelected, final Context context){
         SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
@@ -669,37 +744,33 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
-                Map<String, String> jsonBody = new HashMap<>();
+                Map<String, Object> jsonBody = new HashMap<>();
                 jsonBody.put("nome", gruposItens.getNome());
-                jsonBody.put("notas", gruposItens.getNotas());
+                if (gruposItens.getNotas() != null)
+                {
+                    jsonBody.put("notas", gruposItens.getNotas());
+                }
+                jsonBody.put("itens", itemSelected);
 
                 JsonObjectRequest req = new JsonObjectRequest(
-                    Request.Method.POST,
-                    SYSTEM_DOMAIN + "grupoitens",
-                    new JSONObject(jsonBody),
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            adicionarGrupoItensBD(JSONParsers.parserJsonGrupoItens(response.toString()));
-                            if (operacoesGruposListener != null) {
-                                operacoesGruposListener.onGrupoOperacoesRefresh(Helpers.OPERACAO_ADD);
-                            }
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            if(error != null)
-                            {
-                                if(error.networkResponse != null)
-                                {
-                                    Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                    return;
+                        Request.Method.POST,
+                        SYSTEM_DOMAIN + "grupoitens",
+                        new JSONObject(jsonBody),
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                adicionarGrupoItensBD(JSONParsers.parserJsonGrupoItens(response.toString()));
+                                if (operacoesGruposListener != null) {
+                                    operacoesGruposListener.onGrupoOperacoesRefresh(Helpers.OPERACAO_ADD);
                                 }
                             }
-                            Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Helpers.parseVolleyErrors(context, error);
+                            }
                         }
-                    }
                 )
                 {
                     @Override
@@ -744,15 +815,7 @@ public class Singleton {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            if(error != null)
-                            {
-                                if(error.networkResponse != null)
-                                {
-                                    Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-                            }
-                            Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                            Helpers.parseVolleyErrors(context, error);
                         }
                     }
                 )
@@ -770,7 +833,8 @@ public class Singleton {
         }
     }
 
-    public void RemoverGrupoItemAPI(final GrupoItens grupoItem, final Context context){
+    public void RemoverGrupoItemAPI(final GrupoItens grupoItem, final Context context)
+    {
         SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 
         SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
@@ -778,13 +842,12 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
             } else {
-                JsonObjectRequest req = new JsonObjectRequest(
+                StringRequest req = new StringRequest(
                     Request.Method.DELETE,
                     SYSTEM_DOMAIN + "grupoitens/" + grupoItem.getId(),
-                    null,
-                    new Response.Listener<JSONObject>() {
+                    new Response.Listener<String>() {
                         @Override
-                        public void onResponse(JSONObject response) {
+                        public void onResponse(String response) {
                             removerGrupoItensBD(grupoItem.getId());
 
                             if (grupoItensListener != null) {
@@ -795,13 +858,7 @@ public class Singleton {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            if (error != null) {
-                                if (error.networkResponse != null) {
-                                    Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                    return;
-                                }
-                            }
-                            Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+                            Helpers.parseVolleyErrors(context, error);
                         }
                     }
                 )
@@ -818,5 +875,192 @@ public class Singleton {
             }
         }
     }
+
     //endregion
+
+    //region Funções Interação com API Pedidos Alocação/ Requisição
+
+    public void getUserAlocacoesAPI(final Context context)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
+                alocacoes = database.getAllAlocacoesDB();
+                if (pedidosAlocacaoListener != null) {
+                    pedidosAlocacaoListener.onRefreshListaAlocacoes(alocacoes);
+                }
+            } else {
+                JsonObjectRequest req = new JsonObjectRequest(
+                    Request.Method.GET,
+                    SYSTEM_DOMAIN + "pedidoalocacao/user/" + preferences.getInt(Helpers.USER_ID, -1),
+                    null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            alocacoes = JSONParsers.parserJsonAlocacoes(response, context);
+                            adicionarAlocacoesBD(alocacoes);
+                            if (pedidosAlocacaoListener != null) {
+                                pedidosAlocacaoListener.onRefreshListaAlocacoes(alocacoes);
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Helpers.parseVolleyErrors(context, error);
+                        }
+                    }
+                )
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    public void createPedidoAlocacao(final Context context, final JSONObject jsonBody)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
+            } else {
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.POST,
+                        SYSTEM_DOMAIN + "pedidoalocacao",
+                        jsonBody,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                adicionarAlocacaoBD(JSONParsers.parserJsonAlocacao(response));
+
+                                if (operacoesPedidoAlocacaoListener!= null) {
+                                    operacoesPedidoAlocacaoListener.onAlocacaoOperacaoRefresh(Helpers.OPERACAO_ADD);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Helpers.parseVolleyErrors(context, error);
+                            }
+                        }
+                )
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+
+    public void EditarAlocacaoAPI(final Alocacao alocacao, final Context context)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
+            } else {
+                Map<String, String> jsonBody = new HashMap<>();
+                jsonBody.put("dataFim", alocacao.getDataFim());
+                jsonBody.put("status", String.valueOf(alocacao.getStatus()));
+
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.PUT,
+                        SYSTEM_DOMAIN + "pedidoalocacao/" + alocacao.getId(),
+                        new JSONObject(jsonBody),
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                editarAlocacaoBD(alocacao);
+
+                                if (operacoesPedidoAlocacaoListener != null) {
+                                    operacoesPedidoAlocacaoListener.onAlocacaoOperacaoRefresh(Helpers.OPERACAO_EDIT);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Helpers.parseVolleyErrors(context, error);
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    public void RemoverAlocacaoAPI(final Alocacao alocacao, final Context context)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
+            } else {
+                StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + "pedidoalocacao/" + alocacao.getId(), new Response.Listener<String>(){
+                    @Override
+                    public void onResponse(String response) {
+                        removerAlocacaoBD(alocacao.getId());
+
+                        if (pedidosAlocacaoListener != null) {
+                            pedidosAlocacaoListener.onRefreshListaAlocacoes(alocacoes);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Helpers.parseVolleyErrors(context, error);
+                    }
+                })
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    public GrupoItens getActiveGrupoForItem(Integer item_id) {
+        return database.getActiveGrupoForItem(item_id);
+    }
+    //endregion
+
 }

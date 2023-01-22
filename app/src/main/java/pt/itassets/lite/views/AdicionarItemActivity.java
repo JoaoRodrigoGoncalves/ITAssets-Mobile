@@ -45,6 +45,7 @@ public class AdicionarItemActivity extends AppCompatActivity implements Operacoe
                                 tiNota.getEditText().getText().toString().trim(),
                                 null,
                                 null,
+                                null,
                                 null
                         );
                         Singleton.getInstance(getBaseContext()).AdicionarItemAPI(itemAux, getBaseContext());

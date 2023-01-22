@@ -1,8 +1,6 @@
 package pt.itassets.lite.views;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -22,7 +20,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -72,21 +69,24 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.item_lista_itens:
                 Fragment listaItensFragment = new ListaItensFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, listaItensFragment).commit();
+                setTitle(R.string.txt_itens);
                 return true;
 
             case R.id.item_lista_grupos:
                 Fragment ListaGruposfrag = new ListaGrupoItensFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, ListaGruposfrag).commit();
+                setTitle(R.string.txt_grupo_itens);
+                return true;
+
+            case R.id.item_alocar:
+                Fragment ListaAlocacoes = new ListaPedidosAlocacaoFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, ListaAlocacoes).commit();
+                setTitle(R.string.txt_alocar);
                 return true;
 
             case R.id.item_reparar:
                 Fragment frag_b = new ListaGrupoItensFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, frag_b).commit();
-                return true;
-
-            case R.id.item_alocar:
-                Fragment frag_a = new ListaGrupoItensFragment();
-                getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, frag_a).commit();
                 return true;
 
             case R.id.item_user:

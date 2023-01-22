@@ -129,7 +129,7 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
     //Dialog para perguntar se o user pretende mesmo eliminar/ desativar o item
     private void dialogRemover(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.txt_remover_item + "")
+        builder.setTitle(getString(R.string.txt_remover_item))
                 .setMessage(R.string.txt_confirm_remover_item)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override

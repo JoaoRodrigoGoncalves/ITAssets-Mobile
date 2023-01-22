@@ -4,12 +4,18 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Patterns;
+import android.widget.Toast;
+
+import com.android.volley.VolleyError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+
+import pt.itassets.lite.R;
 
 public class Helpers {
     public static final String SHAREDPREFERENCES = "IT_ASSETS_SHAREDPREFERENCES";
@@ -18,6 +24,7 @@ public class Helpers {
     public static final String USER_ROLE = "IT_ASSETS_USER_ROLE";
     public static final String USER_NAME = "IT_ASSETS_USER_NOME";
     public static final String USER_EMAIL = "IT_ASSETS_USER_EMAIL";
+    public static final String USER_ID = "IT_ASSETS_USER_ID";
 
     public static final int OPERACAO_ADD = 10;
     public static final int OPERACAO_EDIT = 20;
@@ -77,6 +84,31 @@ public class Helpers {
         } catch (UnknownHostException e) {
             return false;
         }
+    }
+
+    public static void parseVolleyErrors(Context context, VolleyError error)
+    {
+        if(error != null)
+        {
+            if(error.networkResponse != null)
+            {
+                if(error.networkResponse.data != null)
+                {
+                    try
+                    {
+                        JSONObject erro = new JSONObject(new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                        Toast.makeText(context, String.valueOf(erro.getString("message")), Toast.LENGTH_SHORT).show();
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Erro interno: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    return;
+                }
+            }
+        }
+        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
     }
 
 }

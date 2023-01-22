@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import pt.itassets.lite.models.Alocacao;
 import pt.itassets.lite.models.GrupoItens;
+import pt.itassets.lite.models.GrupoItensItem;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.models.Site;
@@ -34,6 +36,7 @@ public class JSONParsers {
               "status": 200,
               "data": {
                   "token": "Fr3zCduYo5yAcaJ8Q_Nq-i__NdIj6YSl",
+                  "userID": 1,
                   "username": "nome",
                   "email": "email@itassets.pt",
                   "level": "administrator"
@@ -50,6 +53,7 @@ public class JSONParsers {
                 SharedPreferences.Editor editor =  preferences.edit();
 
                 editor.putString(Helpers.USER_TOKEN, data.getString("token"));
+                editor.putInt(Helpers.USER_ID, data.getInt("userID"));
                 editor.putString(Helpers.USER_NAME, data.getString("username"));
                 editor.putString(Helpers.USER_EMAIL, data.getString("email"));
                 editor.putString(Helpers.USER_ROLE, data.getString("level"));
@@ -141,7 +145,8 @@ public class JSONParsers {
                                 thisObject.isNull("notas") ? null : thisObject.getString("notas"),
                                 (thisObject.isNull("status") ? 10 : thisObject.getInt("status")),
                                 nome_categoria,
-                                (thisSite == null ? null : thisSite.getId())
+                                (thisSite == null ? null : thisSite.getId()),
+                                (thisObject.isNull("pedido_alocacao") ? null : thisObject.getInt("pedido_alocacao"))
                             );
                         itens.add(auxItem);
                     }
@@ -181,7 +186,8 @@ public class JSONParsers {
                         data.isNull("notas") ? null : data.getString("notas"),
                         data.isNull("status") ? 10 : data.getInt("status"),
                         data_categoria == null ? null : data_categoria.getString("nome"),
-                        data_site == null ? null : data_site.getInt("id")
+                        data_site == null ? null : data_site.getInt("id"),
+                        data.isNull("pedido_alocacao") ? null : data.getInt("pedido_alocacao")
                 );
             }
         }catch (JSONException e){
@@ -233,7 +239,8 @@ public class JSONParsers {
                                 thisObject.getInt("id"),
                                 (thisObject.isNull("status") ? 10 : thisObject.getInt("status")),
                                 thisObject.getString("nome"),
-                                thisObject.getString("notas")
+                                thisObject.getString("notas"),
+                                (thisObject.isNull("pedido_alocacao") ? null : thisObject.getInt("pedido_alocacao"))
                         );
                         grupoItens.add(auxGrupoItens);
                     }
@@ -252,14 +259,156 @@ public class JSONParsers {
             JSONObject grupoItens = new JSONObject(response);
             if(grupoItens.getInt("status") == 200 || grupoItens.getInt("status") == 201)
             {
-                int id = grupoItens.getInt("id");
-                String nome = grupoItens.getString("nome");
-                String nota = grupoItens.getString("notas");
-                auxGrupoItens = new GrupoItens(id, auxGrupoItens.getStatus(), nome, nota);
+                JSONObject data = grupoItens.getJSONObject("data");
+
+                auxGrupoItens = new GrupoItens(
+                        data.getInt("id"),
+                        data.isNull("status") ? 10 : grupoItens.getInt("status"),
+                        data.getString("nome"),
+                        data.isNull("notas") ? null : grupoItens.getString("notas"),
+                        data.isNull("pedido_alocacao") ? null : grupoItens.getInt("pedido_alocacao")
+                );
             }
         }catch (JSONException e){
             e.printStackTrace();
         }
         return auxGrupoItens;
+    }
+
+    public static ArrayList<Alocacao> parserJsonAlocacoes(JSONObject response, Context context)
+    {
+        ArrayList<Alocacao> alocacoes = null;
+        try{
+            for(int i=0; i<response.length(); i++){
+
+                if(response.getInt("status") == 200)
+                {
+                    JSONArray dados = response.getJSONArray("data");
+                    alocacoes = new ArrayList<>();
+
+                    for (int j = 0; j < dados.length(); j++) {
+                        JSONObject thisObject = dados.getJSONObject(j);
+
+                        String nome_item = null;
+
+                        if(!thisObject.isNull("item"))
+                        {
+                            JSONObject thisObjectItem = thisObject.getJSONObject("item");
+                            nome_item = thisObjectItem.getString("nome");
+                        }
+
+                        String nome_grupoItens = null;
+
+                        if(!thisObject.isNull("grupoItens"))
+                        {
+                            JSONObject thisObjectGrupoItens = thisObject.getJSONObject("grupoItens");
+                            nome_grupoItens = thisObjectGrupoItens.getString("nome");
+                        }
+
+                        Alocacao auxAlcoacao = new Alocacao(
+                                thisObject.getInt("id"),
+                                thisObject.getInt("status"),
+                                thisObject.getString("dataPedido"),
+                                thisObject.isNull("dataInicio") ? null : thisObject.getString("dataInicio"),
+                                thisObject.isNull("dataFim") ? null : thisObject.getString("dataFim"),
+                                thisObject.isNull("obs") ? null : thisObject.getString("obs"),
+                                thisObject.isNull("obsResposta") ? null : thisObject.getString("obsResposta"),
+                                thisObject.getInt("requerente_id"),
+                                thisObject.isNull("aprovador_id") ? null : thisObject.getInt("aprovador_id"),
+                                nome_item,
+                                nome_grupoItens
+                        );
+                        alocacoes.add(auxAlcoacao);
+                    }
+                }
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return alocacoes;
+    }
+
+    public static Alocacao parserJsonAlocacao(JSONObject response)
+    {
+        Alocacao pedidoAlocacao = null;
+
+        try
+        {
+            if(response.getInt("status") == 200 || response.getInt("status") == 201)
+            {
+                JSONObject data = response.getJSONObject("data");
+
+                String item = null, grupo = null;
+
+                if(!data.isNull("item"))
+                {
+                    item = data.getJSONObject("item").getString("nome");
+                }
+
+                if(!data.isNull("grupoItens"))
+                {
+                    grupo = data.getJSONObject("grupoItens").getString("nome");
+                }
+
+                pedidoAlocacao = new Alocacao(
+                        data.getInt("id"),
+                        data.getInt("status"),
+                        data.getString("dataPedido"),
+                        data.isNull("dataInicio") ? null : data.getString("dataInicio"),
+                        data.isNull("dataFim") ? null : data.getString("dataFim"),
+                        data.isNull("obs") ? null : data.getString("obs"),
+                        data.isNull("obsResposta") ? null : data.getString("obsResposta"),
+                        data.getInt("requerente_id"),
+                        data.isNull("aprovador_id") ? null : data.getInt("aprovador_id"),
+                        item,
+                        grupo
+                );
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        return pedidoAlocacao;
+    }
+
+    public static ArrayList<GrupoItensItem> parserJsonGruposItensItem(JSONObject response)
+    {
+        ArrayList<GrupoItensItem> grupoItensItems = null;
+        try{
+
+            for(int i=0; i<response.length(); i++){
+                grupoItensItems = new  ArrayList<>();
+                if(response.getInt("status") == 200)
+                {
+                    JSONArray dados = response.getJSONArray("data");
+
+
+                    for (int j = 0; j < dados.length(); j++) {
+
+
+                        JSONObject thisObject = dados.getJSONObject(j);
+                        JSONArray itens=thisObject.getJSONArray("itens");
+
+                        for (int k=0;k<itens.length();k++)
+                        {
+                            JSONObject thisitem = itens.getJSONObject(k);
+
+                            GrupoItensItem auxGrupoItensItem=new GrupoItensItem(
+                                    k,
+                                    thisObject.getInt("id"),
+                                    thisitem.getInt("id")
+                            );
+                            grupoItensItems.add(auxGrupoItensItem);
+                        }
+
+                    }
+                }
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return grupoItensItems;
     }
 }
