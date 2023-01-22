@@ -55,40 +55,46 @@ public class AdicionarPedidoAlocacaoActivity extends AppCompatActivity implement
 
         for (Item item:itens)
         {
-            RadioButton rdbtn = new RadioButton(this);
-            rdbtn.setId(View.generateViewId());
-            rdbtn.setText(String.format(
-                    "[Item] %s - %s",
-                    String.valueOf(item.getNome()),
-                    String.valueOf(item.getSerialNumber())
-            ));
-            rdbtn.setTag("ITEM_" + item.getId());
-            rdbtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectedObject = v.getTag().toString();
-                }
-            });
-            radioBTNGrupo.addView(rdbtn);
+            if(item.getPedido_alocacao_id() == null)
+            {
+                RadioButton rdbtn = new RadioButton(this);
+                rdbtn.setId(View.generateViewId());
+                rdbtn.setText(String.format(
+                        "[Item] %s - %s",
+                        String.valueOf(item.getNome()),
+                        String.valueOf(item.getSerialNumber())
+                ));
+                rdbtn.setTag("ITEM_" + item.getId());
+                rdbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectedObject = v.getTag().toString();
+                    }
+                });
+                radioBTNGrupo.addView(rdbtn);
+            }
         }
 
         for (GrupoItens grupoItens:grupos)
         {
-            RadioButton rdbtn = new RadioButton(this);
-            rdbtn.setId(View.generateViewId());
-            rdbtn.setText(String.format(
-                    "[Grupo] %s - %s",
-                    String.valueOf(grupoItens.getNome()),
-                    String.valueOf(grupoItens.getNotas())
-            ));
-            rdbtn.setTag("GRUPO_" + grupoItens.getId());
-            rdbtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectedObject = v.getTag().toString();
-                }
-            });
-            radioBTNGrupo.addView(rdbtn);
+            if(grupoItens.getPedido_alocacao_id() == null)
+            {
+                RadioButton rdbtn = new RadioButton(this);
+                rdbtn.setId(View.generateViewId());
+                rdbtn.setText(String.format(
+                        "[Grupo] %s - %s",
+                        String.valueOf(grupoItens.getNome()),
+                        String.valueOf(grupoItens.getNotas())
+                ));
+                rdbtn.setTag("GRUPO_" + grupoItens.getId());
+                rdbtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        selectedObject = v.getTag().toString();
+                    }
+                });
+                radioBTNGrupo.addView(rdbtn);
+            }
         }
     }
 
@@ -99,7 +105,7 @@ public class AdicionarPedidoAlocacaoActivity extends AppCompatActivity implement
             String obs = TI_Observacoes.getEditText().getText().toString().trim();
 
             SharedPreferences preferences = getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
-            ArrayList<String> part = new ArrayList<>(Arrays.asList(obs.split("_")));
+            ArrayList<String> part = new ArrayList<>(Arrays.asList(selectedObject.split("_")));
             Map<String, String> jsonBody = new HashMap<>();
 
             jsonBody.put("requerente_id", String.valueOf(preferences.getInt(Helpers.USER_ID, -1)));
@@ -125,7 +131,7 @@ public class AdicionarPedidoAlocacaoActivity extends AppCompatActivity implement
                     break;
             }
 
-            Singleton.getInstance(this).createPedidoAlocacao(this, new JSONObject());
+            Singleton.getInstance(this).createPedidoAlocacao(this, new JSONObject(jsonBody));
         }
         else
         {

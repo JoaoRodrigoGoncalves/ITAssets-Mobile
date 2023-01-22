@@ -63,4 +63,5 @@
     <string name="txt_campo_obrigatorio">Campo obrigatório</string>
     <string name="devolver">Devolver</string>
     <string name="adicionar_grupo_de_itens">Adicionar Grupo de Itens</string>
+    <string name="txt_grupo">Grupo</string>
 </resources>

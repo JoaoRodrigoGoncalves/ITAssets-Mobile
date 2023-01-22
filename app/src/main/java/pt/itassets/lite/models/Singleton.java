@@ -1100,8 +1100,20 @@ public class Singleton {
                                 {
                                     if(error.networkResponse != null)
                                     {
-                                        Toast.makeText(context, error.networkResponse.toString(), Toast.LENGTH_LONG).show();
-                                        return;
+                                        if(error.networkResponse.data != null)
+                                        {
+                                            try
+                                            {
+                                                JSONObject erro = new JSONObject(new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                                                Toast.makeText(context, String.valueOf(erro.getString("message")), Toast.LENGTH_SHORT).show();
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                e.printStackTrace();
+                                                Toast.makeText(context, "Erro interno: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                            return;
+                                        }
                                     }
                                 }
                                 Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();

@@ -135,7 +135,7 @@ public class Alocacao {
     }
 
     public String getNome_grupoItem() {
-        return nome_item;
+        return nome_grupoItem;
     }
 
     public void setNome_grupoItem(String nome_grupoItem) {

@@ -61,7 +61,7 @@
             android:layout_margin="5dp">
 
             <TextView
-                android:id="@+id/textView5"
+                android:id="@+id/TV_tipo_objeto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/txt_item"
@@ -97,6 +97,8 @@
                 android:textSize="15sp"
                 android:layout_marginStart="5dp"/>
         </LinearLayout>
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
-
 </LinearLayout>

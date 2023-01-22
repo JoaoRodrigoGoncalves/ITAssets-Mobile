@@ -43,7 +43,8 @@ public class DBHelper extends SQLiteOpenHelper {
             NOME_ITEM = "nome_item",
             NOME_GRUPO = "nome_grupoItem",
             GRUPOITENSID ="grupoitensid",
-            ITEMID="itemid";
+            ITEMID="itemid",
+            PEDIDO_ALOCACAO_ID = "pedido_alocacao_id";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -61,7 +62,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         NOTAS + " TEXT," +
                         STATUS + " INTEGER NOT NULL," +
                         NOME_CATEGORIA + " TEXT," +
-                        SITE_ID + " INTEGER" + ")";
+                        SITE_ID + " INTEGER," +
+                        PEDIDO_ALOCACAO_ID + " INTEGER" + ")";
 
         sqlLiteDatabase.execSQL(sqlCreateTableItem);
 
@@ -79,7 +81,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         ID + " INTEGER PRIMARY KEY," +
                         NOME + " TEXT NOT NULL," +
                         NOTAS + " TEXT," +
-                        STATUS + " INTEGER NOT NULL" + ")";
+                        STATUS + " INTEGER NOT NULL," +
+                        PEDIDO_ALOCACAO_ID + " INTEGER" + ")";
 
         sqlLiteDatabase.execSQL(sqlCreateTableGrupoItens);
 
@@ -142,6 +145,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(NOTAS, item.getNotas());
         values.put(STATUS, item.getStatus());
         values.put(SITE_ID, item.getSite_id());
+        values.put(PEDIDO_ALOCACAO_ID, item.getPedido_alocacao_id());
 
         // devolve -1 em caso de erro, ou o id do novo livro (long)
         int id = (int) db.insert(TABLE_ITENS, null, values);
@@ -166,6 +170,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(NOTAS, item.getNotas());
         values.put(STATUS, item.getStatus());
         values.put(SITE_ID, item.getSite_id());
+        values.put(PEDIDO_ALOCACAO_ID, item.getPedido_alocacao_id());
 
         // devolve o número de linhas atualizadas
         return db.update(TABLE_ITENS, values, ID+"=?", new String[]{String.valueOf(item.getId())})==1;
@@ -186,7 +191,7 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         ArrayList<Item> itens = new ArrayList<>();
 
-        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID},
+        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID},
                 null, null, null, null, null);
 
         if(cursor.moveToFirst())
@@ -199,7 +204,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         (cursor.isNull(3) ? null : cursor.getString(3)), // Notas
                         cursor.getInt(4), // status
                         (cursor.isNull(5) ? null : cursor.getString(5)), // categoria
-                        (cursor.isNull(6) ? null : cursor.getInt(6)) // site
+                        (cursor.isNull(6) ? null : cursor.getInt(6)), // site
+                        (cursor.isNull(7) ? null : cursor.getInt(7)) //pedido alocação id
                 );
                 itens.add(itemAux);
             }while(cursor.moveToNext());
@@ -211,7 +217,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Item FindItemDB(Integer id_Item) {
 
 
-        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID},
+        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID},
                 ID + "=" + id_Item, null, null, null, null);
 
         Item itemAux = null;
@@ -224,7 +230,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     (cursor.isNull(3) ? null : cursor.getString(3)), // Notas
                     cursor.getInt(4), // status
                     (cursor.isNull(5) ? null : cursor.getString(5)), // categoria
-                    (cursor.isNull(6) ? null : cursor.getInt(6)) // site
+                    (cursor.isNull(6) ? null : cursor.getInt(6)), // site
+                    (cursor.isNull(7) ? null : cursor.getInt(7)) // pedido alocacao id
             );
 
 
@@ -304,6 +311,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(NOME, grupoItens.getNome());
         values.put(NOTAS, grupoItens.getNotas());
         values.put(STATUS, grupoItens.getStatus());
+        values.put(PEDIDO_ALOCACAO_ID, grupoItens.getPedido_alocacao_id());
 
         // devolve -1 em caso de erro, ou o id do novo grupo de itens (long)
         int id = (int) db.insert(TABLE_GRUPO_ITENS, null, values);
@@ -325,6 +333,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(NOME, grupoItens.getNome());
         values.put(NOTAS, grupoItens.getNotas());
         values.put(STATUS, grupoItens.getStatus());
+        values.put(PEDIDO_ALOCACAO_ID, grupoItens.getPedido_alocacao_id());
 
         // devolve o número de linhas atualizadas
         return db.update(TABLE_GRUPO_ITENS, values, ID+"=?", new String[]{String.valueOf(grupoItens.getId())})==1;
@@ -345,7 +354,7 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         ArrayList<GrupoItens> grupoItens = new ArrayList<>();
 
-        Cursor cursor = db.query(TABLE_GRUPO_ITENS, new String[]{ID, NOME, NOTAS, STATUS},
+        Cursor cursor = db.query(TABLE_GRUPO_ITENS, new String[]{ID, NOME, NOTAS, STATUS, PEDIDO_ALOCACAO_ID},
                 null, null, null, null, null);
 
         if(cursor.moveToFirst())
@@ -355,7 +364,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getInt(0), //ID
                         cursor.getInt(3), // status
                         cursor.getString(1), //Nome
-                        (cursor.isNull(2) ? null : cursor.getString(2))// Notas
+                        (cursor.isNull(2) ? null : cursor.getString(2)), // Notas
+                        (cursor.isNull(4) ? null : cursor.getInt(4)) // pedido alocacao id
                 );
                 grupoItens.add(grupoItensAux);
             }while(cursor.moveToNext());
@@ -408,7 +418,6 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getInt(0), //ID
                         cursor.getInt(1), //Grupo Item ID
                         cursor.getInt(2) //Item ID
-
                 );
                 grupoItensItems.add(auxgrupoItensItem);
             }while(cursor.moveToNext());
@@ -417,31 +426,36 @@ public class DBHelper extends SQLiteOpenHelper {
         return grupoItensItems;
     }
 
+    //TODO: TIAGO ADICIONAR COMENTARIOS
     public ArrayList<Item> checkItemGrupo(ArrayList<Item> items) {
         ArrayList<Item> itensSemGrupo = new ArrayList<>();
         for (int i = 0; i < getAllItensDB().size(); i++) {
-            int j = 0;
             Cursor cursorGR = db.query(TABLE_ITENS_GRUPO, new String[]{ID, GRUPOITENSID, ITEMID},
                     ITEMID + "=" + items.get(i).getId(), null, null, null, null);
 
             if (!cursorGR.moveToFirst())
             {
-                Cursor cursorItem = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID},
+                Cursor cursorItem = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID},
                         ID + "=" + items.get(i).getId(), null, null, null, null);
 
                 Item itemAux = null;
                 if (cursorItem.moveToFirst())
                 {
-                    itemAux = new Item(
-                            cursorItem.getInt(0), //ID
-                            cursorItem.getString(1), //Nome
-                            (cursorItem.isNull(2) ? null : cursorItem.getString(2)), //Serial
-                            (cursorItem.isNull(3) ? null : cursorItem.getString(3)), // Notas
-                            cursorItem.getInt(4), // status
-                            (cursorItem.isNull(5) ? null : cursorItem.getString(5)), // categoria
-                            (cursorItem.isNull(6) ? null : cursorItem.getInt(6)) // site
-                    );
-                    itensSemGrupo.add(itemAux);
+                    // Se não tiver um pedido de alocação associado
+                    if(cursorItem.isNull(7))
+                    {
+                        itemAux = new Item(
+                                cursorItem.getInt(0), //ID
+                                cursorItem.getString(1), //Nome
+                                (cursorItem.isNull(2) ? null : cursorItem.getString(2)), //Serial
+                                (cursorItem.isNull(3) ? null : cursorItem.getString(3)), // Notas
+                                cursorItem.getInt(4), // status
+                                (cursorItem.isNull(5) ? null : cursorItem.getString(5)), // categoria
+                                (cursorItem.isNull(6) ? null : cursorItem.getInt(6)), // site
+                                (cursorItem.isNull(7) ? null : cursorItem.getInt(7)) // pedido alocacao id
+                        );
+                        itensSemGrupo.add(itemAux);
+                    }
                 }
             }
         }

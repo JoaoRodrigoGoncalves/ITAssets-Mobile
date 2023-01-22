@@ -48,7 +48,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
                 if(holder.checkbox_Item.isChecked())
                 {
-
                     itens.add(holder.checkbox_Item.getId());
                 }
                 else

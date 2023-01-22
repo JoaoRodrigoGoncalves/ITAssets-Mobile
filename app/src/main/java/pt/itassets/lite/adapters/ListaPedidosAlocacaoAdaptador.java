@@ -62,27 +62,29 @@ public class ListaPedidosAlocacaoAdaptador extends BaseAdapter {
     }
 
     private class ViewHolderLista{
-        private TextView tvId, tvData, tvItem, tvStatus;
+        private TextView tvId, tvData, tvItem, tvStatus, tvObjeto;
 
         public ViewHolderLista(View view){
             tvId=view.findViewById(R.id.tvId);
             tvData=view.findViewById(R.id.tvDataPedido);
             tvItem=view.findViewById(R.id.tvItemNome);
             tvStatus=view.findViewById(R.id.tvStatus);
+            tvObjeto = view.findViewById(R.id.TV_tipo_objeto);
         }
 
         public void update(Alocacao alocacao){
             tvId.setText(String.valueOf(alocacao.getId()));
             tvData.setText(String.valueOf(alocacao.getDataPedido()));
 
-            if(alocacao.getNome_item() == null)
+            if(alocacao.getNome_item() != null)
             {
-                tvItem.setText(R.string.txt_nao_aplicavel);
-                tvItem.setTypeface(tvItem.getTypeface(), Typeface.ITALIC);
+                tvObjeto.setText(context.getText(R.string.txt_item));
+                tvItem.setText(String.valueOf(alocacao.getNome_item()));
             }
             else
             {
-                tvItem.setText(String.valueOf(alocacao.getNome_item()));
+                tvObjeto.setText(context.getString(R.string.txt_grupo));
+                tvItem.setText(String.valueOf(alocacao.getNome_grupoItem()));
             }
             tvStatus.setText(alocacao.humanReadableStatus(context));
         }

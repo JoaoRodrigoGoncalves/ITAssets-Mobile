@@ -42,7 +42,7 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
         recyclerView = findViewById(R.id.rv);
         Singleton.getInstance(getApplicationContext()).setOperacoesGruposListener(this);
 
-        ArrayList<Item> items=Singleton.getInstance(this).getItensSemGrupoItem();
+        ArrayList<Item> items = Singleton.getInstance(this).getItensSemGrupoItem();
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -58,8 +58,8 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
                                 0,
                                 null,
                                 tiNome.getEditText().getText().toString().trim(),
-                                tiNota.getEditText().getText().toString().trim()
-
+                                tiNota.getEditText().getText().toString().trim(),
+                                null
                         );
 
                         ArrayList<Integer> itemSelected = adapter.getArrayitems();
