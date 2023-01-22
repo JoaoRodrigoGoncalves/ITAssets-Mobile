@@ -73,4 +73,5 @@
     <string name="txt_concluido">Concluído</string>
     <string name="Num_Pedido_Reparacao">Pedido de Reparação Nº</string>
     <string name="Num_Pedido_Alocacao">Pedido Nº</string>
+    <string name="txt_pesquisar">Pesquisar</string>
 </resources>

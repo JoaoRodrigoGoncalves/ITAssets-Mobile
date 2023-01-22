@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,7 +27,6 @@ import pt.itassets.lite.adapters.ListaItensAdaptador;
 import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
-import pt.itassets.lite.utils.Helpers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -95,8 +95,34 @@ public class ListaItensFragment extends Fragment implements ItensListener{
     }
 
     @Override
-    public void onResume() {
-        // Quando se faz Go Back a searchView fecha-se
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.main_top_search, menu);
+        MenuItem itemPesquisa = menu.findItem(R.id.pesquisarItem);
+        searchView=(SearchView) itemPesquisa.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                ArrayList<Item> listaItens = new ArrayList<>();
+                for(Item i : Singleton.getInstance(getContext()).getItensBD()) {//Mudar
+                    if (i.getNome().toLowerCase().contains(s.toLowerCase())){
+                        listaItens.add(i);
+                    }
+                }
+                lvItens.setAdapter(new ListaItensAdaptador(getContext(),listaItens));
+                return true;
+            }
+        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onResume(){
+        // Quando faço Go Back fecho a searchView
         if(searchView!=null){
             searchView.onActionViewCollapsed();
         }
