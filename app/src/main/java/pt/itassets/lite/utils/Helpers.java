@@ -4,12 +4,18 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Patterns;
+import android.widget.Toast;
+
+import com.android.volley.VolleyError;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
+
+import pt.itassets.lite.R;
 
 public class Helpers {
     public static final String SHAREDPREFERENCES = "IT_ASSETS_SHAREDPREFERENCES";
@@ -78,6 +84,31 @@ public class Helpers {
         } catch (UnknownHostException e) {
             return false;
         }
+    }
+
+    public static void parseVolleyErrors(Context context, VolleyError error)
+    {
+        if(error != null)
+        {
+            if(error.networkResponse != null)
+            {
+                if(error.networkResponse.data != null)
+                {
+                    try
+                    {
+                        JSONObject erro = new JSONObject(new String(error.networkResponse.data, StandardCharsets.UTF_8));
+                        Toast.makeText(context, String.valueOf(erro.getString("message")), Toast.LENGTH_SHORT).show();
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                        Toast.makeText(context, "Erro interno: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    return;
+                }
+            }
+        }
+        Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
     }
 
 }

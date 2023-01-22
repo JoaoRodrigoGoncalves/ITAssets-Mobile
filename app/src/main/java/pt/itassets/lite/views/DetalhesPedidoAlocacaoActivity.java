@@ -58,15 +58,35 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
 
         if(id_pedido != -1)
         {
+            setTitle("Pedido Nº" + id_pedido);
             pedidoAlocacao = Singleton.getInstance(this).getAlocacao(id_pedido);
 
             TV_id_pedido.setText(String.valueOf(pedidoAlocacao.getId()));
             TV_estado_pedido.setText(pedidoAlocacao.humanReadableStatus(this));
-            TV_requerente.setText(String.valueOf(pedidoAlocacao.getNome_requerente()));
+            TV_requerente.setText(String.valueOf(pedidoAlocacao.getNome_requerente())); //TODO: Mostar o nome ao invés do ID
             TV_data_pedido.setText(String.valueOf(pedidoAlocacao.getDataPedido()));
 
             // Objeto
-            TV_observacoes.setText(String.valueOf(pedidoAlocacao.getObs()));
+
+            if(pedidoAlocacao.getNome_item() != null)
+            {
+                TV_objeto.setText(String.valueOf(pedidoAlocacao.getNome_item()));
+            }
+            else
+            {
+                TV_objeto.setText(String.valueOf(pedidoAlocacao.getNome_grupoItem()));
+            }
+
+            //OBS
+            if(pedidoAlocacao.getObs() != null)
+            {
+                TV_observacoes.setText(String.valueOf(pedidoAlocacao.getObs()));
+            }
+            else
+            {
+                TV_observacoes.setTypeface(TV_observacoes.getTypeface(), Typeface.ITALIC);
+                TV_observacoes.setText(R.string.txt_nao_aplicavel);
+            }
 
             //Botão
             btn_Cancelar.setVisibility(View.VISIBLE);
@@ -78,6 +98,8 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
                 btn_Devolver.setVisibility(View.VISIBLE);
 
                 // region Campo Aprovador
+
+                //TODO: Mostar o nome ao invés do ID
                 if(pedidoAlocacao.getNome_aprovador() != null)
                 {
                     TV_aprovador.setText(String.valueOf(pedidoAlocacao.getNome_aprovador()));

@@ -259,12 +259,14 @@ public class JSONParsers {
             JSONObject grupoItens = new JSONObject(response);
             if(grupoItens.getInt("status") == 200 || grupoItens.getInt("status") == 201)
             {
+                JSONObject data = grupoItens.getJSONObject("data");
+
                 auxGrupoItens = new GrupoItens(
-                        grupoItens.getInt("id"),
-                        grupoItens.isNull("status") ? 10 : grupoItens.getInt("status"),
-                        grupoItens.getString("nome"),
-                        grupoItens.isNull("notas") ? null : grupoItens.getString("notas"),
-                        grupoItens.isNull("pedido_alocacao") ? null : grupoItens.getInt("pedido_alocacao")
+                        data.getInt("id"),
+                        data.isNull("status") ? 10 : grupoItens.getInt("status"),
+                        data.getString("nome"),
+                        data.isNull("notas") ? null : grupoItens.getString("notas"),
+                        data.isNull("pedido_alocacao") ? null : grupoItens.getInt("pedido_alocacao")
                 );
             }
         }catch (JSONException e){

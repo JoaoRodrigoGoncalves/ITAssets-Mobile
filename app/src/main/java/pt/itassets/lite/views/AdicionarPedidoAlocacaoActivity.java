@@ -42,6 +42,7 @@ public class AdicionarPedidoAlocacaoActivity extends AppCompatActivity implement
         radioBTNGrupo = findViewById(R.id.radiogroup);
         TI_Observacoes = findViewById(R.id.TI_Observacoes);
 
+        Singleton.getInstance(this).setOperacoesPedidoAlocacaoListener(this); //Subscrever o listener
         // Atualizar todos os itens e grupos
         Singleton.getInstance(this).getAllItensAPI(this);
         Singleton.getInstance(this).getAllGrupoItensAPI(this);
@@ -51,27 +52,28 @@ public class AdicionarPedidoAlocacaoActivity extends AppCompatActivity implement
         ArrayList<Item> itens = Singleton.getInstance(this).getItensBD();
         ArrayList<GrupoItens> grupos = Singleton.getInstance(this).getGrupoItensBD();
 
-        // TODO: Não apresentar itens ou grupos que não podem ser associados
-
         for (Item item:itens)
         {
             if(item.getPedido_alocacao_id() == null)
             {
-                RadioButton rdbtn = new RadioButton(this);
-                rdbtn.setId(View.generateViewId());
-                rdbtn.setText(String.format(
-                        "[Item] %s - %s",
-                        String.valueOf(item.getNome()),
-                        String.valueOf(item.getSerialNumber())
-                ));
-                rdbtn.setTag("ITEM_" + item.getId());
-                rdbtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        selectedObject = v.getTag().toString();
-                    }
-                });
-                radioBTNGrupo.addView(rdbtn);
+                if(!item.isInGrupo(this))
+                {
+                    RadioButton rdbtn = new RadioButton(this);
+                    rdbtn.setId(View.generateViewId());
+                    rdbtn.setText(String.format(
+                            "[Item] %s - %s",
+                            String.valueOf(item.getNome()),
+                            String.valueOf(item.getSerialNumber())
+                    ));
+                    rdbtn.setTag("ITEM_" + item.getId());
+                    rdbtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            selectedObject = v.getTag().toString();
+                        }
+                    });
+                    radioBTNGrupo.addView(rdbtn);
+                }
             }
         }
 

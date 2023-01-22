@@ -1,5 +1,7 @@
 package pt.itassets.lite.models;
 
+import android.content.Context;
+
 public class Item {
 
     private Integer id, status, site_id, pedido_alocacao_id;
@@ -16,6 +18,8 @@ public class Item {
         this.notas = notas;
         this.pedido_alocacao_id = pedido_alocacao_id;
     }
+
+    // region Getters e Setters
 
     public Integer getId() {
         return id;
@@ -80,4 +84,12 @@ public class Item {
     public void setPedido_alocacao_id(Integer pedido_alocacao_id) {
         this.pedido_alocacao_id = pedido_alocacao_id;
     }
+
+    //endregion
+
+    public boolean isInGrupo(Context context)
+    {
+        return Singleton.getInstance(context).getActiveGrupoForItem(this.id) != null;
+    }
+
 }

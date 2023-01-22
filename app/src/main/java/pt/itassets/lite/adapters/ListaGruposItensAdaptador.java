@@ -1,6 +1,7 @@
 package pt.itassets.lite.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,15 @@ public class ListaGruposItensAdaptador extends BaseAdapter {
 
         public void update(GrupoItens grupoItens) {
             tvNome.setText(grupoItens.getNome());
-            tvNotas.setText(grupoItens.getNotas());
+            if(grupoItens.getNotas() != null)
+            {
+                tvNotas.setText(grupoItens.getNotas());
+            }
+            else
+            {
+                tvNotas.setTypeface(tvNotas.getTypeface(), Typeface.ITALIC);
+                tvNotas.setText(R.string.txt_nao_aplicavel);
+            }
         }
     }
 }

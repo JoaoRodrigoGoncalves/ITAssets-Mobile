@@ -378,7 +378,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //region Funções Tabela Grupo de Itens Item
 
-
     public GrupoItensItem adicionarGrupoItensItemDB(GrupoItensItem grupoItensItem)
     {
         ContentValues values = new ContentValues();
@@ -462,6 +461,52 @@ public class DBHelper extends SQLiteOpenHelper {
         return itensSemGrupo;
     }
 
+    public GrupoItens getActiveGrupoForItem(Integer itemID)
+    {
+        Cursor cursor = db.query(
+                TABLE_ITENS_GRUPO,
+                new String[]{ID, GRUPOITENSID, ITEMID},
+                ITEMID + "=" + itemID,
+                null,
+                null,
+                null,
+                null
+        );
+
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                Cursor tabela_grupo = db.query(
+                        TABLE_GRUPO_ITENS,
+                        new String[]{ID, NOME, NOTAS, STATUS, PEDIDO_ALOCACAO_ID},
+                        ID + "=" + cursor.getInt(1),
+                        null,
+                        null,
+                        null,
+                        null
+                );
+
+                if(tabela_grupo.moveToFirst())
+                {
+                    if(tabela_grupo.getInt(3) == 10)
+                    {
+                        return new GrupoItens(
+                                tabela_grupo.getInt(0), //ID
+                                tabela_grupo.getInt(3), // status
+                                tabela_grupo.getString(1), //Nome
+                                (tabela_grupo.isNull(2) ? null : tabela_grupo.getString(2)), // Notas
+                                (tabela_grupo.isNull(4) ? null : tabela_grupo.getInt(4)) // pedido alocacao id
+                        );
+                    }
+                }
+            }
+            while (cursor.moveToNext());
+        }
+        return null;
+    }
+
+    //endregion
 
     //region Funções Tabela Pedidos de Alocação
 

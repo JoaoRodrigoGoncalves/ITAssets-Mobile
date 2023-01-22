@@ -1,5 +1,6 @@
 package pt.itassets.lite.views;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -49,22 +52,29 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
             public void onItemClick(AdapterView<?> adapterView, View view, int positions, long id) {
                 Intent detalhes = new Intent(getContext(), DetalhesPedidoAlocacaoActivity.class);
                 detalhes.putExtra("ID_PEDIDO", (int) id);
-                startActivity(detalhes);
+                startActivityForResult(detalhes, ACTION_DETALHES);
             }
         });
 
         Singleton.getInstance(getContext()).setPedidosAlocacaoListener(this);
-        Singleton.getInstance(container.getContext()).getUserAlocacoesAPI(getContext());
+        Singleton.getInstance(getContext()).getUserAlocacoesAPI(getContext());
 
         fabListaPedidosAlocacao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent adicionar = new Intent(getContext(), AdicionarPedidoAlocacaoActivity.class);
-                startActivity(adicionar);
+                startActivityForResult(adicionar, ACTION_ADICIONAR);
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+        if(resultCode == Activity.RESULT_OK && requestCode == ACTION_ADICIONAR){
+            Singleton.getInstance(getContext()).getUserAlocacoesAPI(getContext());
+        }
     }
 
     @Override
