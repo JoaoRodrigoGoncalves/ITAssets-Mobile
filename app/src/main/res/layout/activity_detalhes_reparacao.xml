@@ -155,7 +155,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:text="@string/string_objeto_reparacao"/>
+            android:text="Objeto Alocado"/>
+
+        <TextView
+            android:id="@+id/tv_nome_Grupo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:visibility="invisible"/>
 
         <ListView
             android:id="@+id/LV_objeto"
@@ -163,7 +170,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
-            android:gravity="right"/>
+            android:gravity="right"
+            android:text="Texto Exemplo"/>
     </LinearLayout>
 
     <com.google.android.material.divider.MaterialDivider

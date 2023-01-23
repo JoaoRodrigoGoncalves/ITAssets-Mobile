@@ -244,7 +244,8 @@ public class JSONParsers {
                                 (thisObject.isNull("status") ? 10 : thisObject.getInt("status")),
                                 thisObject.getString("nome"),
                                 thisObject.getString("notas"),
-                                (thisObject.isNull("pedido_alocacao") ? null : thisObject.getInt("pedido_alocacao"))
+                                (thisObject.isNull("pedido_alocacao") ? null : thisObject.getInt("pedido_alocacao")),
+                                (thisObject.isNull("pedido_reparacao") ? null : thisObject.getInt("pedido_reparacao"))
                         );
                         grupoItens.add(auxGrupoItens);
                     }
@@ -270,7 +271,8 @@ public class JSONParsers {
                         data.isNull("status") ? 10 : grupoItens.getInt("status"),
                         data.getString("nome"),
                         data.isNull("notas") ? null : grupoItens.getString("notas"),
-                        data.isNull("pedido_alocacao") ? null : grupoItens.getInt("pedido_alocacao")
+                        data.isNull("pedido_alocacao") ? null : grupoItens.getInt("pedido_alocacao"),
+                        data.isNull("pedido_reparacao") ? null : grupoItens.getInt("pedido_reparacao")
                 );
             }
         }catch (JSONException e){
