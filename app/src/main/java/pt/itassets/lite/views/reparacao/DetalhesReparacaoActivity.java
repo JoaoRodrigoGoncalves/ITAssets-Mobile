@@ -21,7 +21,15 @@ import java.util.ArrayList;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.adapters.ListaItensAdaptador;
+
+import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.listeners.OperacoesPedidoReparacaoListener;
+
+import pt.itassets.lite.adapters.ListaPedidosReparacaoAdaptador;
+import pt.itassets.lite.listeners.PedidosReparacaoListener;
+import pt.itassets.lite.models.Alocacao;
+import pt.itassets.lite.models.GrupoItens;
+
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.PedidoReparacao;
 import pt.itassets.lite.models.Singleton;
@@ -29,16 +37,18 @@ import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.views.MenuActivity;
 
 
-public class DetalhesReparacaoActivity extends AppCompatActivity implements OperacoesPedidoReparacaoListener {
+public class DetalhesReparacaoActivity extends AppCompatActivity implements OperacoesPedidoReparacaoListener, ItensListener {
 
     private TextView TV_id_pedido, TV_estado_pedido, TV_requerente, TV_data_pedido,
             TV_Descricao, TV_Responsavel, TV_data_inicio, TV_data_fim,
-            TV_observacoes_resposta;
+            TV_observacoes_resposta,TV_Nome_Grupo;
     private Button btn_finalizar, btn_Cancelar;
     private ListView LV_Reparacoes;
     private LinearLayout LL_dados_resposta;
     private PedidoReparacao pedidoReparacao;
     private SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    private GrupoItens grupoItens=null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +68,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
         TV_observacoes_resposta = findViewById(R.id.TV_observacoes_resposta);
         btn_Cancelar = findViewById(R.id.btnCancelar);
         btn_finalizar = findViewById(R.id.btnFinalizar);
+        TV_Nome_Grupo=findViewById(R.id.tv_nome_Grupo);
         LL_dados_resposta = findViewById(R.id.LL_dados_resposta);
 
         Integer id_reparacao = getIntent().getIntExtra("ID_REPARACAO", -1);
@@ -72,9 +83,17 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
             TV_Responsavel.setText(String.valueOf(pedidoReparacao.getNome_Responsavel()));
             TV_data_pedido.setText(String.valueOf(pedidoReparacao.getDataPedido()));
             //objeto
-            onRefreshListaItens(Singleton.getInstance(this).getItensdoPedidoReparacao(pedidoReparacao.getId()));
-            //obter o objeto
-            /*if (pedidoReparacao.)*/
+
+            grupoItens=Singleton.getInstance(this).getGrupodeItemdoPedidoReparacao(pedidoReparacao.getId());
+
+            if (grupoItens==null)
+            {
+                onRefreshListaItens(Singleton.getInstance(this).getItensdoPedidoReparacao(pedidoReparacao.getId()));
+            }else{
+                LV_Reparacoes.setVisibility(View.INVISIBLE);
+                TV_Nome_Grupo.setVisibility(View.VISIBLE);
+                TV_Nome_Grupo.setText(grupoItens.getNome());
+            }
 
 
             if (pedidoReparacao.getDataPedido() != null) {
@@ -156,6 +175,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
         Integer estado = pedidoReparacao.getStatus();
 
         if (estado != 6) {
+
             Toast.makeText(getApplicationContext(), R.string.txt_erro_pedido_reparacao_finalizado, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -163,6 +183,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     }
 
     public void onClick_btn_cancelar(View view) {
+
         if (isPedidoReparacaoCancelarValido()) {
             dialogRemover();
         }
@@ -195,7 +216,8 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     private boolean isPedidoReparacaoCancelarValido() {
         Integer estado = pedidoReparacao.getStatus();
 
-        if (estado != 8 || estado != 10) {
+        if (estado != 10 && estado!=8) {
+
             Toast.makeText(getApplicationContext(), getString(R.string.txt_erro_pedido_reparacao_cancelado), Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -210,9 +232,16 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
         finish();
     }
 
+    @Override
     public void onRefreshListaItens(ArrayList<Item> listaItens) {
-        if (listaItens != null) {
-            LV_Reparacoes.setAdapter(new ListaItensAdaptador(this, listaItens));
+        if (listaItens.size()!=0) {
+                LV_Reparacoes.setAdapter(new ListaItensAdaptador(this, listaItens));
+        }
+        else
+        {
+            LV_Reparacoes.setVisibility(View.INVISIBLE);
+            TV_Nome_Grupo.setVisibility(View.VISIBLE);
+            TV_Nome_Grupo.setText(R.string.itens_nao_associados);
         }
     }
 }

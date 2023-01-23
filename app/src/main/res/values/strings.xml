@@ -87,6 +87,7 @@
     <string name="txt_erro_pedido_alocacao_nao_encontrado">Erro: Pedido de Alocação não encontrado!</string>
     <string name="txt_novo_pedido_alocacao">Novo Pedido de Alocação</string>
     <string name="txt_selecionar_item_grupo">Selecione um item ou grupo</string>
+
     <string name="txt_erro_pedido_alocacao_devolver">Erro: Não é possível devolver este Pedido de Alocação!</string>
     <string name="txt_erro_pedido_alocacao_cancelar">Erro: Não é possível cancelar este Pedido de Alocação!</string>
     <string name="txt_insira_nome_item">Erro: Insira o Nome do Item!</string>
@@ -102,5 +103,7 @@
     <string name="txt_iniciar_sessao">Iniciar Sessão</string>
     <string name="txt_email">Email</string>
     <string name="txt_password">Password</string>
+    <string name="itens_nao_associados">Ainda não existem itens/Grupos de itens associados</string>
+
 
 </resources>

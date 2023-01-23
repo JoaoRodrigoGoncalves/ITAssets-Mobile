@@ -14,7 +14,7 @@ import java.util.List;
 import pt.itassets.lite.R;
 import pt.itassets.lite.models.Item;
 
-public class ListaGrupoItensAdaptador extends RecyclerView.Adapter<MyViewHolder> {
+public class ListaGrupoItensAdaptador extends RecyclerView.Adapter<ViewHolderGrupoItens> {
     
     Context context;
     ArrayList<Item> item;
@@ -27,14 +27,14 @@ public class ListaGrupoItensAdaptador extends RecyclerView.Adapter<MyViewHolder>
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+    public ViewHolderGrupoItens onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(context).inflate(R.layout.grupo_lista_grupoitensitem, viewGroup, false);
         itens=new ArrayList<>();
-        return new MyViewHolder(view);
+        return new ViewHolderGrupoItens(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int i) {
+    public void onBindViewHolder(@NonNull ViewHolderGrupoItens holder, int i) {
         holder.checkbox_Item.setText(item.get(i).getNome());
         holder.checkbox_Item.setId(item.get(i).getId());
 

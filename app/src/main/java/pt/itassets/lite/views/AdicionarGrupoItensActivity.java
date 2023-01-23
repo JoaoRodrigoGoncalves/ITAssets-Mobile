@@ -57,6 +57,7 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
                                 null,
                                 tiNome.getEditText().getText().toString().trim(),
                                 tiNota.getEditText().getText().toString().trim(),
+                                null,
                                 null
                         );
 
