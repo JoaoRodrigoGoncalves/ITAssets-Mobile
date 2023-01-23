@@ -21,10 +21,18 @@
         android:theme="@style/Theme.ITAssets"
         tools:targetApi="31">
         <activity
+            android:name=".views.reparacao.DetalhesReparacaoActivity"
+            android:exported="false"
+            android:parentActivityName=".views.MenuActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".views.AdicionarPedidoAlocacaoActivity"
             android:exported="false"
             android:parentActivityName=".views.MenuActivity">
-        <meta-data
+            <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>

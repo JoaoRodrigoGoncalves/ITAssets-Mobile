@@ -48,7 +48,8 @@ public class DBHelper extends SQLiteOpenHelper {
             NOME_GRUPO = "nome_grupoItem",
             GRUPOITENSID ="grupoitensid",
             ITEMID="itemid",
-            PEDIDO_ALOCACAO_ID = "pedido_alocacao_id";
+            PEDIDO_ALOCACAO_ID = "pedido_alocacao_id",
+            PEDIDO_Reparacao_ID = "pedido_reparacao_id";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -167,6 +168,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(STATUS, item.getStatus());
         values.put(SITE_ID, item.getSite_id());
         values.put(PEDIDO_ALOCACAO_ID, item.getPedido_alocacao_id());
+        //values.put(PEDIDO_Reparacao_ID, item.());
 
         // devolve -1 em caso de erro, ou o id do novo livro (long)
         int id = (int) db.insert(TABLE_ITENS, null, values);
@@ -404,8 +406,8 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(ID, pedido.getId());
-        values.put(REQUERENTE_ID, pedido.getRequerente_id());
-        values.put(RESPONSAVEL_ID, pedido.getResponsavel_id());
+        values.put(REQUERENTE_ID, pedido.getNome_Requerente());
+        values.put(RESPONSAVEL_ID, pedido.getNome_Responsavel());
         values.put(STATUS, pedido.getStatus());
         values.put(DESCRICAO_PROBLEMA, pedido.getDescricaoProblema());
         values.put(RESPOSTA_OBS, pedido.getRespostaObs());
@@ -532,12 +534,15 @@ public class DBHelper extends SQLiteOpenHelper {
     //TODO: TIAGO ADICIONAR COMENTARIOS
     public ArrayList<Item> checkItemGrupo(ArrayList<Item> items) {
         ArrayList<Item> itensSemGrupo = new ArrayList<>();
+        //Percorrer todos os items na base de dados
         for (int i = 0; i < getAllItensDB().size(); i++) {
+            //Procura se o id associado ao item exite
             Cursor cursorGR = db.query(TABLE_ITENS_GRUPO, new String[]{ID, GRUPOITENSID, ITEMID},
                     ITEMID + "=" + items.get(i).getId(), null, null, null, null);
 
             if (!cursorGR.moveToFirst())
             {
+                //caso o item nao esteja associado a nenhum grupo de items vai buscar os dados do item
                 Cursor cursorItem = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID},
                         ID + "=" + items.get(i).getId(), null, null, null, null);
 

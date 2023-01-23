@@ -63,7 +63,7 @@ public class PedidoReparacao
         this.id = id;
     }
 
-    public Integer getRequerente_id() {
+    public Integer getNome_Requerente() {
         return requerente_id;
     }
 
@@ -71,7 +71,7 @@ public class PedidoReparacao
         this.requerente_id = requerente_id;
     }
 
-    public Integer getResponsavel_id() {
+    public Integer getNome_Responsavel() {
         return responsavel_id;
     }
 

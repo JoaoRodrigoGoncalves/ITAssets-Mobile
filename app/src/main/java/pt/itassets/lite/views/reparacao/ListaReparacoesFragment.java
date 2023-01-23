@@ -1,5 +1,6 @@
 package pt.itassets.lite.views.reparacao;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import pt.itassets.lite.adapters.ListaPedidosReparacaoAdaptador;
 import pt.itassets.lite.listeners.PedidosReparacaoListener;
 import pt.itassets.lite.models.PedidoReparacao;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.views.DetalhesItemActivity;
 
 public class ListaReparacoesFragment extends Fragment implements PedidosReparacaoListener {
 
@@ -41,8 +43,10 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
 
         lvReparacoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
+            public void onItemClick(AdapterView<?> adapterView, View view, int positions, long id) {
+                Intent intent = new Intent(getContext(), DetalhesReparacaoActivity.class);
+                intent.putExtra("ID_REPARACAO", (int) id);
+                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
             }
         });
 

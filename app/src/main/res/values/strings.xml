@@ -74,4 +74,11 @@
     <string name="Num_Pedido_Reparacao">Pedido de Reparação Nº</string>
     <string name="Num_Pedido_Alocacao">Pedido Nº</string>
     <string name="txt_pesquisar">Pesquisar</string>
+
+    <string name="string_Pedido_Reparacao">Pedido de Reparação</string>
+    <string name="string_objeto_reparacao">Objeto em Reparação</string>
+    <string name="string_desc_problema">Descrição do Problema</string>
+    <string name="Titulo_reparacao">Pedido Reparação Nª</string>
+    <string name="txt_finalizar">Finalizar</string>
+
 </resources>
