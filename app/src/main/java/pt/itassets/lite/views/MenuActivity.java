@@ -38,35 +38,41 @@ import pt.itassets.lite.views.reparacao.ListaReparacoesFragment;
 public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MQTTMessageListener {
     BottomNavigationView bottomNav;
     private static final int ACT_QRCODE_READER = 50;
-    private MqttAndroidClient client = null;
+    private boolean isFuncionario = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
-
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
         SharedPreferences preferences = getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 
-        if(Objects.equals(preferences.getString(Helpers.USER_ROLE, null), "funcionario"))
+        isFuncionario = Objects.equals(preferences.getString(Helpers.USER_ROLE, null), "funcionario");
+
+        if(isFuncionario)
         {
+            setContentView(R.layout.activity_menu_funcionario);
+
             bottomNav = findViewById(R.id.bottom_navigation_funcionario);
+            bottomNav.setOnNavigationItemSelectedListener(this);
+            bottomNav.setSelectedItemId(R.id.item_alocar);
         }
         else
         {
+            setContentView(R.layout.activity_menu);
+
+            //Código caso seja outra coisa (operador)
             bottomNav = findViewById(R.id.bottom_navigation);
+            bottomNav.setOnNavigationItemSelectedListener(this);
+            bottomNav.setSelectedItemId(R.id.item_lista_itens);
+
+            // Pre-carregar dados para as arrays. Isto é necessário para a pesquisa por QR code, visto
+            // visto que é feita uma verificação se o item existe antes de tentar abrir a atividade de
+            // detalhes.
+
+            Singleton.getInstance(this).getAllGrupoItensAPI(this); // Pre-carregar grupos de itens
         }
 
-        bottomNav.setOnNavigationItemSelectedListener(this);
-        bottomNav.setSelectedItemId(R.id.item_lista_itens);
-
-        // Pre-carregar dados para as arrays. Isto é necessário para a pesquisa por QR code, visto
-        // visto que é feita uma verificação se o item existe antes de tentar abrir a atividade de
-        // detalhes.
-
-        Singleton.getInstance(this).getAllGrupoItensAPI(this); // Pre-carregar grupos de itens
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         //MQTT
         Singleton.getInstance(this).setMqttMessageListener(this);
@@ -111,8 +117,11 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_top_menu, menu);
+        if(!isFuncionario)
+        {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.main_top_menu, menu);
+        }
         return true;
     }
 
@@ -151,7 +160,8 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent)
+    {
         super.onActivityResult(requestCode, resultCode, intent);
         if (resultCode == RESULT_OK && requestCode == ACT_QRCODE_READER) {
             if(intent != null)
@@ -206,7 +216,8 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
-    public void BTN_Logout(View view) {
+    public void BTN_Logout(View view)
+    {
         Singleton.getInstance(this).pararMQTT();
         SharedPreferences preferences = getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
         preferences.edit().putString(Helpers.USER_TOKEN, null).commit();
@@ -216,7 +227,8 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     @Override
-    public void onMQTTMessageRecieved(String message) {
+    public void onMQTTMessageRecieved(String message)
+    {
         try
         {
             JSONObject object = new JSONObject(message);

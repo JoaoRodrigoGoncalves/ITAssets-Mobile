@@ -51,6 +51,12 @@ public class JSONParsers {
 
             if(login.getInt("status") == 200){
                 JSONObject data = login.getJSONObject("data");
+
+                if(data.getString("level").equals("administrador"))
+                {
+                    return false; // Administrador não pode iniciar sessão
+                }
+
                 SharedPreferences.Editor editor =  preferences.edit();
 
                 editor.putString(Helpers.USER_TOKEN, data.getString("token"));

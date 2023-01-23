@@ -4,7 +4,7 @@
     <string name="txt_indique_password">Indique uma palavra-passe</string>
     <string name="txt_generic_error">Ocorreu um erro</string>
     <string name="txt_sem_internet">Sem ligação à internet</string>
-    <string name="txt_credenciais_erradas">Email ou Palavra-passe errados</string>
+    <string name="txt_credenciais_erradas">Credenciais Inválidas</string>
     <string name="txt_ler_qrcode">Ler Código QR</string>
     <string name="txt_empresa">Empresa</string>
     <string name="txt_nif">NIF</string>
@@ -41,9 +41,7 @@
     <string name="txt_confirm_remover_alocacao">Tem a certeza que deseja cancelar este Pedido de Alocação?</string>
     <string name="txt_remover_item">Remover Item</string>
     <string name="txt_meus_itens">Os Meus Itens</string>
-    <string name="txt_pedidos_reparacao">Pedidos de Reparação</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="txt_pedidos_reparacao">Minhas Reparações</string>
     <string name="txt_remover_alocacao">Cancelar Pedido de Alocação</string>
     <string name="txt_dataPedido">Data Pedido</string>
     <string name="txt_item">Item</string>

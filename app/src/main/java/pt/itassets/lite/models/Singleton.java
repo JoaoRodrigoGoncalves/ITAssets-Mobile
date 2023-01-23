@@ -112,7 +112,16 @@ public class Singleton {
                                     }
                                     else
                                     {
-                                        Toast.makeText(context, context.getString(R.string.txt_credenciais_erradas), Toast.LENGTH_SHORT).show();
+                                        if(loginListener != null)
+                                        {
+                                            // É preciso fazer aqui um hack quanto ao fail do login
+                                            // por causa da parte de impedir o admin de iniciar
+                                            // sessão.
+
+                                            Map<String, Object> hack = new HashMap<>();
+                                            hack.put("message", context.getString(R.string.txt_credenciais_erradas));
+                                            loginListener.onLoginFail(hack);
+                                        }
                                     }
                                 }
                                 else
