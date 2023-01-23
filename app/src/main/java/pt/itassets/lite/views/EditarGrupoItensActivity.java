@@ -4,10 +4,8 @@ package pt.itassets.lite.views;
 import static pt.itassets.lite.views.ListaItensFragment.ACTION_DETALHES;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -42,7 +40,7 @@ public class EditarGrupoItensActivity extends AppCompatActivity implements Opera
 
         if(grupoId == -1)
         {
-            Toast.makeText(this, "Item não encontrado!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.txt_item_nao_encontrado), Toast.LENGTH_SHORT).show();
             finish();
         }
         else
@@ -86,7 +84,7 @@ public class EditarGrupoItensActivity extends AppCompatActivity implements Opera
         String Nome = tiNomeGrupo.getEditText().getText().toString().trim();
 
         if(Nome.length() < 1) {
-            tiNomeGrupo.setError("Erro: Insira o Nome do Grupo de Itens!");
+            tiNomeGrupo.setError(getString(R.string.txt_insira_nome_grupoItens));
             return false;
         }
         return true;

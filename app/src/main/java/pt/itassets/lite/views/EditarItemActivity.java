@@ -42,7 +42,7 @@ public class EditarItemActivity extends AppCompatActivity  implements OperacoesI
 
         if(itemId == -1)
         {
-            Toast.makeText(this, "Item não encontrado!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.txt_item_nao_encontrado), Toast.LENGTH_SHORT).show();
             finish();
         }
         else {
@@ -80,7 +80,7 @@ public class EditarItemActivity extends AppCompatActivity  implements OperacoesI
         String Nome = tiNome.getEditText().getText().toString().trim();
 
         if(Nome.length() < 1) {
-            tiNome.setError("Erro: Insira o Nome do Item!");
+            tiNome.setError(getString(R.string.txt_insira_nome_item));
             return false;
         }
         return true;

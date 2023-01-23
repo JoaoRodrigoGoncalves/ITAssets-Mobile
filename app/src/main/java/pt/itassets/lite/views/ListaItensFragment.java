@@ -80,17 +80,6 @@ public class ListaItensFragment extends Fragment implements ItensListener{
         if(resultCode == Activity.RESULT_OK && requestCode == ACTION_DETALHES){
             Singleton.getInstance(getContext()).getAllItensAPI(getContext());
             Toast.makeText(getContext(), "Operação bem sucedida!", Toast.LENGTH_SHORT).show();
-//            switch (intent.getIntExtra(Helpers.OPERACAO, 0)){
-//                case Helpers.OPERACAO_ADD:
-//                    Toast.makeText(getContext(), R.string.txt_item_adicionado_sucesso, Toast.LENGTH_SHORT).show();
-//                    break;
-//                case Helpers.OPERACAO_EDIT:
-//                    Toast.makeText(getContext(), R.string.txt_item_modificado_sucesso, Toast.LENGTH_SHORT).show();
-//                    break;
-//                case Helpers.OPERACAO_DELETE:
-//                    Toast.makeText(getContext(), R.string.txt_item_removido_sucesso, Toast.LENGTH_SHORT).show();
-//                    break;
-//            }
         }
     }
 

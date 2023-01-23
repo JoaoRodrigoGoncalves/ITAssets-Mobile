@@ -20,15 +20,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import pt.itassets.lite.R;
-
-import pt.itassets.lite.listeners.OperacoesPedidoReparacaoListener;
-
 import pt.itassets.lite.adapters.ListaItensAdaptador;
-import pt.itassets.lite.adapters.ListaPedidosReparacaoAdaptador;
-import pt.itassets.lite.listeners.PedidosReparacaoListener;
-import pt.itassets.lite.models.Alocacao;
+import pt.itassets.lite.listeners.OperacoesPedidoReparacaoListener;
 import pt.itassets.lite.models.Item;
-
 import pt.itassets.lite.models.PedidoReparacao;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
@@ -159,9 +153,9 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     }
 
     private boolean isPedidoReparacaoFinalizarValido() {
-        Integer Estado = pedidoReparacao.getStatus();
+        Integer estado = pedidoReparacao.getStatus();
 
-        if (Estado != 6) {
+        if (estado != 6) {
             Toast.makeText(getApplicationContext(), R.string.txt_erro_pedido_reparacao_finalizado, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -199,9 +193,9 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
 
 
     private boolean isPedidoReparacaoCancelarValido() {
-        Integer Estado = pedidoReparacao.getStatus();
+        Integer estado = pedidoReparacao.getStatus();
 
-        if (Estado != 6) {
+        if (estado != 8 || estado != 10) {
             Toast.makeText(getApplicationContext(), getString(R.string.txt_erro_pedido_reparacao_cancelado), Toast.LENGTH_SHORT).show();
             return false;
         }

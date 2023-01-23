@@ -76,7 +76,7 @@ public class ListaGrupoItensFragment extends Fragment implements GrupoItensListe
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         if(resultCode == Activity.RESULT_OK && requestCode == ACTION_DETALHES){
             Singleton.getInstance(getContext()).getAllGrupoItensAPI(getContext());
-            Toast.makeText(getContext(), "Operação bem sucedida!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.txt_operacao_bem_sucedida), Toast.LENGTH_SHORT).show();
         }
     }
     @Override

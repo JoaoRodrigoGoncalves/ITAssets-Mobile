@@ -207,20 +207,20 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
 
 
     private boolean isPedidoAlocacaoDevolverValido(){
-        Integer Estado = pedidoAlocacao.getStatus();
+        Integer estado = pedidoAlocacao.getStatus();
 
-        if(Estado != 9) {
-            Toast.makeText(getApplicationContext(), "Erro: Não é possível devolver este Pedido de Alocação!", Toast.LENGTH_SHORT).show();
+        if(estado != 9) {
+            Toast.makeText(getApplicationContext(), getString(R.string.txt_erro_pedido_alocacao_devolver), Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
     }
 
     private boolean isPedidoAlocacaoCancelarValido(){
-        Integer Estado = pedidoAlocacao.getStatus();
+        Integer estado = pedidoAlocacao.getStatus();
 
-        if(Estado != 10) {
-            Toast.makeText(getApplicationContext(), "Erro: Não é possível cancelar este Pedido de Alocação!", Toast.LENGTH_SHORT).show();
+        if(estado != 10) {
+            Toast.makeText(getApplicationContext(), getString(R.string.txt_erro_pedido_alocacao_cancelar), Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

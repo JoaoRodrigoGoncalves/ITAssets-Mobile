@@ -127,7 +127,7 @@ public class AdicionarPedidoAlocacaoActivity extends AppCompatActivity implement
                     break;
 
                 default:
-                    Toast.makeText(this, "Objeto inválido", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.txt_objeto_invalido), Toast.LENGTH_SHORT).show();
                     System.out.println("[ERRO] Objeto inválido: " + Arrays.toString(part.toArray()));
                     break;
             }

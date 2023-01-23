@@ -89,5 +89,16 @@
     <string name="txt_erro_pedido_alocacao_nao_encontrado">Erro: Pedido de Alocação não encontrado!</string>
     <string name="txt_novo_pedido_alocacao">Novo Pedido de Alocação</string>
     <string name="txt_selecionar_item_grupo">Selecione um item ou grupo</string>
+    <string name="txt_erro_pedido_alocacao_devolver">Erro: Não é possível devolver este Pedido de Alocação!</string>
+    <string name="txt_erro_pedido_alocacao_cancelar">Erro: Não é possível cancelar este Pedido de Alocação!</string>
+    <string name="txt_insira_nome_item">Erro: Insira o Nome do Item!</string>
+    <string name="txt_objeto_invalido">Objeto inválido</string>
+    <string name="txt_Sem_permissao_camara">Sem permissão para camara!</string>
+    <string name="txt_item_nao_encontrado">Erro: Item não encontrado!</string>
+    <string name="txt_insira_nome_grupoItens">Erro: Insira o Nome do Grupo de Itens!</string>
+    <string name="txt_operacao_bem_sucedida">Operação bem sucedida!</string>
+    <string name="txt_qrcode_invalido">QRCode inválido</string>
+    <string name="txt_erro_id_item_invalido">Erro: ID do Item inválido</string>
+    <string name="txt_erro_id_grupoItem_invalido">Erro: ID do Grupo inválido</string>
 
 </resources>

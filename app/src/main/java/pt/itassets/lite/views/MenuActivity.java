@@ -1,14 +1,10 @@
 package pt.itassets.lite.views;
 
-import static android.content.ContentValues.TAG;
-
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,16 +21,9 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -150,7 +139,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 abrirQRCodeReader();
             } else {
-                Toast.makeText(this, "Sem permissão para camara", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.txt_Sem_permissao_camara), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -186,7 +175,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                             }
                             else
                             {
-                                Toast.makeText(this, "ID do Item inválido", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, getString(R.string.txt_erro_id_item_invalido), Toast.LENGTH_SHORT).show();
                             }
                             break;
 
@@ -199,17 +188,17 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
                             }
                             else
                             {
-                                Toast.makeText(this, "ID do Grupo inválido", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, getString(R.string.txt_erro_id_grupoItem_invalido), Toast.LENGTH_SHORT).show();
                             }
                             break;
 
                         default:
-                            Toast.makeText(this, "QRCode inválido", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getString(R.string.txt_qrcode_invalido), Toast.LENGTH_SHORT).show();
                     }
                 }
                 catch (Exception exception)
                 {
-                    Toast.makeText(this, "QRCode inválido", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getString(R.string.txt_qrcode_invalido), Toast.LENGTH_SHORT).show();
                     System.out.println("ERRO: " + exception.getMessage());
                     exception.printStackTrace();
                 }

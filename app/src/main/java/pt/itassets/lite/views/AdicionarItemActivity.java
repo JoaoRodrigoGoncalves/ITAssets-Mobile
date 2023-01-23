@@ -60,7 +60,7 @@ public class AdicionarItemActivity extends AppCompatActivity implements Operacoe
         String Nome = tiNome.getEditText().getText().toString().trim();
 
         if(Nome.length() < 1) {
-            tiNome.setError("Erro: Insira o Nome do Item!");
+            tiNome.setError(getString(R.string.txt_insira_nome_item));
             return false;
         }
         return true;
