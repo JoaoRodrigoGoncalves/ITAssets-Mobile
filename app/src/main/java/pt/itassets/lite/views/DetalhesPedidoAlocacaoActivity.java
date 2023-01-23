@@ -58,7 +58,7 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
 
         if(id_pedido != -1)
         {
-            setTitle(R.string.Num_Pedido_Alocacao + id_pedido);
+            setTitle("Pedido Alocação Nº" + id_pedido);
             pedidoAlocacao = Singleton.getInstance(this).getAlocacao(id_pedido);
 
             TV_id_pedido.setText(String.valueOf(pedidoAlocacao.getId()));
