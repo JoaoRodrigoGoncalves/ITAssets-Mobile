@@ -46,6 +46,7 @@ public class AdicionarItemActivity extends AppCompatActivity implements Operacoe
                                 null,
                                 null,
                                 null,
+                                null,
                                 null
                         );
                         Singleton.getInstance(getBaseContext()).AdicionarItemAPI(itemAux, getBaseContext());

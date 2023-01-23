@@ -4,10 +4,23 @@ import android.content.Context;
 
 public class Item {
 
-    private Integer id, status, site_id, pedido_alocacao_id;
+    private Integer id;
+    private Integer status;
+    private Integer site_id;
+    private Integer pedido_alocacao_id;
+
+    public Integer getPedido_reparacao_id() {
+        return pedido_reparacao_id;
+    }
+
+    public void setPedido_reparacao_id(Integer pedido_reparacao_id) {
+        this.pedido_reparacao_id = pedido_reparacao_id;
+    }
+
+    private Integer pedido_reparacao_id;
     private String nome, serialNumber, notas, nome_categoria;
 
-    public Item(Integer id, String nome, String serialNumber, String notas, Integer status, String nome_categoria, Integer site_id, Integer pedido_alocacao_id)
+    public Item(Integer id, String nome, String serialNumber, String notas, Integer status, String nome_categoria, Integer site_id, Integer pedido_alocacao_id,Integer pedido_reparacao_id)
     {
         this.id = id;
         this.status = status;
@@ -17,6 +30,7 @@ public class Item {
         this.serialNumber = serialNumber;
         this.notas = notas;
         this.pedido_alocacao_id = pedido_alocacao_id;
+        this.pedido_reparacao_id = pedido_reparacao_id;
     }
 
     // region Getters e Setters

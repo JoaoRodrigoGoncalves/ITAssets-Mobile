@@ -12,13 +12,11 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import pt.itassets.lite.R;
-import pt.itassets.lite.adapters.MyAdapter;
+import pt.itassets.lite.adapters.ListaGrupoItensAdaptador;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.models.GrupoItens;
-import pt.itassets.lite.models.GrupoItensItem;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
@@ -46,7 +44,7 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        MyAdapter adapter = new MyAdapter(this, items);
+        ListaGrupoItensAdaptador adapter = new ListaGrupoItensAdaptador(this, items);
         recyclerView.setAdapter(adapter);
 
         fabAdicionarGrupoItens.setOnClickListener(new View.OnClickListener() {

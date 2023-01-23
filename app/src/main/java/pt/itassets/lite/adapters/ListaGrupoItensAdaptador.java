@@ -4,26 +4,23 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.models.Item;
-import pt.itassets.lite.models.Singleton;
 
-public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
+public class ListaGrupoItensAdaptador extends RecyclerView.Adapter<MyViewHolder> {
     
     Context context;
     ArrayList<Item> item;
     ArrayList<Integer> itens;
 
-    public MyAdapter(Context context, ArrayList<Item> item) {
+    public ListaGrupoItensAdaptador(Context context, ArrayList<Item> item) {
         this.context = context;
         this.item = item;
     }
@@ -31,7 +28,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(context).inflate(R.layout.list_view, viewGroup, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.grupo_lista_grupoitensitem, viewGroup, false);
         itens=new ArrayList<>();
         return new MyViewHolder(view);
     }

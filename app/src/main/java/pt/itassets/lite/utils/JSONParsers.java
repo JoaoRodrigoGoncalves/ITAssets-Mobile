@@ -147,7 +147,8 @@ public class JSONParsers {
                                 (thisObject.isNull("status") ? 10 : thisObject.getInt("status")),
                                 nome_categoria,
                                 (thisSite == null ? null : thisSite.getId()),
-                                (thisObject.isNull("pedido_alocacao") ? null : thisObject.getInt("pedido_alocacao"))
+                                (thisObject.isNull("pedido_alocacao") ? null : thisObject.getInt("pedido_alocacao")),
+                                (thisObject.isNull("pedido_reparacao") ? null : thisObject.getInt("pedido_reparacao"))
                             );
                         itens.add(auxItem);
                     }
@@ -188,7 +189,9 @@ public class JSONParsers {
                         data.isNull("status") ? 10 : data.getInt("status"),
                         data_categoria == null ? null : data_categoria.getString("nome"),
                         data_site == null ? null : data_site.getInt("id"),
-                        data.isNull("pedido_alocacao") ? null : data.getInt("pedido_alocacao")
+                        data.isNull("pedido_alocacao") ? null : data.getInt("pedido_alocacao"),
+                        data.isNull("pedido_reparacao") ? null : data.getInt("pedido_reparacao")
+
                 );
             }
         }catch (JSONException e){

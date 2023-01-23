@@ -49,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
             GRUPOITENSID ="grupoitensid",
             ITEMID="itemid",
             PEDIDO_ALOCACAO_ID = "pedido_alocacao_id",
-            PEDIDO_Reparacao_ID = "pedido_reparacao_id";
+            PEDIDO_REPARACAO_ID = "pedido_reparacao_id";
 
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -68,7 +68,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         STATUS + " INTEGER NOT NULL," +
                         NOME_CATEGORIA + " TEXT," +
                         SITE_ID + " INTEGER," +
-                        PEDIDO_ALOCACAO_ID + " INTEGER" + ")";
+                        PEDIDO_ALOCACAO_ID + " INTEGER," +
+                        PEDIDO_REPARACAO_ID + " INTEGER" +")";
 
         sqlLiteDatabase.execSQL(sqlCreateTableItem);
 
@@ -124,7 +125,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         DATAFIM + " TEXT," +
                         DESCRICAO_PROBLEMA + " TEXT," +
                         REQUERENTE_ID + " INTEGER NOT NULL," +
-                        RESPONSAVEL_ID + " INTEGER NOT NULL," +
+                        RESPONSAVEL_ID + " INTEGER," +
                         RESPOSTA_OBS + " TEXT," +
                         STATUS + " INTEGER NOT NULL" + ")";
 
@@ -168,7 +169,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(STATUS, item.getStatus());
         values.put(SITE_ID, item.getSite_id());
         values.put(PEDIDO_ALOCACAO_ID, item.getPedido_alocacao_id());
-        //values.put(PEDIDO_Reparacao_ID, item.());
+        values.put(PEDIDO_REPARACAO_ID, item.getPedido_reparacao_id());
 
         // devolve -1 em caso de erro, ou o id do novo livro (long)
         int id = (int) db.insert(TABLE_ITENS, null, values);
@@ -194,6 +195,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(STATUS, item.getStatus());
         values.put(SITE_ID, item.getSite_id());
         values.put(PEDIDO_ALOCACAO_ID, item.getPedido_alocacao_id());
+        values.put(PEDIDO_REPARACAO_ID, item.getPedido_reparacao_id());
 
         // devolve o número de linhas atualizadas
         return db.update(TABLE_ITENS, values, ID+"=?", new String[]{String.valueOf(item.getId())})==1;
@@ -214,7 +216,7 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         ArrayList<Item> itens = new ArrayList<>();
 
-        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID},
+        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID,PEDIDO_REPARACAO_ID},
                 null, null, null, null, null);
 
         if(cursor.moveToFirst())
@@ -228,7 +230,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getInt(4), // status
                         (cursor.isNull(5) ? null : cursor.getString(5)), // categoria
                         (cursor.isNull(6) ? null : cursor.getInt(6)), // site
-                        (cursor.isNull(7) ? null : cursor.getInt(7)) //pedido alocação id
+                        (cursor.isNull(7) ? null : cursor.getInt(7)), //pedido alocação id
+                        (cursor.isNull(8) ? null : cursor.getInt(8)) //pedido alocação id
                 );
                 itens.add(itemAux);
             }while(cursor.moveToNext());
@@ -240,7 +243,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Item FindItemDB(Integer id_Item) {
 
 
-        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID},
+        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID,PEDIDO_REPARACAO_ID},
                 ID + "=" + id_Item, null, null, null, null);
 
         Item itemAux = null;
@@ -254,7 +257,8 @@ public class DBHelper extends SQLiteOpenHelper {
                     cursor.getInt(4), // status
                     (cursor.isNull(5) ? null : cursor.getString(5)), // categoria
                     (cursor.isNull(6) ? null : cursor.getInt(6)), // site
-                    (cursor.isNull(7) ? null : cursor.getInt(7)) // pedido alocacao id
+                    (cursor.isNull(7) ? null : cursor.getInt(7)), // pedido alocacao id
+                    (cursor.isNull(8) ? null : cursor.getInt(8)) // pedido alocacao id
             );
 
 
@@ -407,13 +411,10 @@ public class DBHelper extends SQLiteOpenHelper {
 
         values.put(ID, pedido.getId());
         values.put(REQUERENTE_ID, pedido.getNome_Requerente());
-        values.put(RESPONSAVEL_ID, pedido.getNome_Responsavel());
         values.put(STATUS, pedido.getStatus());
         values.put(DESCRICAO_PROBLEMA, pedido.getDescricaoProblema());
-        values.put(RESPOSTA_OBS, pedido.getRespostaObs());
         values.put(DATAPEDIDO, pedido.getDataPedido());
-        values.put(DATAINICIO, pedido.getDataInicio());
-        values.put(DATAFIM, pedido.getDataFim());
+
 
         // devolve -1 em caso de erro, ou o id do novo objeto (long)
         int id = (int) db.insert(TABLE_PEDIDO_REPARACAO, null, values);
@@ -531,7 +532,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return grupoItensItems;
     }
 
-    //TODO: TIAGO ADICIONAR COMENTARIOS
     public ArrayList<Item> checkItemGrupo(ArrayList<Item> items) {
         ArrayList<Item> itensSemGrupo = new ArrayList<>();
         //Percorrer todos os items na base de dados
@@ -543,7 +543,7 @@ public class DBHelper extends SQLiteOpenHelper {
             if (!cursorGR.moveToFirst())
             {
                 //caso o item nao esteja associado a nenhum grupo de items vai buscar os dados do item
-                Cursor cursorItem = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID},
+                Cursor cursorItem = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID,PEDIDO_REPARACAO_ID},
                         ID + "=" + items.get(i).getId(), null, null, null, null);
 
                 Item itemAux = null;
@@ -560,7 +560,8 @@ public class DBHelper extends SQLiteOpenHelper {
                                 cursorItem.getInt(4), // status
                                 (cursorItem.isNull(5) ? null : cursorItem.getString(5)), // categoria
                                 (cursorItem.isNull(6) ? null : cursorItem.getInt(6)), // site
-                                (cursorItem.isNull(7) ? null : cursorItem.getInt(7)) // pedido alocacao id
+                                (cursorItem.isNull(7) ? null : cursorItem.getInt(7)), // pedido alocacao id
+                                (cursorItem.isNull(8) ? null : cursorItem.getInt(8)) //pedido reparacao id
                         );
                         itensSemGrupo.add(itemAux);
                     }
@@ -697,5 +698,37 @@ public class DBHelper extends SQLiteOpenHelper {
         return alocacoes;
     }
 
+    //endregion
+
+    //region Pedido Reparacao
+
+    public ArrayList<Item> findItemPedidoReparacao(Integer idPedidoReparacao)
+    {
+        ArrayList<Item> items = new ArrayList<>();
+
+        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID,PEDIDO_REPARACAO_ID},
+                PEDIDO_REPARACAO_ID+"="+idPedidoReparacao, null, null, null, null);
+
+        if(cursor.moveToFirst())
+        {
+            do {
+                Item iten = new Item(
+                        cursor.getInt(0), //ID
+                        cursor.getString(1), //Nome
+                        (cursor.isNull(2) ? null : cursor.getString(2)), //Serial
+                        (cursor.isNull(3) ? null : cursor.getString(3)), // Notas
+                        cursor.getInt(4), // status
+                        (cursor.isNull(5) ? null : cursor.getString(5)), // categoria
+                        (cursor.isNull(6) ? null : cursor.getInt(6)), // site
+                        (cursor.isNull(7) ? null : cursor.getInt(7)),//pedido alocação id
+                        (cursor.isNull(8) ? null : cursor.getInt(8)) //pedido alocação id
+
+                );
+                items.add(iten);
+            }while(cursor.moveToNext());
+            cursor.close();
+        }
+        return items;
+    }
     //endregion
 }

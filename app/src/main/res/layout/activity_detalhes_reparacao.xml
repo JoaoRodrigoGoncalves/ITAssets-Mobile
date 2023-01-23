@@ -157,14 +157,13 @@
             android:textStyle="bold"
             android:text="@string/string_objeto_reparacao"/>
 
-        <TextView
-            android:id="@+id/TV_objeto"
+        <ListView
+            android:id="@+id/LV_objeto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginEnd="5dp"
-            android:gravity="right"
-            android:text="Texto Exemplo"/>
+            android:gravity="right"/>
     </LinearLayout>
 
     <com.google.android.material.divider.MaterialDivider

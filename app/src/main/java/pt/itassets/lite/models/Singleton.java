@@ -417,6 +417,14 @@ public class Singleton {
 
     }
 
+    public ArrayList<Item> getItensdoPedidoReparacao(Integer pedido_reparacao_id)
+    {
+        ArrayList<Item> item=database.findItemPedidoReparacao(pedido_reparacao_id);
+
+        return item;
+
+    }
+
     public ArrayList<Item> getItensSemGrupoItem()
     {
         ArrayList<Item> item=getItensBD();
