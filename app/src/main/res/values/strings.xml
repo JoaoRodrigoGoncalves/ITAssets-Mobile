@@ -72,7 +72,6 @@
     <string name="txt_emPreparacao">Em Preparação</string>
     <string name="txt_concluido">Concluído</string>
     <string name="Num_Pedido_Reparacao">Pedido de Reparação Nº</string>
-    <string name="Num_Pedido_Alocacao">Pedido Nº</string>
     <string name="txt_pesquisar">Pesquisar</string>
 
     <string name="string_Pedido_Reparacao">Pedido de Reparação</string>
@@ -80,5 +79,15 @@
     <string name="string_desc_problema">Descrição do Problema</string>
     <string name="Titulo_reparacao">Pedido Reparação Nª</string>
     <string name="txt_finalizar">Finalizar</string>
+    <string name="txt_remover_reparacao">Cancelar Pedido de Reparação</string>
+    <string name="txt_confirmar_remover_pedido_reparacao">Tem certeza que pretende cancelar este pedido de reparação?</string>
+    <string name="txt_erro_pedido_reparacao_cancelado">Erro: Não é possível cancelar este Pedido de Reparação!</string>
+    <string name="txt_erro_pedido_reparacao_finalizado">Erro: Não é possível finalizar este Pedido de Reparação!</string>
+    <string name="txt_erro_pedido_reparacao_nao_encontrado">Erro: Pedido de Reparação não foi encontrado!</string>
+    <string name="txt_detalhes_reparacao">Detalhes da Reparação</string>
+    <string name="txt_num_pedido_reparacao_finalizado">Finalizar Pedido de Reparação Nº</string>
+    <string name="txt_erro_pedido_alocacao_nao_encontrado">Erro: Pedido de Alocação não encontrado!</string>
+    <string name="txt_novo_pedido_alocacao">Novo Pedido de Alocação</string>
+    <string name="txt_selecionar_item_grupo">Selecione um item ou grupo</string>
 
 </resources>

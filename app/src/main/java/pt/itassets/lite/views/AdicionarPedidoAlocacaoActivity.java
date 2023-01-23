@@ -1,7 +1,5 @@
 package pt.itassets.lite.views;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,11 +9,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,7 +36,7 @@ public class AdicionarPedidoAlocacaoActivity extends AppCompatActivity implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_adicionar_pedido_alocacao);
-        setTitle("Novo Pedido de Alocação");
+        setTitle(getString(R.string.txt_novo_pedido_alocacao));
 
         radioBTNGrupo = findViewById(R.id.radiogroup);
         TI_Observacoes = findViewById(R.id.TI_Observacoes);
@@ -138,7 +137,7 @@ public class AdicionarPedidoAlocacaoActivity extends AppCompatActivity implement
         else
         {
             // Erro selecionar objeto
-            Toast.makeText(this, "Selecione um item ou grupo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.txt_selecionar_item_grupo), Toast.LENGTH_SHORT).show();
         }
     }
 

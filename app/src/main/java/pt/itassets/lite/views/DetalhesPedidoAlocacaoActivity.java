@@ -58,7 +58,7 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
 
         if(id_pedido != -1)
         {
-            setTitle("Pedido Nº" + id_pedido);
+            setTitle(R.string.txt_pedido_num + id_pedido);
             pedidoAlocacao = Singleton.getInstance(this).getAlocacao(id_pedido);
 
             TV_id_pedido.setText(String.valueOf(pedidoAlocacao.getId()));
@@ -141,7 +141,7 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
         }
         else
         {
-            Toast.makeText(this, "Pedido não encontrado", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.txt_erro_pedido_alocacao_nao_encontrado, Toast.LENGTH_SHORT).show();
             finish();
         }
     }
@@ -154,7 +154,7 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
 
         if(pedidoAlocacao.getId() == -1)
         {
-            Toast.makeText(this, "Pedido de Alocação não encontrado!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.txt_erro_pedido_alocacao_nao_encontrado, Toast.LENGTH_SHORT).show();
             finish();
         }
         else {
@@ -182,7 +182,7 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
         }
     }
 
-    //Dialog para perguntar se o user pretende mesmo eliminar/ desativar o item
+    //Dialog para perguntar se o user pretende mesmo cancelar o Pedido de Alocação
     private void dialogRemover(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.txt_remover_alocacao))

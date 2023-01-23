@@ -31,6 +31,7 @@ import pt.itassets.lite.listeners.LoginListener;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.listeners.OperacoesItensListener;
 import pt.itassets.lite.listeners.OperacoesPedidoAlocacaoListener;
+import pt.itassets.lite.listeners.OperacoesPedidoReparacaoListener;
 import pt.itassets.lite.listeners.PedidosAlocacaoListener;
 import pt.itassets.lite.listeners.PedidosReparacaoListener;
 import pt.itassets.lite.utils.Helpers;
@@ -54,6 +55,7 @@ public class Singleton {
     private PedidosAlocacaoListener pedidosAlocacaoListener;
     private OperacoesPedidoAlocacaoListener operacoesPedidoAlocacaoListener;
     private PedidosReparacaoListener pedidosReparacaoListener;
+    private OperacoesPedidoReparacaoListener operacoesPedidoReparacaoListener;
 
     private String SYSTEM_DOMAIN = null;
 
@@ -261,6 +263,11 @@ public class Singleton {
     public void setPedidosReparacaoListener(PedidosReparacaoListener pedidosReparacaoListener)
     {
         this.pedidosReparacaoListener = pedidosReparacaoListener;
+    }
+
+    public void setOperacoesPedidoReparacaoListener(OperacoesPedidoReparacaoListener operacoesPedidoReparacaoListener)
+    {
+        this.operacoesPedidoReparacaoListener = operacoesPedidoReparacaoListener;
     }
 
     //endregion
@@ -1163,6 +1170,93 @@ public class Singleton {
             }
         }
     }
+
+    public void EditarReparacaoAPI(final PedidoReparacao reparacao, final Context context)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
+            } else {
+                Map<String, String> jsonBody = new HashMap<>();
+                jsonBody.put("respostaObs", reparacao.getRespostaObs());
+                jsonBody.put("dataFim", reparacao.getDataFim());
+                jsonBody.put("status", String.valueOf(reparacao.getStatus()));
+
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.PUT,
+                        SYSTEM_DOMAIN + "pedidoreparacao/" + reparacao.getId(),
+                        new JSONObject(jsonBody),
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                editarReparacaoBD(reparacao);
+
+                                if (operacoesPedidoReparacaoListener != null) {
+                                    operacoesPedidoReparacaoListener.onReparacaoOperacaoRefresh(Helpers.OPERACAO_EDIT);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Helpers.parseVolleyErrors(context, error);
+                            }
+                        }
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
+    public void RemoverReparacaoAPI(final PedidoReparacao reparacao, final Context context)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
+            } else {
+                StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + "pedidoreparacao/" + reparacao.getId(), new Response.Listener<String>(){
+                    @Override
+                    public void onResponse(String response) {
+                        removerReparacaoBD(reparacao.getId());
+
+                        if (pedidosReparacaoListener != null) {
+                            pedidosReparacaoListener.onRefreshListaReparacoes(reparacoes);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Helpers.parseVolleyErrors(context, error);
+                    }
+                })
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+    }
+
     //endregion
 
 }

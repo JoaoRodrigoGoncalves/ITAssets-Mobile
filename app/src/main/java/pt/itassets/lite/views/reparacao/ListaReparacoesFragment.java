@@ -1,5 +1,6 @@
 package pt.itassets.lite.views.reparacao;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -19,7 +21,6 @@ import pt.itassets.lite.adapters.ListaPedidosReparacaoAdaptador;
 import pt.itassets.lite.listeners.PedidosReparacaoListener;
 import pt.itassets.lite.models.PedidoReparacao;
 import pt.itassets.lite.models.Singleton;
-import pt.itassets.lite.views.DetalhesItemActivity;
 
 public class ListaReparacoesFragment extends Fragment implements PedidosReparacaoListener {
 
@@ -60,6 +61,13 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
             }
         });
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+        if(resultCode == Activity.RESULT_OK && requestCode == ACTION_ADICIONAR){
+            Singleton.getInstance(getContext()).getUserAlocacoesAPI(getContext());
+        }
     }
 
     @Override
