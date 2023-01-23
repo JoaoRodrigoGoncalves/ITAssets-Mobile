@@ -14,6 +14,9 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.hivemq.client.mqtt.MqttClient;
+import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
+import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 
 import org.json.JSONObject;
 
@@ -22,12 +25,14 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.listeners.AppSetupListener;
 import pt.itassets.lite.listeners.GrupoItensListener;
 import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.listeners.LoginListener;
+import pt.itassets.lite.listeners.MQTTMessageListener;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.listeners.OperacoesItensListener;
 import pt.itassets.lite.listeners.OperacoesPedidoAlocacaoListener;
@@ -51,6 +56,8 @@ public class Singleton {
     private OperacoesGruposListener operacoesGruposListener;
     private PedidosAlocacaoListener pedidosAlocacaoListener;
     private OperacoesPedidoAlocacaoListener operacoesPedidoAlocacaoListener;
+    private Mqtt5AsyncClient mqtt_client;
+    private MQTTMessageListener mqttMessageListener;
 
     private String SYSTEM_DOMAIN = null;
 
@@ -213,7 +220,57 @@ public class Singleton {
         volleyQueue.add(jsonObjectRequest);
     }
 
+    public void iniciarMQTT(Context context)
+    {
+        if(mqtt_client != null)
+            return;
+
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        Integer userID = preferences.getInt(Helpers.USER_ID, -1);
+
+        mqtt_client = MqttClient.builder()
+                        .useMqttVersion5()
+                        .identifier("USER_" + userID)
+                        .serverHost(preferences.getString(Helpers.DOMAIN, null))
+                        .serverPort(1883)
+                        .buildAsync();
+
+        mqtt_client.connect();
+
+        mqtt_client.subscribeWith()
+                .topicFilter("USER_" + userID + "_TOPIC")
+                .callback(new Consumer<Mqtt5Publish>() {
+                    @Override
+                    public void accept(Mqtt5Publish mqtt5Publish) {
+                        String message =  new String(mqtt5Publish.getPayloadAsBytes(), StandardCharsets.UTF_8);
+                        if(mqttMessageListener != null)
+                        {
+                            mqttMessageListener.onMQTTMessageRecieved(message);
+                        }
+                    }
+                })
+                .send()
+                .whenComplete(((mqtt5SubAck, throwable) -> {
+                    if(throwable != null)
+                    {
+                        Toast.makeText(context, "Erro: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                        throwable.printStackTrace();
+                    }
+                }));
+    }
+
+    public void pararMQTT()
+    {
+        mqtt_client.disconnect();
+        mqtt_client = null;
+    }
+
     //region Listeners
+
+    public void setMqttMessageListener(MQTTMessageListener mqttMessageListener) {
+        this.mqttMessageListener = mqttMessageListener;
+    }
 
     public void setItensListener(ItensListener itensListener)
     {

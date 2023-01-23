@@ -20,15 +20,19 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import pt.itassets.lite.R;
+import pt.itassets.lite.listeners.MQTTMessageListener;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
 
-public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MQTTMessageListener {
     BottomNavigationView bottomNav;
     private static final int ACT_QRCODE_READER = 50;
 
@@ -49,6 +53,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         // detalhes.
 
         Singleton.getInstance(this).getAllGrupoItensAPI(this); // Pre-carregar grupos de itens
+        Singleton.getInstance(this).iniciarMQTT(this);
     }
 
     @Override
@@ -184,10 +189,32 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     public void BTN_Logout(View view) {
+        Singleton.getInstance(this).pararMQTT();
         SharedPreferences preferences = getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
         preferences.edit().putString(Helpers.USER_TOKEN, null).commit();
         Intent logout = new Intent(this, LoginActivity.class);
         startActivity(logout);
         finish();
+    }
+
+    @Override
+    public void onMQTTMessageRecieved(String message) {
+        try
+        {
+            JSONObject object = new JSONObject(message);
+            if(!object.isNull("message"))
+            {
+                Toast.makeText(this, String.valueOf(object.getString("message")), Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                Toast.makeText(this, "MQTT Inválido", Toast.LENGTH_SHORT).show();
+            }
+        }
+        catch (JSONException exception)
+        {
+            exception.printStackTrace();
+            Toast.makeText(this, "ERRO Mosquitto: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }
