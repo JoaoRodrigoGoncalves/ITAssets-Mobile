@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -14,10 +15,18 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.hivemq.client.mqtt.MqttClient;
-import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
-import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -25,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import pt.itassets.lite.R;
@@ -56,8 +66,8 @@ public class Singleton {
     private OperacoesGruposListener operacoesGruposListener;
     private PedidosAlocacaoListener pedidosAlocacaoListener;
     private OperacoesPedidoAlocacaoListener operacoesPedidoAlocacaoListener;
-    private Mqtt5AsyncClient mqtt_client;
     private MQTTMessageListener mqttMessageListener;
+    private MqttAndroidClient mqttClient;
 
     private String SYSTEM_DOMAIN = null;
 
@@ -220,51 +230,113 @@ public class Singleton {
         volleyQueue.add(jsonObjectRequest);
     }
 
-    public void iniciarMQTT(Context context)
+    //region MQTT
+
+
+    public void startMQTT(Context context)
     {
-        if(mqtt_client != null)
+        if(mqttClient != null)
             return;
 
         SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 
-        Integer userID = preferences.getInt(Helpers.USER_ID, -1);
+        //Converter url de dominio guardado para dominio simples
+        String domain =
+                preferences.getString(Helpers.DOMAIN, null)
+                        .replace("https://", "")
+                        .replace("/", "");
 
-        mqtt_client = MqttClient.builder()
-                        .useMqttVersion5()
-                        .identifier("USER_" + userID)
-                        .serverHost(preferences.getString(Helpers.DOMAIN, null))
-                        .serverPort(1883)
-                        .buildAsync();
 
-        mqtt_client.connect();
+        mqttClient = new MqttAndroidClient(
+                context,
+                "tcp://" + domain + ":1883",
+                "USER_" + preferences.getInt(Helpers.USER_ID, -1)
+        );
 
-        mqtt_client.subscribeWith()
-                .topicFilter("USER_" + userID + "_TOPIC")
-                .callback(new Consumer<Mqtt5Publish>() {
-                    @Override
-                    public void accept(Mqtt5Publish mqtt5Publish) {
-                        String message =  new String(mqtt5Publish.getPayloadAsBytes(), StandardCharsets.UTF_8);
-                        if(mqttMessageListener != null)
-                        {
-                            mqttMessageListener.onMQTTMessageRecieved(message);
-                        }
-                    }
-                })
-                .send()
-                .whenComplete(((mqtt5SubAck, throwable) -> {
-                    if(throwable != null)
+        try {
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setCleanSession(false);
+            options.setKeepAliveInterval(60*60*24);
+
+            IMqttToken token = mqttClient.connect(options);
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d("MQTT", "Ligado ao broker");
+
+                    try
                     {
-                        Toast.makeText(context, "Erro: " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-                        throwable.printStackTrace();
+                        mqttClient.subscribe(
+                                "USER_" + preferences.getInt(Helpers.USER_ID, -1) + "_TOPIC",
+                                0);
+
+                        mqttClient.setCallback(new MqttCallback() {
+                            @Override
+                            public void connectionLost(Throwable cause) {
+                                Log.d("MQTT", "Ligação ao broker perdida: " + cause.getMessage());
+                            }
+
+                            @Override
+                            public void messageArrived(String topic, MqttMessage message) throws Exception {
+                                Log.d("MQTT", "Mensagem recebida");
+                                //Enviar mensagem para o listener
+                                if(mqttMessageListener != null)
+                                {
+                                    mqttMessageListener.onMQTTMessageRecieved(new String(message.getPayload(), StandardCharsets.UTF_8));
+                                }
+                            }
+
+                            @Override
+                            public void deliveryComplete(IMqttDeliveryToken token) {
+                                Log.d("MQTT", "Entrega concluída");
+                            }
+                        });
                     }
-                }));
+                    catch (MqttException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    // Something went wrong e.g. connection timeout or firewall problems
+                    Log.d("MQTT", "Erro ao ligar ao broker: " + exception.getMessage());
+                }
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * Termina a execução do serviço cliente de MQTT
+     */
     public void pararMQTT()
     {
-        mqtt_client.disconnect();
-        mqtt_client = null;
+        if(mqttClient != null)
+        {
+            try
+            {
+                mqttClient.disconnect();
+            }
+            catch (MqttException exception)
+            {
+                exception.printStackTrace();
+                try
+                {
+                    mqttClient.disconnectForcibly();
+                }
+                catch (MqttException mqttException)
+                {
+                    mqttException.printStackTrace();
+                }
+            }
+            mqttClient = null;
+        }
     }
+
+    //endregion
 
     //region Listeners
 

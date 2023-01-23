@@ -1,10 +1,14 @@
 package pt.itassets.lite.views;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,9 +24,17 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +47,7 @@ import pt.itassets.lite.utils.Helpers;
 public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MQTTMessageListener {
     BottomNavigationView bottomNav;
     private static final int ACT_QRCODE_READER = 50;
+    private MqttAndroidClient client = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +66,10 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         // detalhes.
 
         Singleton.getInstance(this).getAllGrupoItensAPI(this); // Pre-carregar grupos de itens
-        Singleton.getInstance(this).iniciarMQTT(this);
+
+        //MQTT
+        Singleton.getInstance(this).setMqttMessageListener(this);
+        Singleton.getInstance(this).startMQTT(this);
     }
 
     @Override
@@ -204,7 +220,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             JSONObject object = new JSONObject(message);
             if(!object.isNull("message"))
             {
-                Toast.makeText(this, String.valueOf(object.getString("message")), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, String.valueOf(object.getString("message")), Toast.LENGTH_LONG).show();
             }
             else
             {

@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
+    <!-- MQTT -->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -83,11 +87,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBTOlEz1ZRxVIV7SOMlTDoIvSxz0jrKCpk" />
-
         <activity
             android:name=".views.DetalhesItemActivity"
             android:exported="false"
@@ -118,6 +117,13 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBTOlEz1ZRxVIV7SOMlTDoIvSxz0jrKCpk" />
+
+        <service android:name="org.eclipse.paho.android.service.MqttService" >
+        </service>
     </application>
 
 </manifest>
