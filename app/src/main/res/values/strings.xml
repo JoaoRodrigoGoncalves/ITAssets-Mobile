@@ -104,6 +104,9 @@
     <string name="txt_email">Email</string>
     <string name="txt_password">Password</string>
     <string name="itens_nao_associados">Ainda não existem itens/Grupos de itens associados</string>
+    <string name="txt_token_invalido">Token inválido. Inicie sessão novamente.</string>
+    <string name="txt_coloque_dedo_sensor_title">Coloque o dedo no sensor para iniciar sessão</string>
+    <string name="txt_coloque_dedo_sensor_description">Coloque a sua impressão digital sobre o sensor de impressão digital para validar a sua identidade e iniciar sessão</string>
 
 
 </resources>

@@ -1,6 +1,9 @@
 package pt.itassets.lite.views;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
@@ -8,10 +11,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.listeners.LoginListener;
@@ -51,18 +56,11 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         }
         else
         {
-            if(preferences.getString(Helpers.USER_TOKEN, null) != null)
+            if(preferences.getString(Helpers.USER_TOKEN, null) != null && Helpers.IsBiometricAvailable(this))
             {
-                //TODO: Send heartbeat
-
-                /*
-                * Ver se o token é válido e tal
-                * mostrar uma progress circle enquanto processa
-                */
-
-                // De momento a assumir sessão válida
-                Intent abrirAppLoginAnteriorValido = new Intent(getBaseContext(), MenuActivity.class);
-                startActivity(abrirAppLoginAnteriorValido);
+                //Enviar um pedido para validar que o token ainda é válido
+                progressbar_login.setVisibility(View.VISIBLE);
+                Singleton.getInstance(this).sendHeartbeat(this);
             }
         }
     }
@@ -114,11 +112,30 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
 
     @Override
     public void OnHeartbeatSuccess() {
+        progressbar_login.setVisibility(View.INVISIBLE);
 
+        Executor executor = ContextCompat.getMainExecutor(this);
+        BiometricPrompt bioPrompt = new androidx.biometric.BiometricPrompt(this, executor, new androidx.biometric.BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationSucceeded(@NonNull androidx.biometric.BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+                Intent abrirAppLoginAnteriorValido = new Intent(getBaseContext(), MenuActivity.class);
+                startActivity(abrirAppLoginAnteriorValido);
+                finish();
+            }
+        });
+
+        BiometricPrompt.PromptInfo.Builder prompt = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle(getString(R.string.txt_coloque_dedo_sensor_title))
+                .setDescription(getString(R.string.txt_coloque_dedo_sensor_description))
+                .setNegativeButtonText(getString(R.string.txt_cancelar));
+
+        bioPrompt.authenticate(prompt.build());
     }
 
     @Override
     public void OnHeartbeatFail() {
-
+        progressbar_login.setVisibility(View.INVISIBLE);
+        Toast.makeText(this, getString(R.string.txt_token_invalido), Toast.LENGTH_SHORT).show();
     }
 }

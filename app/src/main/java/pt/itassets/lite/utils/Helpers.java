@@ -6,6 +6,8 @@ import android.net.NetworkInfo;
 import android.util.Patterns;
 import android.widget.Toast;
 
+import androidx.biometric.BiometricManager;
+
 import com.android.volley.VolleyError;
 
 import org.json.JSONException;
@@ -16,6 +18,7 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 
 import pt.itassets.lite.R;
+import pt.itassets.lite.views.LoginActivity;
 
 public class Helpers {
     public static final String SHAREDPREFERENCES = "IT_ASSETS_SHAREDPREFERENCES";
@@ -111,4 +114,14 @@ public class Helpers {
         Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Verifica se o dispositivo está apto para autenticação biométrica
+     * @param context
+     * @return boolean
+     */
+    public static boolean IsBiometricAvailable(Context context)
+    {
+        BiometricManager manager = BiometricManager.from(context);
+        return (manager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS);
+    }
 }

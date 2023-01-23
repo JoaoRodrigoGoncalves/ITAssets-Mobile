@@ -186,6 +186,61 @@ public class Singleton {
         }
     }
 
+    public void sendHeartbeat(Context context)
+    {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+
+        if(Helpers.isInternetConnectionAvailable(context))
+        {
+            try
+            {
+                JsonObjectRequest jsonRequest = new JsonObjectRequest(
+                        Request.Method.GET,
+                        SYSTEM_DOMAIN + "heartbeat",
+                        null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                if(loginListener != null)
+                                {
+                                    loginListener.OnHeartbeatSuccess();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if(loginListener != null)
+                                {
+                                    loginListener.OnHeartbeatFail();
+                                }
+                            }
+                        }
+                )
+                {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(jsonRequest);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                Toast.makeText(context, context.getString(R.string.txt_generic_error), Toast.LENGTH_SHORT).show();
+            }
+        }
+        else
+        {
+            Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void setupApp(String url, Context context)
     {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url + "sysinfo", null,
