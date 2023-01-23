@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
                 android:textSize="25dp"
-                android:text="Editar Item"/><!--Remover o text-->
+                android:text="@string/txt_editar_item"/><!--Remover o text-->
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"

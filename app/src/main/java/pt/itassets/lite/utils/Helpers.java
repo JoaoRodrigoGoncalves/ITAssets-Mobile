@@ -102,7 +102,7 @@ public class Helpers {
                     catch (Exception e)
                     {
                         e.printStackTrace();
-                        Toast.makeText(context, "Erro interno: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,  "Erro interno: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                     return;
                 }

@@ -21,12 +21,9 @@ import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
@@ -34,8 +31,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.listeners.AppSetupListener;
@@ -700,7 +695,7 @@ public class Singleton {
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
             
-                Toast.makeText(context, "Sem ligação à internet!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
                 itens = database.getAllItensDB();
 
                 if (itensListener != null) {

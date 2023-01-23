@@ -34,7 +34,6 @@
                 android:id="@+id/tv_nome_Grupo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Example Text"
                 android:layout_marginStart="5dp"
                 />
 
@@ -59,7 +58,6 @@
                 android:id="@+id/tv_notas"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Example Text"
                 android:layout_marginStart="5dp"
                 />
 

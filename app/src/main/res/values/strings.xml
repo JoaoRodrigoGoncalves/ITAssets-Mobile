@@ -100,5 +100,9 @@
     <string name="txt_qrcode_invalido">QRCode inválido</string>
     <string name="txt_erro_id_item_invalido">Erro: ID do Item inválido</string>
     <string name="txt_erro_id_grupoItem_invalido">Erro: ID do Grupo inválido</string>
+    <string name="txt_editar_item">Editar Item</string>
+    <string name="txt_iniciar_sessao">Iniciar Sessão</string>
+    <string name="txt_email">Email</string>
+    <string name="txt_password">Password</string>
 
 </resources>
