@@ -1,10 +1,14 @@
 package pt.itassets.lite.views;
 
+import static android.content.ContentValues.TAG;
+
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,19 +24,32 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import pt.itassets.lite.R;
+import pt.itassets.lite.listeners.MQTTMessageListener;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.views.reparacao.ListaReparacoesFragment;
 
-public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MQTTMessageListener {
     BottomNavigationView bottomNav;
     private static final int ACT_QRCODE_READER = 50;
+    private MqttAndroidClient client = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +78,10 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
         // detalhes.
 
         Singleton.getInstance(this).getAllGrupoItensAPI(this); // Pre-carregar grupos de itens
+
+        //MQTT
+        Singleton.getInstance(this).setMqttMessageListener(this);
+        Singleton.getInstance(this).startMQTT(this);
     }
 
     @Override
@@ -197,10 +218,32 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     public void BTN_Logout(View view) {
+        Singleton.getInstance(this).pararMQTT();
         SharedPreferences preferences = getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
         preferences.edit().putString(Helpers.USER_TOKEN, null).commit();
         Intent logout = new Intent(this, LoginActivity.class);
         startActivity(logout);
         finish();
+    }
+
+    @Override
+    public void onMQTTMessageRecieved(String message) {
+        try
+        {
+            JSONObject object = new JSONObject(message);
+            if(!object.isNull("message"))
+            {
+                Toast.makeText(this, String.valueOf(object.getString("message")), Toast.LENGTH_LONG).show();
+            }
+            else
+            {
+                Toast.makeText(this, "MQTT Inválido", Toast.LENGTH_SHORT).show();
+            }
+        }
+        catch (JSONException exception)
+        {
+            exception.printStackTrace();
+            Toast.makeText(this, "ERRO Mosquitto: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 }
