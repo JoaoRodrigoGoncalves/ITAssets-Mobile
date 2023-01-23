@@ -21,6 +21,7 @@ import pt.itassets.lite.adapters.ListaPedidosReparacaoAdaptador;
 import pt.itassets.lite.listeners.PedidosReparacaoListener;
 import pt.itassets.lite.models.PedidoReparacao;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.views.AdicionarItemActivity;
 
 public class ListaReparacoesFragment extends Fragment implements PedidosReparacaoListener {
 
@@ -57,7 +58,8 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
         fabListaPedidosReparacao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(getContext(), AdicionarPedidoReparacaoActivity.class);
+                startActivityForResult(intent, ACTION_ADICIONAR); //Método Deprecated
             }
         });
         return view;
@@ -66,7 +68,7 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         if(resultCode == Activity.RESULT_OK && requestCode == ACTION_ADICIONAR){
-            Singleton.getInstance(getContext()).getUserAlocacoesAPI(getContext());
+            Singleton.getInstance(getContext()).getUserReparacoesAPI(getContext());
         }
     }
 

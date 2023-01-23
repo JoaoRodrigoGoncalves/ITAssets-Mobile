@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -34,6 +36,7 @@ import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.PedidoReparacao;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
+import pt.itassets.lite.views.AdicionarItemActivity;
 import pt.itassets.lite.views.MenuActivity;
 
 
@@ -48,6 +51,8 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     private PedidoReparacao pedidoReparacao;
     private SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
     private GrupoItens grupoItens=null;
+    private FloatingActionButton fabListaItens;
+    public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
 
 
     @Override
@@ -72,6 +77,14 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
         LL_dados_resposta = findViewById(R.id.LL_dados_resposta);
 
         Integer id_reparacao = getIntent().getIntExtra("ID_REPARACAO", -1);
+
+        fabListaItens.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), AdicionarPedidoReparacaoActivity.class);
+                startActivityForResult(intent, ACTION_ADICIONAR); //Método Deprecated
+            }
+        });
 
         if (id_reparacao != -1) {
             setTitle(getString(R.string.Titulo_reparacao) + id_reparacao);

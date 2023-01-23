@@ -703,6 +703,36 @@ public class DBHelper extends SQLiteOpenHelper {
         return alocacoes;
     }
 
+    public ArrayList<Alocacao> getAllAlocacoesItemDB(Integer id_user)
+    {
+        ArrayList<Alocacao> alocacoes = new ArrayList<>();
+
+        Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR},
+                NOME_REQUERENTE+"="+id_user, null, null, null, null);
+
+        if(cursor.moveToFirst())
+        {
+            do {
+                Alocacao alocacaoAux = new Alocacao(
+                        cursor.getInt(0), //ID
+                        cursor.getInt(1), //Status
+                        cursor.getString(2), //DataPedido
+                        cursor.getString(3), //DataInicio
+                        cursor.getString(4), //DataFim
+                        (cursor.isNull(5)? null : cursor.getString(5)), //Obs
+                        (cursor.isNull(6) ? null : cursor.getString(3)), // ObsResposta
+                        cursor.getInt(7), // Requerente
+                        (cursor.isNull(8) ? null : cursor.getInt(8)), // Aprovador
+                        (cursor.isNull(9) ? null : cursor.getString(9)), // Item
+                        (cursor.isNull(10) ? null : cursor.getString(10)) // Grupo
+                );
+                alocacoes.add(alocacaoAux);
+            }while(cursor.moveToNext());
+            cursor.close();
+        }
+        return alocacoes;
+    }
+
     //endregion
 
     //region Pedido Reparacao
@@ -755,6 +785,39 @@ public class DBHelper extends SQLiteOpenHelper {
             ); // pedido Reparacao id
         }
         return grupoItensAux;
+    }
+    //endregion
+
+    //region alocacao
+
+    public ArrayList<Item> findItensalocados(Integer idPedidoReparacao)
+    {
+
+        ArrayList<Item> items = new ArrayList<>();
+
+        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID,PEDIDO_REPARACAO_ID},
+                PEDIDO_REPARACAO_ID+"="+idPedidoReparacao, null, null, null, null);
+
+        if(cursor.moveToFirst())
+        {
+            do {
+                Item iten = new Item(
+                        cursor.getInt(0), //ID
+                        cursor.getString(1), //Nome
+                        (cursor.isNull(2) ? null : cursor.getString(2)), //Serial
+                        (cursor.isNull(3) ? null : cursor.getString(3)), // Notas
+                        cursor.getInt(4), // status
+                        (cursor.isNull(5) ? null : cursor.getString(5)), // categoria
+                        (cursor.isNull(6) ? null : cursor.getInt(6)), // site
+                        (cursor.isNull(7) ? null : cursor.getInt(7)),//pedido alocação id
+                        (cursor.isNull(8) ? null : cursor.getInt(8)) //pedido alocação id
+
+                );
+                items.add(iten);
+            }while(cursor.moveToNext());
+            cursor.close();
+        }
+        return items;
     }
     //endregion
 }

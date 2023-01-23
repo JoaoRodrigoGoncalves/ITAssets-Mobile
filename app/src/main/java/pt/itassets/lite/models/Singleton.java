@@ -625,8 +625,31 @@ public class Singleton {
         ArrayList<Item> item=getItensBD();
         ArrayList<Item> itensSemGrupo = database.checkItemGrupo(item);
         return itensSemGrupo;
+    }
+
+
+    public ArrayList<Item> getItensAlocados(Integer user_id)
+    {
+        ArrayList<Alocacao> ItensAlocadosUser = database.getAllAlocacoesItemDB(user_id);
+        //ArrayList<Item> item=new ArrayList<>();
+        ArrayList<Item> item=database.getAllItensDB();
+
+        for (int j=0;j<ItensAlocadosUser.size();j++)
+        {
+            for (Item i:item) {
+                if (!i.getNome().equals(ItensAlocadosUser.get(j).getNome_item()))
+                {
+                    item.remove(j);
+                    break;
+                }
+            }
+
+        }
+
+        return item;
 
     }
+
 
     //endregion
 
