@@ -46,6 +46,7 @@ import pt.itassets.lite.listeners.PedidosAlocacaoListener;
 import pt.itassets.lite.listeners.PedidosReparacaoListener;
 import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.utils.JSONParsers;
+import pt.itassets.lite.views.reparacao.AdicionarPedidoReparacaoActivity;
 
 public class Singleton {
     private ArrayList<Item> itens;
@@ -631,22 +632,58 @@ public class Singleton {
     public ArrayList<Item> getItensAlocados(Integer user_id)
     {
         ArrayList<Alocacao> ItensAlocadosUser = database.getAllAlocacoesItemDB(user_id);
-        //ArrayList<Item> item=new ArrayList<>();
-        ArrayList<Item> item=database.getAllItensDB();
+        ArrayList<Item> item=new ArrayList<>();
+        ArrayList<Item> itemBD=database.getAllItensDB();
 
         for (int j=0;j<ItensAlocadosUser.size();j++)
         {
-            for (Item i:item) {
-                if (!i.getNome().equals(ItensAlocadosUser.get(j).getNome_item()))
-                {
-                    item.remove(j);
-                    break;
+            if (ItensAlocadosUser.get(j).getStatus()==9)
+            {
+            for (Item i:itemBD) {
+
+                    if (i.getNome().equals(ItensAlocadosUser.get(j).getNome_item()))
+                    {
+                        if (i.getPedido_reparacao_id()==null)
+                        {
+                            item.add(i);
+                        }
+                    }
+
                 }
             }
 
         }
 
         return item;
+
+    }
+
+    public ArrayList<GrupoItens> getGrupoItensAlocados(Integer user_id)
+    {
+        ArrayList<Alocacao> ItensAlocadosUser = database.getAllAlocacoesGrupoDB(user_id);
+        ArrayList<GrupoItens> grupoItens=new ArrayList<>();
+        ArrayList<GrupoItens> grupoItensBD=database.getAllGruposItensDB();
+
+        for (int j=0;j<ItensAlocadosUser.size();j++)
+        {
+            if (ItensAlocadosUser.get(j).getStatus()==9)
+            {
+                for (GrupoItens i:grupoItensBD) {
+
+                    if (i.getNome().equals(ItensAlocadosUser.get(j).getNome_grupoItem()))
+                    {
+                        if (i.getPedido_reparacao_id()==null)
+                        {
+                            grupoItens.add(i);
+                        }
+                    }
+
+                }
+            }
+
+        }
+
+        return grupoItens;
 
     }
 
@@ -1189,6 +1226,8 @@ public class Singleton {
                             if (pedidosAlocacaoListener != null) {
                                 pedidosAlocacaoListener.onRefreshListaAlocacoes(alocacoes);
                             }
+                            /*getAllItensAPI(context);
+                            getAllGrupoItensAPI(context);*/
                         }
                     },
                     new Response.ErrorListener() {
@@ -1397,6 +1436,49 @@ public class Singleton {
         }
     }
 
+    public void createPedidoReparacao(final Context context, final JSONObject jsonBody) {
+        SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+
+        SYSTEM_DOMAIN = preferences.getString(Helpers.DOMAIN, null);
+        if(SYSTEM_DOMAIN != null) {
+            if (!Helpers.isInternetConnectionAvailable(context)) {
+                Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
+            } else {
+                JsonObjectRequest req = new JsonObjectRequest(
+                        Request.Method.POST,
+                        SYSTEM_DOMAIN + "pedidoreparacao",
+                        jsonBody,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                adicionarAlocacaoBD(JSONParsers.parserJsonAlocacao(response));
+
+                                if (operacoesPedidoReparacaoListener!= null) {
+                                    operacoesPedidoReparacaoListener.onReparacaoOperacaoRefresh(Helpers.OPERACAO_ADD);
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Helpers.parseVolleyErrors(context, error);
+                            }
+                        }
+                )
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> params = new HashMap<>();
+                        params.put("Content-Type", "application/json; charset=UTF-8");
+                        params.put("Authorization", "Bearer " + preferences.getString(Helpers.USER_TOKEN, null));
+                        return params;
+                    }
+                };
+                volleyQueue.add(req);
+            }
+        }
+
+    }
     public void EditarReparacaoAPI(final PedidoReparacao reparacao, final Context context)
     {
         SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
@@ -1482,6 +1564,8 @@ public class Singleton {
             }
         }
     }
+
+
 
     //endregion
 

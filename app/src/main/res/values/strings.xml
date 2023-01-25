@@ -111,7 +111,7 @@
 
     <string name="adicionar_pedido_repara_o">Adicionar pedido Reparação</string>
     <string name="problema">Problema</string>
-
+    <string name="error_problema">Escreva um problema</string>
 
 
 </resources>

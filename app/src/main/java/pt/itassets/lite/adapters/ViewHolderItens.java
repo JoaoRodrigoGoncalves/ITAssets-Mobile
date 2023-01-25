@@ -8,13 +8,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import pt.itassets.lite.R;
 
-public class ViewHolderGrupoItens extends RecyclerView.ViewHolder {
-    public CheckBox checkbox_Item;
+public class ViewHolderItens extends RecyclerView.ViewHolder {
+    public CheckBox checkbox;
 
-    public ViewHolderGrupoItens(@NonNull View itemView){
+    public ViewHolderItens(@NonNull View itemView){
         super(itemView);
 
-        checkbox_Item = itemView.findViewById(R.id.checkbox_Item);
+        checkbox = itemView.findViewById(R.id.checkbox_Item);
     }
 
 }

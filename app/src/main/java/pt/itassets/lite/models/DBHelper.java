@@ -715,16 +715,50 @@ public class DBHelper extends SQLiteOpenHelper {
             do {
                 Alocacao alocacaoAux = new Alocacao(
                         cursor.getInt(0), //ID
-                        cursor.getInt(1), //Status
-                        cursor.getString(2), //DataPedido
-                        cursor.getString(3), //DataInicio
-                        cursor.getString(4), //DataFim
-                        (cursor.isNull(5)? null : cursor.getString(5)), //Obs
-                        (cursor.isNull(6) ? null : cursor.getString(3)), // ObsResposta
-                        cursor.getInt(7), // Requerente
-                        (cursor.isNull(8) ? null : cursor.getInt(8)), // Aprovador
-                        (cursor.isNull(9) ? null : cursor.getString(9)), // Item
-                        (cursor.isNull(10) ? null : cursor.getString(10)) // Grupo
+                        cursor.getInt(6),//status
+                        cursor.getString(3), //DataPedido
+                        cursor.getString(4), //DataInicio
+                        cursor.getString(5), //DataFim
+                        cursor.getString(1), //Obs
+                        cursor.getString(2), //ObsResposta
+                        cursor.getInt(9), // Requerente
+                        (cursor.isNull(10) ? null : cursor.getInt(10)),// Aprovador
+                        (cursor.isNull(7) ? null : cursor.getString(7)), // Item
+                        (cursor.isNull(8) ? null : cursor.getString(8)) // Grupo
+
+
+                );
+                alocacoes.add(alocacaoAux);
+            }while(cursor.moveToNext());
+            cursor.close();
+        }
+        return alocacoes;
+    }
+
+    public ArrayList<Alocacao> getAllAlocacoesGrupoDB(Integer id_user)
+    {
+        ArrayList<Alocacao> alocacoes = new ArrayList<>();
+
+        Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR},
+                NOME_REQUERENTE+"="+id_user, null, null, null, null);
+
+        if(cursor.moveToFirst())
+        {
+            do {
+                Alocacao alocacaoAux = new Alocacao(
+                        cursor.getInt(0), //ID
+                        cursor.getInt(6),//status
+                        cursor.getString(3), //DataPedido
+                        cursor.getString(4), //DataInicio
+                        cursor.getString(5), //DataFim
+                        cursor.getString(1), //Obs
+                        cursor.getString(2), //ObsResposta
+                        cursor.getInt(9), // Requerente
+                        (cursor.isNull(10) ? null : cursor.getInt(10)),// Aprovador
+                        (cursor.isNull(7) ? null : cursor.getString(7)), // Item
+                        (cursor.isNull(8) ? null : cursor.getString(8)) // Grupo
+
+
                 );
                 alocacoes.add(alocacaoAux);
             }while(cursor.moveToNext());

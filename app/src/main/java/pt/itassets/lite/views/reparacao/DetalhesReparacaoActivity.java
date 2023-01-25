@@ -78,14 +78,6 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
 
         Integer id_reparacao = getIntent().getIntExtra("ID_REPARACAO", -1);
 
-        fabListaItens.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AdicionarPedidoReparacaoActivity.class);
-                startActivityForResult(intent, ACTION_ADICIONAR); //Método Deprecated
-            }
-        });
-
         if (id_reparacao != -1) {
             setTitle(getString(R.string.Titulo_reparacao) + id_reparacao);
             pedidoReparacao = Singleton.getInstance(this).getReparacao(id_reparacao);

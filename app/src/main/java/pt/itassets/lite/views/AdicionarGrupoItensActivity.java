@@ -14,7 +14,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.ArrayList;
 
 import pt.itassets.lite.R;
-import pt.itassets.lite.adapters.ListaGrupoItensAdaptador;
+import pt.itassets.lite.adapters.ListaItensAdaptadorRV;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.Item;
@@ -44,7 +44,7 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ListaGrupoItensAdaptador adapter = new ListaGrupoItensAdaptador(this, items);
+        ListaItensAdaptadorRV adapter = new ListaItensAdaptadorRV(this, items);
         recyclerView.setAdapter(adapter);
 
         fabAdicionarGrupoItens.setOnClickListener(new View.OnClickListener() {
