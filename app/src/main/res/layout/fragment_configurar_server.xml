@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".views.ConfigurarServerFragment"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:theme="@style/Theme.ITAssets">
 
     <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressbar_configServer"
