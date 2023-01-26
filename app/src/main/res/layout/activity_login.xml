@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".views.LoginActivity"
-    android:layout_margin="5dp"
-    android:theme="@style/Theme.ITAssets">
+    android:layout_margin="5dp">
 
     <ImageView
         android:layout_width="match_parent"

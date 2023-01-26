@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
-    tools:context=".views.ListaGrupoItensFragment"
-    android:theme="@style/Theme.ITAssets">
+    tools:context=".views.ListaGrupoItensFragment">
 
     <ListView
         android:id="@+id/lvGruposItens"

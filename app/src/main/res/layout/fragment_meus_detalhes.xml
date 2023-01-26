@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".views.MeusDetalhesFragment"
     android:orientation="vertical"
-    android:padding="10dp"
-    android:theme="@style/Theme.ITAssets">
+    android:padding="5dp">
 
 
 
@@ -18,7 +17,6 @@
         android:text="Sample Text"
         android:gravity="center_vertical"
         android:textSize="20sp"
-        android:layout_marginBottom="10dp"
         app:drawableStartCompat="@drawable/ic_user" />
 
     <TextView
@@ -28,7 +26,6 @@
         android:text="Sample@Text.Text"
         android:gravity="center_vertical"
         android:textSize="20sp"
-        android:layout_marginBottom="10dp"
         app:drawableStartCompat="@drawable/ic_email"/>
 
     <TextView
