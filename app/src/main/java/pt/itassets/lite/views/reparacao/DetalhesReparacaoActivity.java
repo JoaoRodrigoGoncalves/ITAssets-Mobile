@@ -133,6 +133,15 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
                 TV_data_inicio.setText(String.valueOf(pedidoReparacao.getDataInicio()));
 
                 // region Campo Data Fim
+                if (pedidoReparacao.getDataInicio() != null) {
+                    TV_data_inicio.setText(String.valueOf(pedidoReparacao.getDataFim()));
+                } else {
+                    TV_data_inicio.setTypeface(TV_data_inicio.getTypeface(), Typeface.ITALIC);
+                    TV_data_inicio.setText(R.string.txt_nao_aplicavel);
+                }
+                //endregion
+
+                // region Campo Data Fim
                 if (pedidoReparacao.getDataFim() != null) {
                     TV_data_fim.setText(String.valueOf(pedidoReparacao.getDataFim()));
                 } else {
