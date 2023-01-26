@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 

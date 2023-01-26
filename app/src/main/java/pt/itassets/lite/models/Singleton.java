@@ -16,7 +16,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -32,6 +31,8 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
+import info.mqtt.android.service.Ack;
+import info.mqtt.android.service.MqttAndroidClient;
 import pt.itassets.lite.R;
 import pt.itassets.lite.listeners.AppSetupListener;
 import pt.itassets.lite.listeners.GrupoItensListener;
@@ -315,63 +316,53 @@ public class Singleton {
         mqttClient = new MqttAndroidClient(
                 context,
                 "tcp://" + domain + ":1883",
-                "USER_" + preferences.getInt(Helpers.USER_ID, -1)
+                "USER_" + preferences.getInt(Helpers.USER_ID, -1),
+                Ack.AUTO_ACK
         );
 
-        try {
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setCleanSession(false);
-            options.setKeepAliveInterval(60*60*24);
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setCleanSession(false);
+        options.setKeepAliveInterval(60*60*24);
 
-            IMqttToken token = mqttClient.connect(options);
-            token.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    Log.d("MQTT", "Ligado ao broker");
+        IMqttToken token = mqttClient.connect(options);
+        token.setActionCallback(new IMqttActionListener() {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken) {
+                Log.d("MQTT", "Ligado ao broker");
 
-                    try
-                    {
-                        mqttClient.subscribe(
-                                "USER_" + preferences.getInt(Helpers.USER_ID, -1) + "_TOPIC",
-                                0);
+                mqttClient.subscribe(
+                        "USER_" + preferences.getInt(Helpers.USER_ID, -1) + "_TOPIC",
+                        0);
 
-                        mqttClient.setCallback(new MqttCallback() {
-                            @Override
-                            public void connectionLost(Throwable cause) {
-                                Log.d("MQTT", "Ligação ao broker perdida: " + cause.getMessage());
-                            }
-
-                            @Override
-                            public void messageArrived(String topic, MqttMessage message) throws Exception {
-                                Log.d("MQTT", "Mensagem recebida");
-                                //Enviar mensagem para o listener
-                                if(mqttMessageListener != null)
-                                {
-                                    mqttMessageListener.onMQTTMessageRecieved(new String(message.getPayload(), StandardCharsets.UTF_8));
-                                }
-                            }
-
-                            @Override
-                            public void deliveryComplete(IMqttDeliveryToken token) {
-                                Log.d("MQTT", "Entrega concluída");
-                            }
-                        });
+                mqttClient.setCallback(new MqttCallback() {
+                    @Override
+                    public void connectionLost(Throwable cause) {
+                        Log.d("MQTT", "Ligação ao broker perdida: " + cause.getMessage());
                     }
-                    catch (MqttException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
 
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    // Something went wrong e.g. connection timeout or firewall problems
-                    Log.d("MQTT", "Erro ao ligar ao broker: " + exception.getMessage());
-                }
-            });
-        } catch (MqttException e) {
-            e.printStackTrace();
-        }
+                    @Override
+                    public void messageArrived(String topic, MqttMessage message) throws Exception {
+                        Log.d("MQTT", "Mensagem recebida");
+                        //Enviar mensagem para o listener
+                        if(mqttMessageListener != null)
+                        {
+                            mqttMessageListener.onMQTTMessageRecieved(new String(message.getPayload(), StandardCharsets.UTF_8));
+                        }
+                    }
+
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken token) {
+                        Log.d("MQTT", "Entrega concluída");
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                // Something went wrong e.g. connection timeout or firewall problems
+                Log.d("MQTT", "Erro ao ligar ao broker: " + exception.getMessage());
+            }
+        });
     }
 
     /**
@@ -381,22 +372,7 @@ public class Singleton {
     {
         if(mqttClient != null)
         {
-            try
-            {
-                mqttClient.disconnect();
-            }
-            catch (MqttException exception)
-            {
-                exception.printStackTrace();
-                try
-                {
-                    mqttClient.disconnectForcibly();
-                }
-                catch (MqttException mqttException)
-                {
-                    mqttException.printStackTrace();
-                }
-            }
+            mqttClient.disconnect();
             mqttClient = null;
         }
     }
