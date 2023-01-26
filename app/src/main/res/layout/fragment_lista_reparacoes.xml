@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
-    tools:context=".views.reparacao.ListaReparacoesFragment">
+    tools:context=".views.reparacao.ListaReparacoesFragment"
+    android:theme="@style/Theme.ITAssets">
 
     <ListView
         android:id="@+id/lvReparacoes"

@@ -209,16 +209,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+
+    <!-- endregion -->
+
     <Button
         android:id="@+id/btnCancelar"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onClick_btn_cancelar"
-        android:text="@string/txt_cancelar"
-        style="@style/Widget.MaterialComponents.Button"/>
-
-
-    <!-- endregion -->
+        android:text="@string/txt_cancelar" />
 
     <LinearLayout
         android:id="@+id/LL_dados_resposta"

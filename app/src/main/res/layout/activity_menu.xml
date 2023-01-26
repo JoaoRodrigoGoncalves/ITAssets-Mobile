@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".views.MenuActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:theme="@style/Theme.ITAssets">
 
     <include
         layout="@layout/app_bar_main"
