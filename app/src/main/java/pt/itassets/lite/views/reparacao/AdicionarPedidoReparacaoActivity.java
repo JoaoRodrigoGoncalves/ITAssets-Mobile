@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import pt.itassets.lite.R;
-import pt.itassets.lite.adapters.ListaGrupoItensAdapterRV;
+import pt.itassets.lite.adapters.ListaGrupoItensAdaptorRV;
 import pt.itassets.lite.adapters.ListaItensAdaptadorRV;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.models.GrupoItens;
@@ -48,6 +48,8 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
 
         Singleton.getInstance(getApplicationContext()).setOperacoesGruposListener(this);
 
+
+
         //region Lista do Item
         recyclerView = findViewById(R.id.rv_Itens);
         ArrayList<Item> items = Singleton.getInstance(this).getItensAlocados(preferences.getInt(Helpers.USER_ID, -1));
@@ -60,7 +62,7 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
         recyclerView = findViewById(R.id.rv_Grupo);
         ArrayList<GrupoItens> grupoItens = Singleton.getInstance(this).getGrupoItensAlocados(preferences.getInt(Helpers.USER_ID, -1));
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ListaGrupoItensAdapterRV adaptador_grupoitens = new ListaGrupoItensAdapterRV(this, grupoItens);
+        ListaGrupoItensAdaptorRV adaptador_grupoitens = new ListaGrupoItensAdaptorRV(this, grupoItens);
         recyclerView.setAdapter(adaptador_grupoitens);
         //endregion
 
@@ -90,7 +92,7 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
 
                         if (grupoItensSelected!=null)
                         {
-                            jsonBody.put("grupoItem_id",grupoItens);
+                            jsonBody.put("grupoItens",grupoItensSelected);
                         }
                         Singleton.getInstance(getApplicationContext()).createPedidoReparacao(getApplicationContext(), new JSONObject(jsonBody));
                     }
