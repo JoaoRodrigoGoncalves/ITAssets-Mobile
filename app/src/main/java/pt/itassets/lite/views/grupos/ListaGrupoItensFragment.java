@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -33,6 +34,7 @@ public class ListaGrupoItensFragment extends Fragment implements GrupoItensListe
     private ListView lvGruposItens;
     private FloatingActionButton fabListaGruposItens;
     private SearchView searchView;
+    private TextView TV_sem_dados;
     public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
 
     public ListaGrupoItensFragment() {
@@ -47,6 +49,7 @@ public class ListaGrupoItensFragment extends Fragment implements GrupoItensListe
         setHasOptionsMenu(true);
 
         lvGruposItens = view.findViewById(R.id.lvGruposItens);
+        TV_sem_dados = view.findViewById(R.id.TV_sem_dados);
         fabListaGruposItens = view.findViewById(R.id.fabListaGruposItens);
 
         lvGruposItens.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -90,8 +93,17 @@ public class ListaGrupoItensFragment extends Fragment implements GrupoItensListe
 
     @Override
     public void onRefreshListaGrupoItens(ArrayList<GrupoItens> listaGrupoItens) {
-        if(listaGrupoItens != null){
-            lvGruposItens.setAdapter(new ListaGruposItensAdaptador(getContext(), listaGrupoItens));
+        if(listaGrupoItens != null)
+        {
+            if(listaGrupoItens.size() > 0)
+            {
+                lvGruposItens.setAdapter(new ListaGruposItensAdaptador(getContext(), listaGrupoItens));
+            }
+            else
+            {
+                lvGruposItens.setVisibility(View.INVISIBLE);
+                TV_sem_dados.setVisibility(View.VISIBLE);
+            }
         }
     }
 }

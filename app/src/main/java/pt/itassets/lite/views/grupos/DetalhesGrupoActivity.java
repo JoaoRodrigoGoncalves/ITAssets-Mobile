@@ -61,7 +61,7 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
             tv_nome_grupo.setText(String.valueOf(grupoItens.getNome()));
             setTitle(String.valueOf(grupoItens.getNome()));
 
-            if(grupoItens.getNotas() == "null") //Sim, texto
+            if(grupoItens.getNotas() == null)
             {
                 tv_notas.setText("Não Aplicável");
                 tv_notas.setTypeface(tv_notas.getTypeface(), Typeface.ITALIC);

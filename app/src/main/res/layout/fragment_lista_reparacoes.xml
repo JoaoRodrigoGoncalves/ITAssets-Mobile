@@ -7,6 +7,15 @@
     tools:context=".views.reparacao.ListaReparacoesFragment"
     android:theme="@style/Theme.ITAssets">
 
+    <!-- TV sem dados -->
+    <TextView
+        android:id="@+id/TV_sem_dados"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/sem_dados_a_mostrar"
+        android:gravity="center"
+        android:visibility="gone"/>
+
     <ListView
         android:id="@+id/lvReparacoes"
         android:layout_width="match_parent"

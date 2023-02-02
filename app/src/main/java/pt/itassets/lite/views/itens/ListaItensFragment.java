@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,7 @@ public class ListaItensFragment extends Fragment implements ItensListener{
     private ListView lvItens;
     private FloatingActionButton fabListaItens;
     private SearchView searchView;
+    private TextView TV_sem_dados;
     public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
 
     public ListaItensFragment() {
@@ -51,6 +53,7 @@ public class ListaItensFragment extends Fragment implements ItensListener{
         setHasOptionsMenu(true);
 
         lvItens = view.findViewById(R.id.lvItens);
+        TV_sem_dados = view.findViewById(R.id.TV_sem_dados);
         fabListaItens = view.findViewById(R.id.fabListaItens);
 
         lvItens.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -120,8 +123,17 @@ public class ListaItensFragment extends Fragment implements ItensListener{
 
     @Override
     public void onRefreshListaItens(ArrayList<Item> listaItens) {
-        if(listaItens != null){
-            lvItens.setAdapter(new ListaItensAdaptador(getContext(), listaItens));
+        if(listaItens != null)
+        {
+            if(listaItens.size() > 0)
+            {
+                lvItens.setAdapter(new ListaItensAdaptador(getContext(), listaItens));
+            }
+            else
+            {
+                lvItens.setVisibility(View.INVISIBLE);
+                TV_sem_dados.setVisibility(View.VISIBLE);
+            }
         }
     }
 }

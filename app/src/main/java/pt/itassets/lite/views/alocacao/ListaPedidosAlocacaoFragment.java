@@ -8,12 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -31,6 +34,7 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
 
     private ListView lvAlocacoes;
     private FloatingActionButton fabListaPedidosAlocacao;
+    private TextView TV_sem_dados;
     public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
 
     public ListaPedidosAlocacaoFragment() {
@@ -45,6 +49,7 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
         setHasOptionsMenu(true);
 
         lvAlocacoes = view.findViewById(R.id.lvAlocacoes);
+        TV_sem_dados = view.findViewById(R.id.TV_sem_dados);
         fabListaPedidosAlocacao = view.findViewById(R.id.fabListaPedidosAlocacao);
 
         lvAlocacoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -80,8 +85,17 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
 
     @Override
     public void onRefreshListaAlocacoes(ArrayList<PedidoAlocacao> listaAlocacoes) {
-        if(listaAlocacoes != null){
-            lvAlocacoes.setAdapter(new ListaPedidosAlocacaoAdaptador(getContext(), listaAlocacoes));
+        if(listaAlocacoes != null)
+        {
+            if(listaAlocacoes.size() > 0)
+            {
+                lvAlocacoes.setAdapter(new ListaPedidosAlocacaoAdaptador(getContext(), listaAlocacoes));
+            }
+            else
+            {
+                TV_sem_dados.setVisibility(View.VISIBLE);
+                lvAlocacoes.setVisibility(View.INVISIBLE);
+            }
         }
     }
 }

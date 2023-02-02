@@ -114,6 +114,8 @@
     <string name="error_problema">Escreva um problema</string>
     <string name="descricao_problema">Descrição do Problema</string>
     <string name="sem_itens_para_grupo">Sem itens válidos para criar novo grupo</string>
+    <string name="meus_dados">Meus Dados</string>
+    <string name="sem_dados_a_mostrar">Sem dados a mostrar</string>
 
 
 </resources>

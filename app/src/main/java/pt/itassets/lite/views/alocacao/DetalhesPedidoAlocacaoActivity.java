@@ -66,7 +66,7 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
 
             TV_id_pedido.setText(String.valueOf(pedidoAlocacao.getId()));
             TV_estado_pedido.setText(pedidoAlocacao.humanReadableStatus(this));
-            TV_requerente.setText(String.valueOf(pedidoAlocacao.getNome_requerente())); //TODO: Mostar o nome ao invés do ID
+            TV_requerente.setText(String.valueOf(pedidoAlocacao.getNome_requerente()));
             TV_data_pedido.setText(String.valueOf(pedidoAlocacao.getDataPedido()));
 
             // Objeto

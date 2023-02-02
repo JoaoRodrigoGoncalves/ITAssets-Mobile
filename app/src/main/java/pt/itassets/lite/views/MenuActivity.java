@@ -114,6 +114,7 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.item_user:
                 Fragment meusDetalhes = new MeusDetalhesFragment();
                 getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment, meusDetalhes).commit();
+                setTitle(getString(R.string.meus_dados));
                 return true;
         }
         return false;

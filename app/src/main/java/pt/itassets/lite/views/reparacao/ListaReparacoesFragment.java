@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -27,6 +28,7 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
 
     private ListView lvReparacoes;
     private FloatingActionButton fabListaPedidosReparacao;
+    private TextView TV_sem_dados;
     public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
 
     public ListaReparacoesFragment() {
@@ -41,6 +43,7 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
         setHasOptionsMenu(true);
 
         lvReparacoes = view.findViewById(R.id.lvReparacoes);
+        TV_sem_dados = view.findViewById(R.id.TV_sem_dados);
         fabListaPedidosReparacao = view.findViewById(R.id.fabListaPedidosReparacao);
 
         lvReparacoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -75,8 +78,17 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
 
     @Override
     public void onRefreshListaReparacoes(ArrayList<PedidoReparacao> listaReparacoes) {
-        if(listaReparacoes != null){
-            lvReparacoes.setAdapter(new ListaPedidosReparacaoAdaptador(getContext(), listaReparacoes));
+        if(listaReparacoes != null)
+        {
+            if(listaReparacoes.size() > 0)
+            {
+                lvReparacoes.setAdapter(new ListaPedidosReparacaoAdaptador(getContext(), listaReparacoes));
+            }
+            else
+            {
+                lvReparacoes.setVisibility(View.INVISIBLE);
+                TV_sem_dados.setVisibility(View.VISIBLE);
+            }
         }
     }
 }
