@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import pt.itassets.lite.R;
 import pt.itassets.lite.adapters.ListaPedidosAlocacaoAdaptador;
 import pt.itassets.lite.listeners.PedidosAlocacaoListener;
-import pt.itassets.lite.models.Alocacao;
+import pt.itassets.lite.models.PedidoAlocacao;
 import pt.itassets.lite.models.Singleton;
 
 /**
@@ -79,7 +79,7 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
     }
 
     @Override
-    public void onRefreshListaAlocacoes(ArrayList<Alocacao> listaAlocacoes) {
+    public void onRefreshListaAlocacoes(ArrayList<PedidoAlocacao> listaAlocacoes) {
         if(listaAlocacoes != null){
             lvAlocacoes.setAdapter(new ListaPedidosAlocacaoAdaptador(getContext(), listaAlocacoes));
         }

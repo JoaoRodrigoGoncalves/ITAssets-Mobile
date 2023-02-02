@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import pt.itassets.lite.models.Alocacao;
+import pt.itassets.lite.models.PedidoAlocacao;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.GrupoItensItem;
 import pt.itassets.lite.models.Item;
@@ -287,9 +287,9 @@ public class JSONParsers {
         return auxGrupoItens;
     }
 
-    public static ArrayList<Alocacao> parserJsonAlocacoes(JSONObject response, Context context)
+    public static ArrayList<PedidoAlocacao> parserJsonAlocacoes(JSONObject response, Context context)
     {
-        ArrayList<Alocacao> alocacoes = null;
+        ArrayList<PedidoAlocacao> alocacoes = null;
         try{
             for(int i=0; i<response.length(); i++){
 
@@ -317,7 +317,7 @@ public class JSONParsers {
                             nome_grupoItens = thisObjectGrupoItens.getString("nome");
                         }
 
-                        Alocacao auxAlcoacao = new Alocacao(
+                        PedidoAlocacao auxAlcoacao = new PedidoAlocacao(
                                 thisObject.getInt("id"),
                                 thisObject.getInt("status"),
                                 thisObject.getString("dataPedido"),
@@ -325,8 +325,8 @@ public class JSONParsers {
                                 thisObject.isNull("dataFim") ? null : thisObject.getString("dataFim"),
                                 thisObject.isNull("obs") ? null : thisObject.getString("obs"),
                                 thisObject.isNull("obsResposta") ? null : thisObject.getString("obsResposta"),
-                                thisObject.getInt("requerente_id"),
-                                thisObject.isNull("aprovador_id") ? null : thisObject.getInt("aprovador_id"),
+                                thisObject.getJSONObject("requerente").getString("username"),
+                                thisObject.isNull("aprovador") ? null : thisObject.getJSONObject("aprovador").getString("username"),
                                 nome_item,
                                 nome_grupoItens
                         );
@@ -340,9 +340,9 @@ public class JSONParsers {
         return alocacoes;
     }
 
-    public static Alocacao parserJsonAlocacao(JSONObject response)
+    public static PedidoAlocacao parserJsonAlocacao(JSONObject response)
     {
-        Alocacao pedidoAlocacao = null;
+        PedidoAlocacao pedidoAlocacao = null;
 
         try
         {
@@ -362,7 +362,7 @@ public class JSONParsers {
                     grupo = data.getJSONObject("grupoItens").getString("nome");
                 }
 
-                pedidoAlocacao = new Alocacao(
+                pedidoAlocacao = new PedidoAlocacao(
                         data.getInt("id"),
                         data.getInt("status"),
                         data.getString("dataPedido"),
@@ -370,8 +370,8 @@ public class JSONParsers {
                         data.isNull("dataFim") ? null : data.getString("dataFim"),
                         data.isNull("obs") ? null : data.getString("obs"),
                         data.isNull("obsResposta") ? null : data.getString("obsResposta"),
-                        data.getInt("requerente_id"),
-                        data.isNull("aprovador_id") ? null : data.getInt("aprovador_id"),
+                        data.getJSONObject("requerente").getString("username"),
+                        data.isNull("aprovador") ? null : data.getJSONObject("aprovador").getString("username"),
                         item,
                         grupo
                 );
@@ -440,8 +440,8 @@ public class JSONParsers {
 
                         PedidoReparacao auxReparacao = new PedidoReparacao(
                                 thisObject.getInt("id"),
-                                thisObject.getInt("requerente_id"),
-                                thisObject.isNull("responsavel_id") ? null : thisObject.getInt("responsavel_id"),
+                                thisObject.getJSONObject("requerente").getString("username"),
+                                thisObject.isNull("responsavel") ? null : thisObject.getJSONObject("responsavel").getString("username"),
                                 thisObject.getInt("status"),
                                 thisObject.isNull("descricaoProblema") ? null : thisObject.getString("descricaoProblema"),
                                 thisObject.isNull("respostaObs") ? null : thisObject.getString("respostaObs"),

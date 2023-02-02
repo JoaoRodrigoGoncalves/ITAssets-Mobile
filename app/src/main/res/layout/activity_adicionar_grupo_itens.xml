@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,9 +7,11 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:layout_margin="5dp"
+    android:orientation="vertical"
     tools:context=".views.AdicionarGrupoItensActivity">
 
     <ScrollView
+        android:layout_marginTop="25dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -18,18 +20,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_margin="25dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                android:textSize="25sp"
-                android:text="@string/adicionar_grupo_de_itens"/>
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="25dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 style="?attr/textInputOutlinedStyle"
@@ -65,10 +55,12 @@
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
+
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="20dp">
             </Space>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -81,8 +73,11 @@
                     android:layout_height="match_parent" />
 
             </LinearLayout>
+
         </LinearLayout>
+
     </ScrollView>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdicionarGrupoItens"
         android:layout_width="wrap_content"
@@ -92,4 +87,4 @@
         android:clickable="true"
         app:srcCompat="@drawable/ic_add" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

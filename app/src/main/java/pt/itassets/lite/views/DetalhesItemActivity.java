@@ -120,7 +120,14 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
                 return true;
 
             case R.id.remove:
-                dialogRemover();
+                if(Helpers.isInternetConnectionAvailable(this))
+                {
+                    dialogRemover();
+                }
+                else
+                {
+                    Toast.makeText(this, R.string.txt_sem_internet, Toast.LENGTH_SHORT).show();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(i);

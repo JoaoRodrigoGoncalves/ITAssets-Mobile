@@ -76,7 +76,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
 
             TV_id_pedido.setText(String.valueOf(pedidoReparacao.getId()));
             TV_estado_pedido.setText(pedidoReparacao.humanReadableStatus(this));
-            TV_requerente.setText(String.valueOf(pedidoReparacao.getNome_Requerente()));
+            TV_requerente.setText(String.valueOf(pedidoReparacao.getNome_requerente()));
             TV_data_pedido.setText(String.valueOf(pedidoReparacao.getDataPedido()));
             //objeto
 
@@ -115,9 +115,8 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
                 btn_finalizar.setVisibility(View.VISIBLE);
 
                 // region Campo Responsavel
-                //TODO: Mostar o nome ao invés do ID
-                if (pedidoReparacao.getNome_Responsavel() != null) {
-                    TV_Responsavel.setText(String.valueOf(pedidoReparacao.getNome_Responsavel()));
+                if (pedidoReparacao.getNome_responsavel() != null) {
+                    TV_Responsavel.setText(String.valueOf(pedidoReparacao.getNome_responsavel()));
                 } else {
                     TV_Responsavel.setTypeface(TV_Responsavel.getTypeface(), Typeface.ITALIC);
                     TV_Responsavel.setText(R.string.txt_nao_aplicavel);

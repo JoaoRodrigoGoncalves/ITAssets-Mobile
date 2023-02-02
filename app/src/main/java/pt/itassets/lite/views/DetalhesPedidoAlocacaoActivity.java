@@ -4,6 +4,7 @@ import static pt.itassets.lite.views.ListaItensFragment.ACTION_DETALHES;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
@@ -17,10 +18,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.listeners.OperacoesPedidoAlocacaoListener;
-import pt.itassets.lite.models.Alocacao;
+import pt.itassets.lite.models.PedidoAlocacao;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
 
@@ -31,7 +33,7 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
                      TV_observacoes_resposta;
     private Button btn_Devolver, btn_Cancelar;
     private LinearLayout LL_dados_resposta;
-    private Alocacao pedidoAlocacao;
+    private PedidoAlocacao pedidoAlocacao;
     private SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
     @Override
@@ -95,11 +97,8 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
             {
                 LL_dados_resposta.setVisibility(View.VISIBLE);
                 btn_Cancelar.setVisibility(View.INVISIBLE);
-                btn_Devolver.setVisibility(View.VISIBLE);
 
                 // region Campo Aprovador
-
-                //TODO: Mostar o nome ao invés do ID
                 if(pedidoAlocacao.getNome_aprovador() != null)
                 {
                     TV_aprovador.setText(String.valueOf(pedidoAlocacao.getNome_aprovador()));
@@ -136,6 +135,13 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
                     TV_observacoes_resposta.setText(R.string.txt_nao_aplicavel);
                 }
                 //endregion
+
+                SharedPreferences preferences = getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
+                if(pedidoAlocacao.getStatus() == PedidoAlocacao.STATUS_APROVADO && !Objects.equals(preferences.getString(Helpers.USER_ROLE, null), "funcionario"))
+                {
+                    // Se o pedido estiver aprovado e o role não for funcionário
+                    btn_Devolver.setVisibility(View.VISIBLE);
+                }
 
             }
         }

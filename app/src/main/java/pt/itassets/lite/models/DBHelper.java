@@ -37,8 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
             DATAINICIO = "dataInicio",
             DATAFIM = "dataFim",
             DESCRICAO_PROBLEMA = "descricaoProblema",
-            REQUERENTE_ID = "requerente_id",
-            RESPONSAVEL_ID = "responsavel_id",
+            NOME_RESPONSAVEL = "nome_responsavel",
             RESPOSTA_OBS = "respostaObs",
             OBS = "obs",
             OBSRESPOSTA = "obsResposta",
@@ -110,7 +109,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         DATAPEDIDO + " TEXT NOT NULL," +
                         DATAINICIO + " TEXT," +
                         DATAFIM + " TEXT," +
-                        NOME_REQUERENTE + " TEXT," +
+                        NOME_REQUERENTE + " TEXT NOT NULL," +
                         NOME_APROVADOR + " TEXT," +
                         NOME_ITEM + " TEXT," +
                         NOME_GRUPO + " TEXT," +
@@ -125,8 +124,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         DATAINICIO + " TEXT," +
                         DATAFIM + " TEXT," +
                         DESCRICAO_PROBLEMA + " TEXT," +
-                        REQUERENTE_ID + " INTEGER NOT NULL," +
-                        RESPONSAVEL_ID + " INTEGER," +
+                        NOME_REQUERENTE + " TEXT NOT NULL," +
+                        NOME_RESPONSAVEL + " TEXT," +
                         RESPOSTA_OBS + " TEXT," +
                         STATUS + " INTEGER NOT NULL" + ")";
 
@@ -241,9 +240,8 @@ public class DBHelper extends SQLiteOpenHelper {
         return itens;
     }
 
-    public Item FindItemDB(Integer id_Item) {
-
-
+    public Item FindItemDB(Integer id_Item)
+    {
         Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID,PEDIDO_REPARACAO_ID},
                 ID + "=" + id_Item, null, null, null, null);
 
@@ -261,7 +259,6 @@ public class DBHelper extends SQLiteOpenHelper {
                     (cursor.isNull(7) ? null : cursor.getInt(7)), // pedido alocacao id
                     (cursor.isNull(8) ? null : cursor.getInt(8)) // pedido alocacao id
             );
-
 
             cursor.close();
         }
@@ -413,7 +410,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(ID, pedido.getId());
-        values.put(REQUERENTE_ID, pedido.getNome_Requerente());
+        values.put(NOME_REQUERENTE, pedido.getNome_requerente());
         values.put(STATUS, pedido.getStatus());
         values.put(DESCRICAO_PROBLEMA, pedido.getDescricaoProblema());
         values.put(DATAPEDIDO, pedido.getDataPedido());
@@ -460,7 +457,7 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         ArrayList<PedidoReparacao> pedidos = new ArrayList<>();
 
-        Cursor cursor = db.query(TABLE_PEDIDO_REPARACAO, new String[]{ID, REQUERENTE_ID, RESPONSAVEL_ID, STATUS, DESCRICAO_PROBLEMA, RESPOSTA_OBS, DATAPEDIDO, DATAINICIO, DATAFIM},
+        Cursor cursor = db.query(TABLE_PEDIDO_REPARACAO, new String[]{ID, NOME_REQUERENTE, NOME_RESPONSAVEL, STATUS, DESCRICAO_PROBLEMA, RESPOSTA_OBS, DATAPEDIDO, DATAINICIO, DATAFIM},
                 null, null, null, null, null);
 
         if(cursor.moveToFirst())
@@ -468,8 +465,8 @@ public class DBHelper extends SQLiteOpenHelper {
             do {
                 PedidoReparacao pedidoAux = new PedidoReparacao(
                                 cursor.getInt(0), //ID
-                                cursor.getInt(1), //Requerente
-                                (cursor.isNull(2) ? null : cursor.getInt(8)), // Aprovador
+                                cursor.getString(1), //Requerente
+                                (cursor.isNull(2) ? null : cursor.getString(8)), // Aprovador
                                 cursor.getInt(3), // status
                                 (cursor.isNull(4) ? null : cursor.getString(5)), //descriçãoProblema
                                 (cursor.isNull(5) ? null : cursor.getString(6)), //respostaObs
@@ -625,24 +622,24 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //region Funções Tabela Pedidos de Alocação
 
-    public Alocacao adicionarAlocacaoDB(Alocacao alocacao)
+    public PedidoAlocacao adicionarAlocacaoDB(PedidoAlocacao pedidoAlocacao)
     {
         ContentValues values = new ContentValues();
 
-        values.put(ID, alocacao.getId());
-        values.put(OBS, alocacao.getObs());
-        values.put(DATAPEDIDO, String.valueOf(alocacao.getDataPedido()));
-        values.put(STATUS, alocacao.getStatus());
-        values.put(NOME_REQUERENTE, alocacao.getNome_requerente());
-        values.put(NOME_ITEM, alocacao.getNome_item());
-        values.put(NOME_GRUPO, alocacao.getNome_grupoItem());
+        values.put(ID, pedidoAlocacao.getId());
+        values.put(OBS, pedidoAlocacao.getObs());
+        values.put(DATAPEDIDO, String.valueOf(pedidoAlocacao.getDataPedido()));
+        values.put(STATUS, pedidoAlocacao.getStatus());
+        values.put(NOME_REQUERENTE, pedidoAlocacao.getNome_requerente());
+        values.put(NOME_ITEM, pedidoAlocacao.getNome_item());
+        values.put(NOME_GRUPO, pedidoAlocacao.getNome_grupoItem());
 
         // devolve -1 em caso de erro, ou o id do novo pedido de alocação (long)
         int id = (int) db.insert(TABLE_PEDIDOS_REQUISICAO, null, values);
         if(id != -1)
         {
-            alocacao.setId(id);
-            return alocacao;
+            pedidoAlocacao.setId(id);
+            return pedidoAlocacao;
         }
         else
         {
@@ -650,22 +647,22 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
 
-    public boolean editarAlocacaoDB(Alocacao alocacao)
+    public boolean editarAlocacaoDB(PedidoAlocacao pedidoAlocacao)
     {
         ContentValues values = new ContentValues();
         ;
-        values.put(DATAINICIO, String.valueOf(alocacao.getDataInicio()));
-        values.put(DATAFIM, String.valueOf(alocacao.getDataFim()));
-        values.put(STATUS, alocacao.getStatus());
+        values.put(DATAINICIO, String.valueOf(pedidoAlocacao.getDataInicio()));
+        values.put(DATAFIM, String.valueOf(pedidoAlocacao.getDataFim()));
+        values.put(STATUS, pedidoAlocacao.getStatus());
 
         // devolve o número de linhas atualizadas
-        return db.update(TABLE_PEDIDOS_REQUISICAO, values, ID+"=?", new String[]{String.valueOf(alocacao.getId())})==1;
+        return db.update(TABLE_PEDIDOS_REQUISICAO, values, ID+"=?", new String[]{String.valueOf(pedidoAlocacao.getId())})==1;
     }
 
-    public boolean removerAlocacaoDB(Alocacao alocacao)
+    public boolean removerAlocacaoDB(PedidoAlocacao pedidoAlocacao)
     {
         // db.delete devolve o número de linhas eliminadas
-        return db.delete(TABLE_PEDIDOS_REQUISICAO, ID+"=?", new String[]{String.valueOf(alocacao.getId())})==1;
+        return db.delete(TABLE_PEDIDOS_REQUISICAO, ID+"=?", new String[]{String.valueOf(pedidoAlocacao.getId())})==1;
     }
 
     public void removerAllAlocacaoDB()
@@ -673,9 +670,9 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(TABLE_PEDIDOS_REQUISICAO, null, null);
     }
 
-    public ArrayList<Alocacao> getAllAlocacoesDB()
+    public ArrayList<PedidoAlocacao> getAllAlocacoesDB()
     {
-        ArrayList<Alocacao> alocacoes = new ArrayList<>();
+        ArrayList<PedidoAlocacao> alocacoes = new ArrayList<>();
 
         Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR},
                 null, null, null, null, null);
@@ -683,7 +680,7 @@ public class DBHelper extends SQLiteOpenHelper {
         if(cursor.moveToFirst())
         {
             do {
-                Alocacao alocacaoAux = new Alocacao(
+                PedidoAlocacao pedidoAlocacaoAux = new PedidoAlocacao(
                         cursor.getInt(0), //ID
                         cursor.getInt(1), //Status
                         cursor.getString(2), //DataPedido
@@ -691,21 +688,21 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getString(4), //DataFim
                         (cursor.isNull(5)? null : cursor.getString(5)), //Obs
                         (cursor.isNull(6) ? null : cursor.getString(3)), // ObsResposta
-                        cursor.getInt(7), // Requerente
-                        (cursor.isNull(8) ? null : cursor.getInt(8)), // Aprovador
+                        cursor.getString(7), // Requerente
+                        (cursor.isNull(8) ? null : cursor.getString(8)), // Aprovador
                         (cursor.isNull(9) ? null : cursor.getString(9)), // Item
                         (cursor.isNull(10) ? null : cursor.getString(10)) // Grupo
                 );
-                alocacoes.add(alocacaoAux);
+                alocacoes.add(pedidoAlocacaoAux);
             }while(cursor.moveToNext());
             cursor.close();
         }
         return alocacoes;
     }
 
-    public ArrayList<Alocacao> getAllAlocacoesItemDB(Integer id_user)
+    public ArrayList<PedidoAlocacao> getAllAlocacoesItemDB(Integer id_user)
     {
-        ArrayList<Alocacao> alocacoes = new ArrayList<>();
+        ArrayList<PedidoAlocacao> alocacoes = new ArrayList<>();
 
         Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR},
                 NOME_REQUERENTE+"="+id_user, null, null, null, null);
@@ -713,7 +710,7 @@ public class DBHelper extends SQLiteOpenHelper {
         if(cursor.moveToFirst())
         {
             do {
-                Alocacao alocacaoAux = new Alocacao(
+                PedidoAlocacao pedidoAlocacaoAux = new PedidoAlocacao(
                         cursor.getInt(0), //ID
                         cursor.getInt(6),//status
                         cursor.getString(3), //DataPedido
@@ -721,23 +718,23 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getString(5), //DataFim
                         cursor.getString(1), //Obs
                         cursor.getString(2), //ObsResposta
-                        cursor.getInt(9), // Requerente
-                        (cursor.isNull(10) ? null : cursor.getInt(10)),// Aprovador
+                        cursor.getString(9), // Requerente
+                        (cursor.isNull(10) ? null : cursor.getString(10)),// Aprovador
                         (cursor.isNull(7) ? null : cursor.getString(7)), // Item
                         (cursor.isNull(8) ? null : cursor.getString(8)) // Grupo
 
 
                 );
-                alocacoes.add(alocacaoAux);
+                alocacoes.add(pedidoAlocacaoAux);
             }while(cursor.moveToNext());
             cursor.close();
         }
         return alocacoes;
     }
 
-    public ArrayList<Alocacao> getAllAlocacoesGrupoDB(Integer id_user)
+    public ArrayList<PedidoAlocacao> getAllAlocacoesGrupoDB(Integer id_user)
     {
-        ArrayList<Alocacao> alocacoes = new ArrayList<>();
+        ArrayList<PedidoAlocacao> alocacoes = new ArrayList<>();
 
         Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR},
                 NOME_REQUERENTE+"="+id_user, null, null, null, null);
@@ -745,7 +742,7 @@ public class DBHelper extends SQLiteOpenHelper {
         if(cursor.moveToFirst())
         {
             do {
-                Alocacao alocacaoAux = new Alocacao(
+                PedidoAlocacao pedidoAlocacaoAux = new PedidoAlocacao(
                         cursor.getInt(0), //ID
                         cursor.getInt(6),//status
                         cursor.getString(3), //DataPedido
@@ -753,14 +750,14 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getString(5), //DataFim
                         cursor.getString(1), //Obs
                         cursor.getString(2), //ObsResposta
-                        cursor.getInt(9), // Requerente
-                        (cursor.isNull(10) ? null : cursor.getInt(10)),// Aprovador
+                        cursor.getString(9), // Requerente
+                        (cursor.isNull(10) ? null : cursor.getString(10)),// Aprovador
                         (cursor.isNull(7) ? null : cursor.getString(7)), // Item
                         (cursor.isNull(8) ? null : cursor.getString(8)) // Grupo
 
 
                 );
-                alocacoes.add(alocacaoAux);
+                alocacoes.add(pedidoAlocacaoAux);
             }while(cursor.moveToNext());
             cursor.close();
         }

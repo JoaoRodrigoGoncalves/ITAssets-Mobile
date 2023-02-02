@@ -1,11 +1,10 @@
 package pt.itassets.lite.models;
 
 import android.content.Context;
-import android.content.res.Resources;
 
 import pt.itassets.lite.R;
 
-public class Alocacao {
+public class PedidoAlocacao {
 
     public static final int STATUS_ABERTO = 10;
     public static final int STATUS_APROVADO = 9;
@@ -13,10 +12,10 @@ public class Alocacao {
     public static final int STATUS_DEVOLVIDO = 7;
     public static final int STATUS_CANCELADO = 0;
 
-    private Integer id, status, nome_requerente, nome_aprovador;
-    private String obs, obsResposta, nome_item, nome_grupoItem,  dataPedido, dataInicio, dataFim;
+    private Integer id, status;
+    private String obs, obsResposta, nome_item, nome_grupoItem,  dataPedido, dataInicio, dataFim, nome_requerente, nome_aprovador;
 
-    public Alocacao(Integer id, Integer status, String dataPedido, String dataInicio, String dataFim, String obs, String obsResposta, Integer nome_requerente, Integer nome_aprovador, String nome_item, String nome_grupoItem) {
+    public PedidoAlocacao(Integer id, Integer status, String dataPedido, String dataInicio, String dataFim, String obs, String obsResposta, String nome_requerente, String nome_aprovador, String nome_item, String nome_grupoItem) {
         this.id = id;
         this.status = status;
         this.dataPedido = dataPedido;
@@ -112,17 +111,17 @@ public class Alocacao {
         this.obsResposta = obsResposta;
     }
 
-    public Integer getNome_requerente() {
+    public String getNome_requerente() {
         return nome_requerente;
     }
 
-    public void setNome_requerente(Integer nome_requerente) {this.nome_requerente = nome_requerente;}
+    public void setNome_requerente(String nome_requerente) {this.nome_requerente = nome_requerente;}
 
-    public Integer getNome_aprovador() {
+    public String getNome_aprovador() {
         return nome_aprovador;
     }
 
-    public void setNome_aprovador(Integer nome_aprovador) {
+    public void setNome_aprovador(String nome_aprovador) {
         this.nome_aprovador = nome_aprovador;
     }
 

@@ -348,6 +348,7 @@
             android:layout_height="wrap_content"
             android:text="@string/devolver"
             android:onClick="onClick_btn_devolver"
+            android:visibility="invisible"
             style="@style/Widget.MaterialComponents.Button"/>
 
         <!-- endregion -->

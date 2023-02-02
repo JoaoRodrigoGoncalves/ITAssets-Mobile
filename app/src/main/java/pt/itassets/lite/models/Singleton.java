@@ -21,7 +21,6 @@ import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.json.JSONObject;
 
@@ -47,12 +46,11 @@ import pt.itassets.lite.listeners.PedidosAlocacaoListener;
 import pt.itassets.lite.listeners.PedidosReparacaoListener;
 import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.utils.JSONParsers;
-import pt.itassets.lite.views.reparacao.AdicionarPedidoReparacaoActivity;
 
 public class Singleton {
     private ArrayList<Item> itens;
     private ArrayList<GrupoItens> grupoItens;
-    private ArrayList<Alocacao> alocacoes;
+    private ArrayList<PedidoAlocacao> alocacoes;
     private ArrayList<GrupoItensItem> grupoItensItems;
     private ArrayList<PedidoReparacao> reparacoes;
     private static Singleton instance=null;
@@ -570,16 +568,14 @@ public class Singleton {
 
     public ArrayList<Item> getItensdoGrupoItem(Integer grupoitem_id)
     {
-        ArrayList<Item> item=new ArrayList<>();
-        ArrayList<GrupoItensItem> grupoItensItems=database.findGrupoItensItem(grupoitem_id);
+        ArrayList<Item> local_itens = new ArrayList<>();
+        ArrayList<GrupoItensItem> grupoItensItems = database.findGrupoItensItem(grupoitem_id);
 
-        for (int i=0; i<grupoItensItems.size();i++)
+        for (GrupoItensItem gii: grupoItensItems)
         {
-            Integer aux=grupoItensItems.get(i).getItem_id();
-            item.add(database.FindItemDB(aux));
+            local_itens.add(database.FindItemDB(gii.getItem_id()));
         }
-        return item;
-
+        return local_itens;
     }
 
     public GrupoItens getGrupodeItemdoPedidoReparacao(Integer pedido_reparacao_id)
@@ -607,7 +603,7 @@ public class Singleton {
 
     public ArrayList<Item> getItensAlocados(Integer user_id)
     {
-        ArrayList<Alocacao> ItensAlocadosUser = database.getAllAlocacoesItemDB(user_id);
+        ArrayList<PedidoAlocacao> ItensAlocadosUser = database.getAllAlocacoesItemDB(user_id);
         ArrayList<Item> item=new ArrayList<>();
         ArrayList<Item> itemBD=database.getAllItensDB();
 
@@ -636,7 +632,7 @@ public class Singleton {
 
     public ArrayList<GrupoItens> getGrupoItensAlocados(Integer user_id)
     {
-        ArrayList<Alocacao> ItensAlocadosUser = database.getAllAlocacoesGrupoDB(user_id);
+        ArrayList<PedidoAlocacao> ItensAlocadosUser = database.getAllAlocacoesGrupoDB(user_id);
         ArrayList<GrupoItens> grupoItens=new ArrayList<>();
         ArrayList<GrupoItens> grupoItensBD=database.getAllGruposItensDB();
 
@@ -673,8 +669,8 @@ public class Singleton {
         return new ArrayList(alocacoes);
     }
 
-    public Alocacao getAlocacao(Integer id){
-        for(Alocacao i:alocacoes){
+    public PedidoAlocacao getAlocacao(Integer id){
+        for(PedidoAlocacao i:alocacoes){
             if(i.getId()==id){
                 return i;
             }
@@ -682,28 +678,28 @@ public class Singleton {
         return null;
     }
 
-    public void adicionarAlocacoesBD(ArrayList<Alocacao> alocacoes){
+    public void adicionarAlocacoesBD(ArrayList<PedidoAlocacao> alocacoes){
         database.removerAllAlocacaoDB();
-        for(Alocacao i : alocacoes){
+        for(PedidoAlocacao i : alocacoes){
             adicionarAlocacaoBD(i);
         }
     }
 
-    public void adicionarAlocacaoBD(Alocacao i){
+    public void adicionarAlocacaoBD(PedidoAlocacao i){
         database.adicionarAlocacaoDB(i);
     }
 
-    public void editarAlocacaoBD(Alocacao i){
-        Alocacao auxAlocacao = getAlocacao(i.getId());
-        if(auxAlocacao!=null){
+    public void editarAlocacaoBD(PedidoAlocacao i){
+        PedidoAlocacao auxPedidoAlocacao = getAlocacao(i.getId());
+        if(auxPedidoAlocacao !=null){
             database.editarAlocacaoDB(i);
         }
     }
 
     public void removerAlocacaoBD(int id){
-        Alocacao auxAlocacao = getAlocacao(id);
-        if(auxAlocacao != null){
-            database.removerAlocacaoDB(auxAlocacao);
+        PedidoAlocacao auxPedidoAlocacao = getAlocacao(id);
+        if(auxPedidoAlocacao != null){
+            database.removerAlocacaoDB(auxPedidoAlocacao);
         }
     }
 
@@ -761,9 +757,9 @@ public class Singleton {
         if(SYSTEM_DOMAIN != null) {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, R.string.txt_sem_internet, Toast.LENGTH_LONG).show();
-
+                itens = database.getAllItensDB();
                 if (itensListener != null) {
-                    itensListener.onRefreshListaItens(database.getAllItensDB());
+                    itensListener.onRefreshListaItens(itens);
                 }
             } else {
                 JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, SYSTEM_DOMAIN + "item", null, new Response.Listener<JSONObject>() {
@@ -1272,7 +1268,7 @@ public class Singleton {
     }
 
 
-    public void EditarAlocacaoAPI(final Alocacao alocacao, final Context context)
+    public void EditarAlocacaoAPI(final PedidoAlocacao pedidoAlocacao, final Context context)
     {
         SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 
@@ -1282,17 +1278,17 @@ public class Singleton {
                 Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
             } else {
                 Map<String, String> jsonBody = new HashMap<>();
-                jsonBody.put("dataFim", alocacao.getDataFim());
-                jsonBody.put("status", String.valueOf(alocacao.getStatus()));
+                jsonBody.put("dataFim", pedidoAlocacao.getDataFim());
+                jsonBody.put("status", String.valueOf(pedidoAlocacao.getStatus()));
 
                 JsonObjectRequest req = new JsonObjectRequest(
                         Request.Method.PUT,
-                        SYSTEM_DOMAIN + "pedidoalocacao/" + alocacao.getId(),
+                        SYSTEM_DOMAIN + "pedidoalocacao/" + pedidoAlocacao.getId(),
                         new JSONObject(jsonBody),
                         new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
-                                editarAlocacaoBD(alocacao);
+                                editarAlocacaoBD(pedidoAlocacao);
 
                                 if (operacoesPedidoAlocacaoListener != null) {
                                     operacoesPedidoAlocacaoListener.onAlocacaoOperacaoRefresh(Helpers.OPERACAO_EDIT);
@@ -1319,7 +1315,7 @@ public class Singleton {
         }
     }
 
-    public void RemoverAlocacaoAPI(final Alocacao alocacao, final Context context)
+    public void RemoverAlocacaoAPI(final PedidoAlocacao pedidoAlocacao, final Context context)
     {
         SharedPreferences preferences = context.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 
@@ -1328,10 +1324,10 @@ public class Singleton {
             if (!Helpers.isInternetConnectionAvailable(context)) {
                 Toast.makeText(context, context.getString(R.string.txt_sem_internet), Toast.LENGTH_LONG).show();
             } else {
-                StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + "pedidoalocacao/" + alocacao.getId(), new Response.Listener<String>(){
+                StringRequest req = new StringRequest(Request.Method.DELETE, SYSTEM_DOMAIN + "pedidoalocacao/" + pedidoAlocacao.getId(), new Response.Listener<String>(){
                     @Override
                     public void onResponse(String response) {
-                        removerAlocacaoBD(alocacao.getId());
+                        removerAlocacaoBD(pedidoAlocacao.getId());
 
                         if (pedidosAlocacaoListener != null) {
                             pedidosAlocacaoListener.onRefreshListaAlocacoes(alocacoes);

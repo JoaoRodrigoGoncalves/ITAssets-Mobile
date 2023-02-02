@@ -6,8 +6,8 @@ import pt.itassets.lite.R;
 
 public class PedidoReparacao
 {
-    private Integer id, requerente_id, responsavel_id, status;
-    private String descricaoProblema, respostaObs, dataPedido, dataInicio, dataFim;
+    private Integer id, status;
+    private String descricaoProblema, respostaObs, dataPedido, dataInicio, dataFim, nome_requerente, nome_responsavel;
 
     public static final int STATUS_ABERTO = 8;
     public static final int STATUS_EM_PREPARACAO = 10;
@@ -16,13 +16,13 @@ public class PedidoReparacao
     public static final int STATUS_CANCELADO = 0;
 
     public PedidoReparacao(
-            Integer id, Integer requerente_id, Integer responsavel_id, Integer status,
+            Integer id, String nome_requerente, String nome_responsavel, Integer status,
             String descricaoProblema, String respostaObs, String dataPedido, String dataInicio,
             String dataFim)
     {
         this.id = id;
-        this.requerente_id = requerente_id;
-        this.responsavel_id = responsavel_id;
+        this.nome_requerente = nome_requerente;
+        this.nome_responsavel = nome_responsavel;
         this.status = status;
         this.descricaoProblema = descricaoProblema;
         this.respostaObs = respostaObs;
@@ -63,20 +63,20 @@ public class PedidoReparacao
         this.id = id;
     }
 
-    public Integer getNome_Requerente() {
-        return requerente_id;
+    public String getNome_requerente() {
+        return nome_requerente;
     }
 
-    public void setRequerente_id(Integer requerente_id) {
-        this.requerente_id = requerente_id;
+    public void setNome_requerente(String nome_requerente) {
+        this.nome_requerente = nome_requerente;
     }
 
-    public Integer getNome_Responsavel() {
-        return responsavel_id;
+    public String getNome_responsavel() {
+        return nome_responsavel;
     }
 
-    public void setResponsavel_id(Integer responsavel_id) {
-        this.responsavel_id = responsavel_id;
+    public void setNome_responsavel(String nome_responsavel) {
+        this.nome_responsavel = nome_responsavel;
     }
 
     public Integer getStatus() {

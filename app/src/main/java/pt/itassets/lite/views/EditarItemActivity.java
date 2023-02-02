@@ -46,33 +46,43 @@ public class EditarItemActivity extends AppCompatActivity  implements OperacoesI
             finish();
         }
         else {
-            item = Singleton.getInstance(getBaseContext()).getItem(itemId);
 
-            if(item != null){
-                String titulo = String.format(getString(R.string.act_Titulo), item.getNome());
-                tvTitulo.setText(titulo);
-                tiNome.getEditText().setText(item.getNome());
-                tiNumSerie.getEditText().setText(item.getSerialNumber());
-                tiNota.getEditText().setText(item.getNotas());
-            }
+            if(Helpers.isInternetConnectionAvailable(this))
+            {
+                item = Singleton.getInstance(getBaseContext()).getItem(itemId);
 
-            fabGuardarAlteracoes.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (isItemValido()) {
-                        if (item != null) {
-                            setTitle(tiNome.getEditText().getText().toString().trim());
-                            item.setNome(tiNome.getEditText().getText().toString().trim());
-                            item.setSerialNumber(tiNumSerie.getEditText().getText().toString().trim());
-                            item.setNotas(tiNota.getEditText().getText().toString().trim());
-                            Singleton.getInstance(getApplicationContext()).EditarItemAPI(item, getApplicationContext());
+                if(item != null){
+                    String titulo = String.format(getString(R.string.act_Titulo), item.getNome());
+                    tvTitulo.setText(titulo);
+                    tiNome.getEditText().setText(item.getNome());
+                    tiNumSerie.getEditText().setText(item.getSerialNumber());
+                    tiNota.getEditText().setText(item.getNotas());
+                }
 
-                            Intent intent = new Intent(getBaseContext(), MenuActivity.class);
-                            startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                fabGuardarAlteracoes.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (isItemValido()) {
+                            if (item != null) {
+                                setTitle(tiNome.getEditText().getText().toString().trim());
+                                item.setNome(tiNome.getEditText().getText().toString().trim());
+                                item.setSerialNumber(tiNumSerie.getEditText().getText().toString().trim());
+                                item.setNotas(tiNota.getEditText().getText().toString().trim());
+                                Singleton.getInstance(getApplicationContext()).EditarItemAPI(item, getApplicationContext());
+
+                                Intent intent = new Intent(getBaseContext(), MenuActivity.class);
+                                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                            }
                         }
                     }
-                }
-            });
+                });
+            }
+            else
+            {
+                // Sem internet
+                Toast.makeText(this, R.string.txt_sem_internet, Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
     }
 

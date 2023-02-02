@@ -58,9 +58,16 @@ public class LoginActivity extends AppCompatActivity implements LoginListener {
         {
             if(preferences.getString(Helpers.USER_TOKEN, null) != null && Helpers.IsBiometricAvailable(this))
             {
-                //Enviar um pedido para validar que o token ainda é válido
-                progressbar_login.setVisibility(View.VISIBLE);
-                Singleton.getInstance(this).sendHeartbeat(this);
+                if(Helpers.isInternetConnectionAvailable(this))
+                {
+                    //Enviar um pedido para validar que o token ainda é válido
+                    progressbar_login.setVisibility(View.VISIBLE);
+                    Singleton.getInstance(this).sendHeartbeat(this);
+                }
+                else
+                {
+                    OnHeartbeatSuccess(); // Não há internet. Entrar com biometria.
+                }
             }
         }
     }

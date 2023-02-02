@@ -40,6 +40,8 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); //Para adicionar o botão back, na actionBar
+        setTitle(R.string.adicionar_pedido_reparacao);
         setContentView(R.layout.activity_adicionar_pedido_reparacao);
         SharedPreferences preferences = this.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
         tiProblema = findViewById(R.id.tiProblema);

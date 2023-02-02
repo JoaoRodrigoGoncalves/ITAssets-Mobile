@@ -3,6 +3,7 @@ package pt.itassets.lite.views;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,6 +33,7 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //Para adicionar o botão back, na actionBar
+        setTitle(R.string.adicionar_grupo_de_itens);
         setContentView(R.layout.activity_adicionar_grupo_itens);
 
         tiNome = findViewById(R.id.tiNome);
@@ -42,6 +44,12 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
 
         ArrayList<Item> items = Singleton.getInstance(this).getItensSemGrupoItem();
 
+
+        if(items.size() < 1)
+        {
+            Toast.makeText(this, "Sem itens válidos para criar novo grupo", Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         ListaItensAdaptadorRV adapter = new ListaItensAdaptadorRV(this, items);

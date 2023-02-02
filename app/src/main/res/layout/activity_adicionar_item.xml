@@ -9,81 +9,65 @@
     android:layout_margin="5dp"
     tools:context=".views.AdicionarItemActivity">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="25dp">
 
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputOutlinedStyle"
+            android:id="@+id/tiNome"
+            app:boxStrokeColor="?attr/colorPrimary"
+            app:boxStrokeErrorColor="?attr/colorError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_margin="25dp">
+            android:hint="@string/tv_nome"
+            android:layout_marginBottom="10dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                android:textSize="25dp"
-                android:text="@string/txt_adicionar_item"/>
-
-            <com.google.android.material.divider.MaterialDivider
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="25dp"/>
+                android:maxLength="100"
+                />
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="?attr/textInputOutlinedStyle"
-                android:id="@+id/tiNome"
-                app:boxStrokeColor="?attr/colorPrimary"
-                app:boxStrokeErrorColor="?attr/colorError"
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- TODO: Colocar botão para usar o leitor de códigos para preencher o numero de serie -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputOutlinedStyle"
+            android:id="@+id/tiNSerie"
+            app:boxStrokeColor="?attr/colorPrimary"
+            app:boxStrokeErrorColor="?attr/colorError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/tv_nSerie"
+            android:layout_marginBottom="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/tv_nome"
-                android:layout_marginBottom="10dp">
+                />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLength="100"
-                    />
+        </com.google.android.material.textfield.TextInputLayout>
 
-            </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputOutlinedStyle"
+            android:id="@+id/tiNota"
+            app:boxStrokeColor="?attr/colorPrimary"
+            app:boxStrokeErrorColor="?attr/colorError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/tv_nota">
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="?attr/textInputOutlinedStyle"
-                android:id="@+id/tiNSerie"
-                app:boxStrokeColor="?attr/colorPrimary"
-                app:boxStrokeErrorColor="?attr/colorError"
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/tv_nSerie"
-                android:layout_marginBottom="10dp">
+                android:maxLength="150"
+                />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="?attr/textInputOutlinedStyle"
-                android:id="@+id/tiNota"
-                app:boxStrokeColor="?attr/colorPrimary"
-                app:boxStrokeErrorColor="?attr/colorError"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/tv_nota">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLength="150"
-                    />
-
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
-    </ScrollView>
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabGuardarAlteracoesItem"

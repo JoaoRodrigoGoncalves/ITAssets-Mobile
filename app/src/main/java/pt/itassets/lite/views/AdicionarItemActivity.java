@@ -25,6 +25,7 @@ public class AdicionarItemActivity extends AppCompatActivity implements Operacoe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //Para adicionar o botão back, na actionBar
+        setTitle(R.string.txt_adicionar_item);
         setContentView(R.layout.activity_adicionar_item);
 
         tiNome = findViewById(R.id.tiNome);
