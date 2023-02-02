@@ -74,6 +74,7 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         if(resultCode == Activity.RESULT_OK && requestCode == ACTION_ADICIONAR){
             Singleton.getInstance(getContext()).getUserAlocacoesAPI(getContext());
+            Toast.makeText(getContext(), getString(R.string.txt_operacao_bem_sucedida), Toast.LENGTH_SHORT).show();
         }
     }
 

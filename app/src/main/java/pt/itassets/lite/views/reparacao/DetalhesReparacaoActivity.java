@@ -1,7 +1,5 @@
 package pt.itassets.lite.views.reparacao;
 
-import static pt.itassets.lite.views.ListaItensFragment.ACTION_DETALHES;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -20,23 +18,17 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.adapters.ListaItensAdaptador;
-
 import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.listeners.OperacoesPedidoReparacaoListener;
-
-import pt.itassets.lite.adapters.ListaPedidosReparacaoAdaptador;
-import pt.itassets.lite.listeners.PedidosReparacaoListener;
-import pt.itassets.lite.models.Alocacao;
 import pt.itassets.lite.models.GrupoItens;
-
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.PedidoReparacao;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
-import pt.itassets.lite.views.AdicionarItemActivity;
 import pt.itassets.lite.views.MenuActivity;
 
 
@@ -85,7 +77,6 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
             TV_id_pedido.setText(String.valueOf(pedidoReparacao.getId()));
             TV_estado_pedido.setText(pedidoReparacao.humanReadableStatus(this));
             TV_requerente.setText(String.valueOf(pedidoReparacao.getNome_Requerente()));
-            TV_Responsavel.setText(String.valueOf(pedidoReparacao.getNome_Responsavel()));
             TV_data_pedido.setText(String.valueOf(pedidoReparacao.getDataPedido()));
             //objeto
 
@@ -114,13 +105,16 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
                 TV_Descricao.setText(R.string.txt_nao_aplicavel);
             }
 
+            //Botão
+            btn_Cancelar.setVisibility(View.VISIBLE);
 
             // Aprovador
-            if (pedidoReparacao.getStatus() != 10) {
+            if (pedidoReparacao.getStatus() != 10 || pedidoReparacao.getStatus() != 8) {
                 LL_dados_resposta.setVisibility(View.VISIBLE);
-                btn_Cancelar.setVisibility(View.INVISIBLE);
+                //btn_Cancelar.setVisibility(View.INVISIBLE);
                 btn_finalizar.setVisibility(View.VISIBLE);
 
+                // region Campo Responsavel
                 //TODO: Mostar o nome ao invés do ID
                 if (pedidoReparacao.getNome_Responsavel() != null) {
                     TV_Responsavel.setText(String.valueOf(pedidoReparacao.getNome_Responsavel()));
@@ -130,9 +124,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
                 }
                 // endregion
 
-                TV_data_inicio.setText(String.valueOf(pedidoReparacao.getDataInicio()));
-
-                // region Campo Data Fim
+                // region Campo Data Inicio
                 if (pedidoReparacao.getDataInicio() != null) {
                     TV_data_inicio.setText(String.valueOf(pedidoReparacao.getDataFim()));
                 } else {
@@ -167,6 +159,9 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     }
 
     public void onClick_btn_finalizar(View view) {
+        Date data = new Date();
+        String dataFormatada = formatoData.format(data);
+
         Singleton.getInstance(getApplicationContext()).setOperacoesPedidoReparacaoListener(this);
 
         if (pedidoReparacao.getId() == -1) {
@@ -177,6 +172,10 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
 
             if (pedidoReparacao != null) {
                 if (isPedidoReparacaoFinalizarValido()) {
+                    pedidoReparacao.setDataFim(dataFormatada);
+                    pedidoReparacao.setDataInicio(dataFormatada);
+                    pedidoReparacao.setStatus(4);
+
                     Intent intent = new Intent(getBaseContext(), FinalizarPedidoReparacaoActivity.class);
                     intent.putExtra("ID_REPARACAO", pedidoReparacao.getId());
                     startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated

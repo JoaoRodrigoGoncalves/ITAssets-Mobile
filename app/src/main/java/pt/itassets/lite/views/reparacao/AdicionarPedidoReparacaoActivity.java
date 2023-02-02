@@ -1,15 +1,15 @@
 package pt.itassets.lite.views.reparacao;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -75,6 +75,7 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
                 if(itemSelected != null || grupoItensSelected != null)
                 {
                     String obs = tiProblema.getEditText().getText().toString().trim();
+
 
                     SharedPreferences preferences = getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 

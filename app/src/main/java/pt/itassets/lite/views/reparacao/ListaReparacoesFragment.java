@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -21,7 +22,6 @@ import pt.itassets.lite.adapters.ListaPedidosReparacaoAdaptador;
 import pt.itassets.lite.listeners.PedidosReparacaoListener;
 import pt.itassets.lite.models.PedidoReparacao;
 import pt.itassets.lite.models.Singleton;
-import pt.itassets.lite.views.AdicionarItemActivity;
 
 public class ListaReparacoesFragment extends Fragment implements PedidosReparacaoListener {
 
@@ -69,6 +69,7 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
         if(resultCode == Activity.RESULT_OK && requestCode == ACTION_ADICIONAR){
             Singleton.getInstance(getContext()).getUserReparacoesAPI(getContext());
+            Toast.makeText(getContext(), getString(R.string.txt_operacao_bem_sucedida), Toast.LENGTH_SHORT).show();
         }
     }
 

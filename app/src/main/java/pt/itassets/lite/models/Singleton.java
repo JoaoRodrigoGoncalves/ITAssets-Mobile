@@ -1467,6 +1467,7 @@ public class Singleton {
                 Map<String, String> jsonBody = new HashMap<>();
                 jsonBody.put("respostaObs", reparacao.getRespostaObs());
                 jsonBody.put("dataFim", reparacao.getDataFim());
+                jsonBody.put("dataInicio", reparacao.getDataInicio());
                 jsonBody.put("status", String.valueOf(reparacao.getStatus()));
 
                 JsonObjectRequest req = new JsonObjectRequest(
