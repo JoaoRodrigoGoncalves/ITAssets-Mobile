@@ -1,4 +1,4 @@
-package pt.itassets.lite.views;
+package pt.itassets.lite.views.alocacao;
 
 import android.content.Intent;
 import android.content.SharedPreferences;

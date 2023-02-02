@@ -1,7 +1,7 @@
-package pt.itassets.lite.views;
+package pt.itassets.lite.views.grupos;
 
 
-import static pt.itassets.lite.views.ListaItensFragment.ACTION_DETALHES;
+import static pt.itassets.lite.views.itens.ListaItensFragment.ACTION_DETALHES;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import pt.itassets.lite.listeners.OperacoesGruposListener;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
+import pt.itassets.lite.views.MenuActivity;
 
 public class EditarGrupoItensActivity extends AppCompatActivity implements OperacoesGruposListener {
 

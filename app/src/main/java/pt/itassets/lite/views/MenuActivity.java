@@ -32,6 +32,11 @@ import pt.itassets.lite.R;
 import pt.itassets.lite.listeners.MQTTMessageListener;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
+import pt.itassets.lite.views.alocacao.ListaPedidosAlocacaoFragment;
+import pt.itassets.lite.views.grupos.DetalhesGrupoActivity;
+import pt.itassets.lite.views.grupos.ListaGrupoItensFragment;
+import pt.itassets.lite.views.itens.DetalhesItemActivity;
+import pt.itassets.lite.views.itens.ListaItensFragment;
 import pt.itassets.lite.views.reparacao.ListaReparacoesFragment;
 
 public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MQTTMessageListener {

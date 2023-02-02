@@ -1,6 +1,6 @@
-package pt.itassets.lite.views;
+package pt.itassets.lite.views.grupos;
 
-import static pt.itassets.lite.views.ListaItensFragment.ACTION_DETALHES;
+import static pt.itassets.lite.views.itens.ListaItensFragment.ACTION_DETALHES;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -12,17 +12,12 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.adapters.ListaItensAdaptador;
@@ -30,6 +25,7 @@ import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
+import pt.itassets.lite.views.MenuActivity;
 
 public class DetalhesGrupoActivity extends AppCompatActivity {
 

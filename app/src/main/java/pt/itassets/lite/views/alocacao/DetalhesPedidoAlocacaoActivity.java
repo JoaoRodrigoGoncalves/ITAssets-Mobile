@@ -1,6 +1,6 @@
-package pt.itassets.lite.views;
+package pt.itassets.lite.views.alocacao;
 
-import static pt.itassets.lite.views.ListaItensFragment.ACTION_DETALHES;
+import static pt.itassets.lite.views.itens.ListaItensFragment.ACTION_DETALHES;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +25,7 @@ import pt.itassets.lite.listeners.OperacoesPedidoAlocacaoListener;
 import pt.itassets.lite.models.PedidoAlocacao;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
+import pt.itassets.lite.views.MenuActivity;
 
 public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements OperacoesPedidoAlocacaoListener {
 

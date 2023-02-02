@@ -1,6 +1,6 @@
 package pt.itassets.lite.views.reparacao;
 
-import static pt.itassets.lite.views.ListaItensFragment.ACTION_DETALHES;
+import static pt.itassets.lite.views.itens.ListaItensFragment.ACTION_DETALHES;
 
 import android.content.Intent;
 import android.os.Bundle;

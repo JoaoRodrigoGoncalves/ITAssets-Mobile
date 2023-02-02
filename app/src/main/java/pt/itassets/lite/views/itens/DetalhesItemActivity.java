@@ -1,6 +1,6 @@
-package pt.itassets.lite.views;
+package pt.itassets.lite.views.itens;
 
-import static pt.itassets.lite.views.ListaItensFragment.ACTION_DETALHES;
+import static pt.itassets.lite.views.itens.ListaItensFragment.ACTION_DETALHES;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,11 +25,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import pt.itassets.lite.R;
-import pt.itassets.lite.listeners.OperacoesItensListener;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.models.Site;
 import pt.itassets.lite.utils.Helpers;
+import pt.itassets.lite.views.MenuActivity;
 
 public class DetalhesItemActivity extends AppCompatActivity implements OnMapReadyCallback {
 

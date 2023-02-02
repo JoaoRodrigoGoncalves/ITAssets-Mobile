@@ -1,4 +1,4 @@
-package pt.itassets.lite.views;
+package pt.itassets.lite.views.alocacao;
 
 import android.app.Activity;
 import android.content.Intent;

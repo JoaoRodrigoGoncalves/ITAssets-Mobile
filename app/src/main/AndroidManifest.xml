@@ -50,7 +50,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".views.AdicionarPedidoAlocacaoActivity"
+            android:name=".views.alocacao.AdicionarPedidoAlocacaoActivity"
             android:exported="false"
             android:parentActivityName=".views.MenuActivity">
             <meta-data
@@ -58,7 +58,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".views.DetalhesPedidoAlocacaoActivity"
+            android:name=".views.alocacao.DetalhesPedidoAlocacaoActivity"
             android:exported="false"
             android:parentActivityName=".views.MenuActivity">
             <meta-data
@@ -73,23 +73,15 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".views.EditarGrupoItensActivity"
+            android:name=".views.grupos.EditarGrupoItensActivity"
             android:exported="false"
-            android:parentActivityName=".views.AdicionarGrupoItensActivity">
+            android:parentActivityName=".views.grupos.AdicionarGrupoItensActivity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
-            android:name=".views.DetalhesGrupoActivity"
-            android:exported="false"
-            android:parentActivityName=".views.MenuActivity">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".views.AdicionarGrupoItensActivity"
+            android:name=".views.grupos.DetalhesGrupoActivity"
             android:exported="false"
             android:parentActivityName=".views.MenuActivity">
             <meta-data
@@ -97,15 +89,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".views.EditarItemActivity"
-            android:exported="false"
-            android:parentActivityName=".views.AdicionarItemActivity">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".views.AdicionarItemActivity"
+            android:name=".views.grupos.AdicionarGrupoItensActivity"
             android:exported="false"
             android:parentActivityName=".views.MenuActivity">
             <meta-data
@@ -113,7 +97,23 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".views.DetalhesItemActivity"
+            android:name=".views.itens.EditarItemActivity"
+            android:exported="false"
+            android:parentActivityName=".views.itens.AdicionarItemActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".views.itens.AdicionarItemActivity"
+            android:exported="false"
+            android:parentActivityName=".views.MenuActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".views.itens.DetalhesItemActivity"
             android:exported="false"
             android:parentActivityName=".views.MenuActivity">
             <meta-data

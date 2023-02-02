@@ -8,7 +8,7 @@
     android:gravity="center"
     android:layout_margin="5dp"
     android:orientation="vertical"
-    tools:context=".views.AdicionarGrupoItensActivity">
+    tools:context=".views.grupos.AdicionarGrupoItensActivity">
 
     <ScrollView
         android:layout_marginTop="25dp"

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
-    tools:context=".views.ListaPedidosAlocacaoFragment"
+    tools:context=".views.alocacao.ListaPedidosAlocacaoFragment"
     android:theme="@style/Theme.ITAssets">
 
     <ListView

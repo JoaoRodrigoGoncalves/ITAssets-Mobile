@@ -1,4 +1,4 @@
-package pt.itassets.lite.views;
+package pt.itassets.lite.views.grupos;
 
 import android.content.Intent;
 import android.os.Bundle;
