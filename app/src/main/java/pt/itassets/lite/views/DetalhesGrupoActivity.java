@@ -29,6 +29,7 @@ import pt.itassets.lite.adapters.ListaItensAdaptador;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.utils.Helpers;
 
 public class DetalhesGrupoActivity extends AppCompatActivity {
 
@@ -99,7 +100,15 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
                 return true;
 
             case R.id.remove:
-                dialogRemover();
+                if(Helpers.isInternetConnectionAvailable(this))
+                {
+                    dialogRemover();
+                }
+                else
+                {
+                    Toast.makeText(this, R.string.txt_sem_internet, Toast.LENGTH_SHORT).show();
+                    finish();
+                }
                 return true;
         }
         return super.onOptionsItemSelected(i);

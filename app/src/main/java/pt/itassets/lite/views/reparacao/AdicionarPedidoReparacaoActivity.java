@@ -47,10 +47,13 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
         tiProblema = findViewById(R.id.tiProblema);
         btn_guadar=findViewById(R.id.btn_guardar);
 
+        if(!Helpers.isInternetConnectionAvailable(this))
+        {
+            Toast.makeText(this, R.string.txt_sem_internet, Toast.LENGTH_SHORT).show();
+            finish();
+        }
 
         Singleton.getInstance(getApplicationContext()).setOperacoesGruposListener(this);
-
-
 
         //region Lista do Item
         recyclerView = findViewById(R.id.rv_Itens);
@@ -112,9 +115,6 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
                 }
             }
         });
-
-
-
     }
 
     @Override

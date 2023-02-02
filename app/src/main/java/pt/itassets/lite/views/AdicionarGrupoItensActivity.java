@@ -45,9 +45,17 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
         ArrayList<Item> items = Singleton.getInstance(this).getItensSemGrupoItem();
 
 
-        if(items.size() < 1)
+        if(Helpers.isInternetConnectionAvailable(this))
         {
-            Toast.makeText(this, "Sem itens válidos para criar novo grupo", Toast.LENGTH_SHORT).show();
+            if(items.size() < 1)
+            {
+                Toast.makeText(this, R.string.sem_itens_para_grupo, Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+        else
+        {
+            Toast.makeText(this, R.string.txt_sem_internet, Toast.LENGTH_SHORT).show();
             finish();
         }
 

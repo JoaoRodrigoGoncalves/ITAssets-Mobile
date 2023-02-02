@@ -113,6 +113,7 @@
     <string name="problema">Problema</string>
     <string name="error_problema">Escreva um problema</string>
     <string name="descricao_problema">Descrição do Problema</string>
+    <string name="sem_itens_para_grupo">Sem itens válidos para criar novo grupo</string>
 
 
 </resources>

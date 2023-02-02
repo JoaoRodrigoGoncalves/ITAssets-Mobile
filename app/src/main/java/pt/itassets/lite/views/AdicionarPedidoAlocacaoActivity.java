@@ -38,6 +38,12 @@ public class AdicionarPedidoAlocacaoActivity extends AppCompatActivity implement
         setContentView(R.layout.activity_adicionar_pedido_alocacao);
         setTitle(getString(R.string.txt_novo_pedido_alocacao));
 
+        if(!Helpers.isInternetConnectionAvailable(this))
+        {
+            Toast.makeText(this, R.string.txt_sem_internet, Toast.LENGTH_SHORT).show();
+            finish();
+        }
+
         radioBTNGrupo = findViewById(R.id.radiogroup);
         TI_Observacoes = findViewById(R.id.TI_Observacoes);
 

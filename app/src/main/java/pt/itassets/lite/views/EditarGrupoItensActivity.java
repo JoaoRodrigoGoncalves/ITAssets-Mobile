@@ -45,38 +45,47 @@ public class EditarGrupoItensActivity extends AppCompatActivity implements Opera
         }
         else
         {
-            grupoItens = Singleton.getInstance(getBaseContext()).getGrupoItens(grupoId);
+            if(Helpers.isInternetConnectionAvailable(this))
+            {
+                grupoItens = Singleton.getInstance(getBaseContext()).getGrupoItens(grupoId);
 
-            if(grupoItens != null){
+                if(grupoItens != null){
 
-                tiNomeGrupo.getEditText().setText(grupoItens.getNome());
-                if(grupoItens.getNotas()!=null)
-                {
-                    tiNotas.getEditText().setText(grupoItens.getNotas());
-                }
-                else
-                {
-                    tiNotas.getEditText().setText("");
-                }
-            }
-
-            fabEditarGrupoItens.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if ((isGrupoItensValido())) {
-                        if (grupoItens != null) {
-
-                            grupoItens.setNome(tiNomeGrupo.getEditText().getText().toString().trim());
-                            grupoItens.setNotas(tiNotas.getEditText().getText().toString().trim());
-
-                            Singleton.getInstance(getApplicationContext()).EditarGrupoItensAPI(grupoItens, getApplicationContext());
-
-                            Intent intent = new Intent(getBaseContext(), MenuActivity.class);
-                            startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
-                        }
+                    tiNomeGrupo.getEditText().setText(grupoItens.getNome());
+                    if(grupoItens.getNotas()!=null)
+                    {
+                        tiNotas.getEditText().setText(grupoItens.getNotas());
+                    }
+                    else
+                    {
+                        tiNotas.getEditText().setText("");
                     }
                 }
-            });
+
+                fabEditarGrupoItens.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if ((isGrupoItensValido())) {
+                            if (grupoItens != null) {
+
+                                grupoItens.setNome(tiNomeGrupo.getEditText().getText().toString().trim());
+                                grupoItens.setNotas(tiNotas.getEditText().getText().toString().trim());
+
+                                Singleton.getInstance(getApplicationContext()).EditarGrupoItensAPI(grupoItens, getApplicationContext());
+
+                                Intent intent = new Intent(getBaseContext(), MenuActivity.class);
+                                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                            }
+                        }
+                    }
+                });
+            }
+            else
+            {
+                //Sem net
+                Toast.makeText(this, R.string.txt_sem_internet, Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
     }
 
