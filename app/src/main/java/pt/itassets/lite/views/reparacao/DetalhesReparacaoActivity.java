@@ -118,9 +118,9 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
             btn_Cancelar.setVisibility(View.VISIBLE);
 
             // Aprovador
-            if (pedidoReparacao.getStatus() != 10 || pedidoReparacao.getStatus() != 8) {
+            if (pedidoReparacao.getStatus() != PedidoReparacao.STATUS_ABERTO) {
                 LL_dados_resposta.setVisibility(View.VISIBLE);
-                //btn_Cancelar.setVisibility(View.INVISIBLE);
+                btn_Cancelar.setVisibility(View.INVISIBLE);
                 btn_finalizar.setVisibility(View.VISIBLE);
 
                 // region Campo Responsavel
@@ -158,6 +158,12 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
                     TV_observacoes_resposta.setText(R.string.txt_nao_aplicavel);
                 }
                 //endregion
+            }
+
+            if (pedidoReparacao.getStatus() == PedidoReparacao.STATUS_CONCLUIDO)
+            {
+                btn_Cancelar.setVisibility(View.INVISIBLE);
+                btn_finalizar.setVisibility(View.INVISIBLE);
             }
         } else {
             Toast.makeText(this, R.string.txt_erro_pedido_reparacao_nao_encontrado, Toast.LENGTH_SHORT).show();
