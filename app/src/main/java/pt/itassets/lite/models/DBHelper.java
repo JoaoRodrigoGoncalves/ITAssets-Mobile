@@ -47,6 +47,7 @@ public class DBHelper extends SQLiteOpenHelper {
             NOME_GRUPO = "nome_grupoItem",
             GRUPOITENSID ="grupoitensid",
             ITEMID="itemid",
+            USER_ID="userid",
             PEDIDO_ALOCACAO_ID = "pedido_alocacao_id",
             PEDIDO_REPARACAO_ID = "pedido_reparacao_id";
 
@@ -113,6 +114,7 @@ public class DBHelper extends SQLiteOpenHelper {
                         NOME_APROVADOR + " TEXT," +
                         NOME_ITEM + " TEXT," +
                         NOME_GRUPO + " TEXT," +
+                        USER_ID + " INTEGER NOT NULL," +
                         STATUS + " INTEGER NOT NULL" + ")";
 
         sqlLiteDatabase.execSQL(sqlCreateTablePedidosAlocacao);
@@ -633,6 +635,7 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(NOME_REQUERENTE, pedidoAlocacao.getNome_requerente());
         values.put(NOME_ITEM, pedidoAlocacao.getNome_item());
         values.put(NOME_GRUPO, pedidoAlocacao.getNome_grupoItem());
+        values.put(USER_ID, pedidoAlocacao.getUserid());
 
         // devolve -1 em caso de erro, ou o id do novo pedido de alocação (long)
         int id = (int) db.insert(TABLE_PEDIDOS_REQUISICAO, null, values);
@@ -674,7 +677,7 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         ArrayList<PedidoAlocacao> alocacoes = new ArrayList<>();
 
-        Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR},
+        Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR, USER_ID},
                 null, null, null, null, null);
 
         if(cursor.moveToFirst())
@@ -691,7 +694,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getString(7), // Requerente
                         (cursor.isNull(8) ? null : cursor.getString(8)), // Aprovador
                         (cursor.isNull(9) ? null : cursor.getString(9)), // Item
-                        (cursor.isNull(10) ? null : cursor.getString(10)) // Grupo
+                        (cursor.isNull(10) ? null : cursor.getString(10)), // Grupo
+                        cursor.getInt(11)
                 );
                 alocacoes.add(pedidoAlocacaoAux);
             }while(cursor.moveToNext());
@@ -704,8 +708,8 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         ArrayList<PedidoAlocacao> alocacoes = new ArrayList<>();
 
-        Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR},
-                NOME_REQUERENTE+"="+id_user, null, null, null, null);
+        Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR, USER_ID},
+                USER_ID+"="+id_user, null, null, null, null);
 
         if(cursor.moveToFirst())
         {
@@ -721,9 +725,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getString(9), // Requerente
                         (cursor.isNull(10) ? null : cursor.getString(10)),// Aprovador
                         (cursor.isNull(7) ? null : cursor.getString(7)), // Item
-                        (cursor.isNull(8) ? null : cursor.getString(8)) // Grupo
-
-
+                        (cursor.isNull(8) ? null : cursor.getString(8)), // Grupo
+                        cursor.getInt(11)
                 );
                 alocacoes.add(pedidoAlocacaoAux);
             }while(cursor.moveToNext());
@@ -736,8 +739,8 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         ArrayList<PedidoAlocacao> alocacoes = new ArrayList<>();
 
-        Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR},
-                NOME_REQUERENTE+"="+id_user, null, null, null, null);
+        Cursor cursor = db.query(TABLE_PEDIDOS_REQUISICAO, new String[]{ID, OBS, OBSRESPOSTA, DATAPEDIDO, DATAINICIO, DATAFIM, STATUS, NOME_ITEM, NOME_GRUPO, NOME_REQUERENTE, NOME_APROVADOR, USER_ID},
+                USER_ID+"="+id_user, null, null, null, null);
 
         if(cursor.moveToFirst())
         {
@@ -753,8 +756,8 @@ public class DBHelper extends SQLiteOpenHelper {
                         cursor.getString(9), // Requerente
                         (cursor.isNull(10) ? null : cursor.getString(10)),// Aprovador
                         (cursor.isNull(7) ? null : cursor.getString(7)), // Item
-                        (cursor.isNull(8) ? null : cursor.getString(8)) // Grupo
-
+                        (cursor.isNull(8) ? null : cursor.getString(8)), // Grupo
+                        cursor.getInt(11)
 
                 );
                 alocacoes.add(pedidoAlocacaoAux);
@@ -797,24 +800,30 @@ public class DBHelper extends SQLiteOpenHelper {
         return items;
     }
 
-    public GrupoItens findGrupoItensPedidoReparacao(Integer idPedidoReparacao)
+    public ArrayList<GrupoItens> findGrupoItensPedidoReparacao(Integer idPedidoReparacao)
     {
 
-        GrupoItens grupoItensAux=null;
+        ArrayList<GrupoItens> grupoItensAux= new ArrayList<>();
         Cursor cursor = db.query(TABLE_GRUPO_ITENS, new String[]{ID, NOME, NOTAS, STATUS, PEDIDO_ALOCACAO_ID,PEDIDO_REPARACAO_ID},
                 PEDIDO_REPARACAO_ID+"="+idPedidoReparacao, null, null, null, null);
 
         if(cursor.moveToFirst())
         {
-            grupoItensAux=new GrupoItens(
-                    cursor.getInt(0), //ID
-                    cursor.getInt(3), // status
-                    cursor.getString(1), //Nome
-                    (cursor.isNull(2) ? null : cursor.getString(2)), // Notas
-                    (cursor.isNull(4) ? null : cursor.getInt(4)), // pedido alocacao id
-                    (cursor.isNull(5) ? null : cursor.getInt(5))
-            ); // pedido Reparacao id
+            do {
+                GrupoItens grupoItens = new GrupoItens(
+                        cursor.getInt(0), //ID
+                        cursor.getInt(3), // status
+                        cursor.getString(1), //Nome
+                        (cursor.isNull(2) ? null : cursor.getString(2)), // Notas
+                        (cursor.isNull(4) ? null : cursor.getInt(4)), // pedido alocacao id
+                        (cursor.isNull(5) ? null : cursor.getInt(5)) // pedido Reparacao id
+
+                );
+                grupoItensAux.add(grupoItens);
+            }while(cursor.moveToNext());
+            cursor.close();
         }
+
         return grupoItensAux;
     }
     //endregion

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import pt.itassets.lite.R;
+import pt.itassets.lite.adapters.ListaGruposItensAdaptador;
 import pt.itassets.lite.adapters.ListaItensAdaptador;
 import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.listeners.OperacoesPedidoReparacaoListener;
@@ -36,13 +37,14 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
 
     private TextView TV_id_pedido, TV_estado_pedido, TV_requerente, TV_data_pedido,
             TV_Descricao, TV_Responsavel, TV_data_inicio, TV_data_fim,
-            TV_observacoes_resposta,TV_Nome_Grupo;
+            TV_observacoes_resposta,TV_Sem_Dados;
     private Button btn_finalizar, btn_Cancelar;
-    private ListView LV_Reparacoes;
+    private ListView LV_Reparacoes,LV_Grupo;
     private LinearLayout LL_dados_resposta;
     private PedidoReparacao pedidoReparacao;
     private SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    private GrupoItens grupoItens = null;
+    private ArrayList<GrupoItens> grupoItens = null;
+    private ArrayList<Item> item=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,8 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
         TV_observacoes_resposta = findViewById(R.id.TV_observacoes_resposta);
         btn_Cancelar = findViewById(R.id.btnCancelar);
         btn_finalizar = findViewById(R.id.btnFinalizar);
-        TV_Nome_Grupo=findViewById(R.id.tv_nome_Grupo);
+        TV_Sem_Dados=findViewById(R.id.TV_sem_dados);
+        LV_Grupo=findViewById(R.id.LV_Grupo);
         LL_dados_resposta = findViewById(R.id.LL_dados_resposta);
 
         Integer id_reparacao = getIntent().getIntExtra("ID_REPARACAO", -1);
@@ -78,21 +81,30 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
             //objeto
 
             grupoItens=Singleton.getInstance(this).getGrupodeItemdoPedidoReparacao(pedidoReparacao.getId());
+            item=Singleton.getInstance(this).getItensdoPedidoReparacao(pedidoReparacao.getId());
 
-            if (grupoItens==null)
+
+            if (grupoItens.size()==0 && item.size()==0)
             {
-                onRefreshListaItens(Singleton.getInstance(this).getItensdoPedidoReparacao(pedidoReparacao.getId()));
-            }else{
-                LV_Reparacoes.setVisibility(View.INVISIBLE);
-                TV_Nome_Grupo.setVisibility(View.VISIBLE);
-                TV_Nome_Grupo.setText(grupoItens.getNome());
+                TV_Sem_Dados.setVisibility(View.VISIBLE);
+                TV_Sem_Dados.setText(R.string.itens_nao_associados);
             }
+            else{
 
+                if (grupoItens.size()!=0)
+                {
+                    onRefreshListaGrupoItens(grupoItens);
+                }
+
+                if (item.size()!=0)
+                {
+                    onRefreshListaItens(item);
+                }
+            }
 
             if (pedidoReparacao.getDataPedido() != null) {
                 TV_data_inicio.setText(String.valueOf(pedidoReparacao.getDataInicio()));
             }
-
 
             // region Campo Observações Resposta
             if (pedidoReparacao.getDescricaoProblema() != null) {
@@ -241,13 +253,15 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     public void onRefreshListaItens(ArrayList<Item> listaItens) {
         if (listaItens.size()!=0)
         {
-                LV_Reparacoes.setAdapter(new ListaItensAdaptador(this, listaItens));
+            LV_Reparacoes.setAdapter(new ListaItensAdaptador(this, listaItens));
         }
-        else
+    }
+
+
+    public void onRefreshListaGrupoItens(ArrayList<GrupoItens> listaGrupoItens) {
+        if (listaGrupoItens.size()!=0)
         {
-            LV_Reparacoes.setVisibility(View.INVISIBLE);
-            TV_Nome_Grupo.setVisibility(View.VISIBLE);
-            TV_Nome_Grupo.setText(R.string.itens_nao_associados);
+            LV_Grupo.setAdapter(new ListaGruposItensAdaptador(this, listaGrupoItens));
         }
     }
 }

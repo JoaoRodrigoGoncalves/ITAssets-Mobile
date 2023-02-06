@@ -578,10 +578,11 @@ public class Singleton {
         return local_itens;
     }
 
-    public GrupoItens getGrupodeItemdoPedidoReparacao(Integer pedido_reparacao_id)
+    public ArrayList<GrupoItens> getGrupodeItemdoPedidoReparacao(Integer pedido_reparacao_id)
     {
-        GrupoItens grupoItens= database.findGrupoItensPedidoReparacao(pedido_reparacao_id);
-            return grupoItens;
+        ArrayList<GrupoItens> grupoItens=new ArrayList<>();
+        grupoItens= database.findGrupoItensPedidoReparacao(pedido_reparacao_id);
+        return grupoItens;
     }
 
     public ArrayList<Item> getItensdoPedidoReparacao(Integer pedido_reparacao_id)

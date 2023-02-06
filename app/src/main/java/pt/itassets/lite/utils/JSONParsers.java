@@ -328,7 +328,8 @@ public class JSONParsers {
                                 thisObject.getJSONObject("requerente").getString("username"),
                                 thisObject.isNull("aprovador") ? null : thisObject.getJSONObject("aprovador").getString("username"),
                                 nome_item,
-                                nome_grupoItens
+                                nome_grupoItens,
+                                thisObject.getJSONObject("requerente").getInt("id")
                         );
                         alocacoes.add(auxAlcoacao);
                     }
@@ -373,7 +374,8 @@ public class JSONParsers {
                         data.getJSONObject("requerente").getString("username"),
                         data.isNull("aprovador") ? null : data.getJSONObject("aprovador").getString("username"),
                         item,
-                        grupo
+                        grupo,
+                        data.getJSONObject("responsavel").getInt("id")
                 );
             }
         }

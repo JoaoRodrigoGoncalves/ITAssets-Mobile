@@ -12,10 +12,10 @@ public class PedidoAlocacao {
     public static final int STATUS_DEVOLVIDO = 7;
     public static final int STATUS_CANCELADO = 0;
 
-    private Integer id, status;
+    private Integer id, status,userid;
     private String obs, obsResposta, nome_item, nome_grupoItem,  dataPedido, dataInicio, dataFim, nome_requerente, nome_aprovador;
 
-    public PedidoAlocacao(Integer id, Integer status, String dataPedido, String dataInicio, String dataFim, String obs, String obsResposta, String nome_requerente, String nome_aprovador, String nome_item, String nome_grupoItem) {
+    public PedidoAlocacao(Integer id, Integer status, String dataPedido, String dataInicio, String dataFim, String obs, String obsResposta, String nome_requerente, String nome_aprovador, String nome_item, String nome_grupoItem,Integer userid) {
         this.id = id;
         this.status = status;
         this.dataPedido = dataPedido;
@@ -27,6 +27,7 @@ public class PedidoAlocacao {
         this.nome_aprovador = nome_aprovador;
         this.nome_item = nome_item;
         this.nome_grupoItem = nome_grupoItem;
+        this.userid=userid;
     }
 
     public String humanReadableStatus(final Context context)
@@ -65,6 +66,14 @@ public class PedidoAlocacao {
 
     public Integer getStatus() {
         return status;
+    }
+
+    public Integer getUserid() {
+        return userid;
+    }
+
+    public void setUserid(Integer userid) {
+        this.userid = userid;
     }
 
     public void setStatus(Integer status) {
