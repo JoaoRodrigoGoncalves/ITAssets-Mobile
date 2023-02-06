@@ -1,7 +1,5 @@
 package pt.itassets.lite.views.grupos;
 
-import static pt.itassets.lite.views.itens.ListaItensFragment.ACTION_DETALHES;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,7 +30,6 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
     private TextView tv_nome_grupo, tv_notas;
     private GrupoItens grupoItens;
     private ListView lvItens;
-    //private ArrayList<Item> item_Grupo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +41,7 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
         tv_notas=findViewById(R.id.tv_notas);
         lvItens=findViewById(R.id.lvGruposItens);
 
-
-
         Integer grupoId = getIntent().getIntExtra("ID_GRUPO", -1);
-
 
         if(grupoId == -1)
         {
@@ -92,7 +86,7 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
             case R.id.edit:
                 Intent intent = new Intent(getBaseContext(), EditarGrupoItensActivity.class);
                 intent.putExtra("ID_GRUPO", grupoItens.getId());
-                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
                 return true;
 
             case R.id.remove:
@@ -120,7 +114,7 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Singleton.getInstance(getApplicationContext()).RemoverGrupoItemAPI(grupoItens, getApplicationContext());
                         Intent intent = new Intent(getBaseContext(), MenuActivity.class);
-                        startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                        startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

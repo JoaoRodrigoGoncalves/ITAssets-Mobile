@@ -21,7 +21,6 @@ public class AdicionarItemActivity extends AppCompatActivity implements Operacoe
     private TextInputLayout tiNome, tiNumSerie, tiNota;
     private FloatingActionButton fabAdicionarItem;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

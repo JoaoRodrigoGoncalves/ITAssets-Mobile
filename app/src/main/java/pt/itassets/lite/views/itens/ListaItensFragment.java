@@ -28,6 +28,7 @@ import pt.itassets.lite.adapters.ListaItensAdaptador;
 import pt.itassets.lite.listeners.ItensListener;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.utils.Helpers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,7 +40,6 @@ public class ListaItensFragment extends Fragment implements ItensListener{
     private FloatingActionButton fabListaItens;
     private SearchView searchView;
     private TextView TV_sem_dados;
-    public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
 
     public ListaItensFragment() {
         // Required empty public constructor
@@ -61,7 +61,7 @@ public class ListaItensFragment extends Fragment implements ItensListener{
             public void onItemClick(AdapterView<?> adapterView, View view, int positions, long id) {
                 Intent intent = new Intent(getContext(), DetalhesItemActivity.class);
                 intent.putExtra("ID_ITEM", (int) id);
-                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
             }
         });
 
@@ -72,7 +72,7 @@ public class ListaItensFragment extends Fragment implements ItensListener{
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), AdicionarItemActivity.class);
-                startActivityForResult(intent, ACTION_ADICIONAR); //Método Deprecated
+                startActivityForResult(intent, Helpers.OPERACAO_ADD); //Método Deprecated
             }
         });
         return view;
@@ -80,7 +80,9 @@ public class ListaItensFragment extends Fragment implements ItensListener{
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
-        if(resultCode == Activity.RESULT_OK && requestCode == ACTION_DETALHES){
+        if(resultCode == Activity.RESULT_OK && (requestCode == Helpers.OPERACAO_DETALHES ||
+                requestCode == Helpers.OPERACAO_ADD))
+        {
             Singleton.getInstance(getContext()).getAllItensAPI(getContext());
             Toast.makeText(getContext(), getString(R.string.txt_operacao_bem_sucedida), Toast.LENGTH_SHORT).show();
         }

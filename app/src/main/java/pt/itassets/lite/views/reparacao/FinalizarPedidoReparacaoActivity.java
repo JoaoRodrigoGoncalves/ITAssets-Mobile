@@ -1,7 +1,5 @@
 package pt.itassets.lite.views.reparacao;
 
-import static pt.itassets.lite.views.itens.ListaItensFragment.ACTION_DETALHES;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -69,7 +67,7 @@ public class FinalizarPedidoReparacaoActivity extends AppCompatActivity implemen
         Singleton.getInstance(getApplicationContext()).EditarReparacaoAPI(pedidoReparacao, getApplicationContext());
 
         Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
-        startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+        startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
     }
 
     @Override

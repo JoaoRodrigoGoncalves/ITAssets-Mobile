@@ -41,7 +41,6 @@ import pt.itassets.lite.views.reparacao.ListaReparacoesFragment;
 
 public class MenuActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, MQTTMessageListener {
     BottomNavigationView bottomNav;
-    private static final int ACT_QRCODE_READER = 50;
     private boolean isFuncionario = false;
 
     @Override
@@ -161,14 +160,14 @@ public class MenuActivity extends AppCompatActivity implements BottomNavigationV
     public void abrirQRCodeReader()
     {
         Intent qrcode = new Intent(this, QRCodeReaderActivity.class);
-        startActivityForResult(qrcode, ACT_QRCODE_READER);
+        startActivityForResult(qrcode, Helpers.ACTION_QRCODE_READER);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent)
     {
         super.onActivityResult(requestCode, resultCode, intent);
-        if (resultCode == RESULT_OK && requestCode == ACT_QRCODE_READER) {
+        if (resultCode == RESULT_OK && requestCode == Helpers.ACTION_QRCODE_READER) {
             if(intent != null)
             {
                 String qrResult = intent.getStringExtra("resultado");

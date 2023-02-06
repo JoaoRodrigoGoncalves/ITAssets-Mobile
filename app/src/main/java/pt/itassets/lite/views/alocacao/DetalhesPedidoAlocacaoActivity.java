@@ -1,7 +1,5 @@
 package pt.itassets.lite.views.alocacao;
 
-import static pt.itassets.lite.views.itens.ListaItensFragment.ACTION_DETALHES;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -143,7 +141,6 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
                     // Se o pedido estiver aprovado e o role não for funcionário
                     btn_Devolver.setVisibility(View.VISIBLE);
                 }
-
             }
         }
         else
@@ -175,8 +172,8 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
 
                         Singleton.getInstance(getApplicationContext()).EditarAlocacaoAPI(pedidoAlocacao, getApplicationContext());
 
-                        Intent intent = new Intent(getBaseContext(), MenuActivity.class);
-                        startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+//                        Intent intent = new Intent(getBaseContext(), MenuActivity.class);
+//                        startActivityForResult(intent, Helpers.OPERACAO_EDIT); //Método Deprecated
                     }
                 }
             }
@@ -199,7 +196,7 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Singleton.getInstance(getApplicationContext()).RemoverAlocacaoAPI(pedidoAlocacao, getApplicationContext());
                         Intent intent = new Intent(getBaseContext(), MenuActivity.class);
-                        startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                        startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -212,11 +209,10 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
                 .show();
     }
 
-
     private boolean isPedidoAlocacaoDevolverValido(){
         Integer estado = pedidoAlocacao.getStatus();
 
-        if(estado != 9) {
+        if(estado != PedidoAlocacao.STATUS_APROVADO) {
             Toast.makeText(getApplicationContext(), getString(R.string.txt_erro_pedido_alocacao_devolver), Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -226,7 +222,7 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
     private boolean isPedidoAlocacaoCancelarValido(){
         Integer estado = pedidoAlocacao.getStatus();
 
-        if(estado != 10) {
+        if(estado != PedidoAlocacao.STATUS_ABERTO) {
             Toast.makeText(getApplicationContext(), getString(R.string.txt_erro_pedido_alocacao_cancelar), Toast.LENGTH_SHORT).show();
             return false;
         }

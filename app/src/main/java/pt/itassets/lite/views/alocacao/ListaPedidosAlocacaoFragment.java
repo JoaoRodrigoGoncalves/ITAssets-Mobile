@@ -25,6 +25,7 @@ import pt.itassets.lite.adapters.ListaPedidosAlocacaoAdaptador;
 import pt.itassets.lite.listeners.PedidosAlocacaoListener;
 import pt.itassets.lite.models.PedidoAlocacao;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.utils.Helpers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,7 +36,6 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
     private ListView lvAlocacoes;
     private FloatingActionButton fabListaPedidosAlocacao;
     private TextView TV_sem_dados;
-    public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
 
     public ListaPedidosAlocacaoFragment() {
         // Required empty public constructor
@@ -57,7 +57,7 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
             public void onItemClick(AdapterView<?> adapterView, View view, int positions, long id) {
                 Intent detalhes = new Intent(getContext(), DetalhesPedidoAlocacaoActivity.class);
                 detalhes.putExtra("ID_PEDIDO", (int) id);
-                startActivityForResult(detalhes, ACTION_DETALHES);
+                startActivityForResult(detalhes, Helpers.OPERACAO_DETALHES);
             }
         });
 
@@ -68,7 +68,7 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
             @Override
             public void onClick(View view) {
                 Intent adicionar = new Intent(getContext(), AdicionarPedidoAlocacaoActivity.class);
-                startActivityForResult(adicionar, ACTION_ADICIONAR);
+                startActivityForResult(adicionar, Helpers.OPERACAO_ADD);
             }
         });
 
@@ -77,9 +77,32 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
-        if(resultCode == Activity.RESULT_OK && requestCode == ACTION_ADICIONAR){
+        if(resultCode == Activity.RESULT_OK && (requestCode == Helpers.OPERACAO_DETALHES ||
+                requestCode == Helpers.OPERACAO_ADD))
+        {
             Singleton.getInstance(getContext()).getUserAlocacoesAPI(getContext());
-            Toast.makeText(getContext(), getString(R.string.txt_operacao_bem_sucedida), Toast.LENGTH_SHORT).show();
+
+            if(intent != null)
+            {
+                switch(intent.getIntExtra(Helpers.OPERACAO, -99))
+                {
+                    case Helpers.OPERACAO_ADD:
+                        Toast.makeText(getContext(), R.string.txt_alocacao_submetido, Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case Helpers.OPERACAO_EDIT:
+                        Toast.makeText(getContext(), R.string.txt_alocacao_atualizada, Toast.LENGTH_SHORT).show();
+                        break;
+
+                    default:
+                        Toast.makeText(getContext(), getString(R.string.txt_operacao_bem_sucedida), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+            else
+            {
+                Toast.makeText(getContext(), getString(R.string.txt_operacao_bem_sucedida), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

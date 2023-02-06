@@ -23,13 +23,13 @@ import pt.itassets.lite.adapters.ListaPedidosReparacaoAdaptador;
 import pt.itassets.lite.listeners.PedidosReparacaoListener;
 import pt.itassets.lite.models.PedidoReparacao;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.utils.Helpers;
 
 public class ListaReparacoesFragment extends Fragment implements PedidosReparacaoListener {
 
     private ListView lvReparacoes;
     private FloatingActionButton fabListaPedidosReparacao;
     private TextView TV_sem_dados;
-    public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
 
     public ListaReparacoesFragment() {
         // Required empty public constructor
@@ -51,7 +51,7 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
             public void onItemClick(AdapterView<?> adapterView, View view, int positions, long id) {
                 Intent intent = new Intent(getContext(), DetalhesReparacaoActivity.class);
                 intent.putExtra("ID_REPARACAO", (int) id);
-                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
             }
         });
 
@@ -62,7 +62,7 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), AdicionarPedidoReparacaoActivity.class);
-                startActivityForResult(intent, ACTION_ADICIONAR); //Método Deprecated
+                startActivityForResult(intent, Helpers.OPERACAO_ADD); //Método Deprecated
             }
         });
         return view;
@@ -70,9 +70,33 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
-        if(resultCode == Activity.RESULT_OK && requestCode == ACTION_ADICIONAR){
+        if(resultCode == Activity.RESULT_OK && (requestCode == Helpers.OPERACAO_DETALHES ||
+                requestCode == Helpers.OPERACAO_ADD))
+        {
             Singleton.getInstance(getContext()).getUserReparacoesAPI(getContext());
-            Toast.makeText(getContext(), getString(R.string.txt_operacao_bem_sucedida), Toast.LENGTH_SHORT).show();
+
+            if(intent != null)
+            {
+                switch(intent.getIntExtra(Helpers.OPERACAO, -99))
+                {
+                    case Helpers.OPERACAO_ADD:
+                        Toast.makeText(getContext(), R.string.txt_reparacao_submetido, Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case Helpers.OPERACAO_EDIT:
+                        Toast.makeText(getContext(), R.string.txt_reparacao_atualizado, Toast.LENGTH_SHORT).show();
+                        break;
+
+                    default:
+                        Toast.makeText(getContext(), getString(R.string.txt_operacao_bem_sucedida), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+            else
+            {
+                Toast.makeText(getContext(), getString(R.string.txt_operacao_bem_sucedida), Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 

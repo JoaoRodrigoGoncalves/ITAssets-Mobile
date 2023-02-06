@@ -32,6 +32,8 @@ public class Helpers {
     public static final int OPERACAO_ADD = 10;
     public static final int OPERACAO_EDIT = 20;
     public static final int OPERACAO_DELETE = 30;
+    public static final int OPERACAO_DETALHES = 40;
+    public static final int ACTION_QRCODE_READER = 50;
     public static final String OPERACAO = "OPERACAO";
 
     /**
@@ -89,6 +91,11 @@ public class Helpers {
         }
     }
 
+    /**
+     * Interpreta e mostra o erro indicado pelo Volley
+     * @param context
+     * @param error Erro devolvido pelo volley
+     */
     public static void parseVolleyErrors(Context context, VolleyError error)
     {
         if(error != null)

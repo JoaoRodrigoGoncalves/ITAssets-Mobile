@@ -149,6 +149,7 @@ public class AdicionarPedidoAlocacaoActivity extends AppCompatActivity implement
 
     @Override
     public void onAlocacaoOperacaoRefresh(int operacao) {
+        Toast.makeText(this, R.string.txt_alocacao_submetido, Toast.LENGTH_SHORT).show();
         Intent intent = new Intent();
         intent.putExtra(Helpers.OPERACAO, operacao);
         setResult(RESULT_OK, intent);

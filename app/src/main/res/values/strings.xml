@@ -116,6 +116,10 @@
     <string name="sem_itens_para_grupo">Sem itens válidos para criar novo grupo</string>
     <string name="meus_dados">Meus Dados</string>
     <string name="sem_dados_a_mostrar">Sem dados a mostrar</string>
+    <string name="txt_alocacao_atualizada">Alocação Atualizada!</string>
+    <string name="txt_alocacao_submetido">Pedido de Alocação Submetido!</string>
+    <string name="txt_reparacao_atualizado">Pedido de Reparação Atualizado!</string>
+    <string name="txt_reparacao_submetido">Peido de Reparação submetido!</string>
 
 
 </resources>

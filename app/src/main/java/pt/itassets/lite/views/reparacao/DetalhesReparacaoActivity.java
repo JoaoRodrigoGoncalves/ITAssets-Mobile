@@ -42,10 +42,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     private LinearLayout LL_dados_resposta;
     private PedidoReparacao pedidoReparacao;
     private SimpleDateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    private GrupoItens grupoItens=null;
-    private FloatingActionButton fabListaItens;
-    public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
-
+    private GrupoItens grupoItens = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,11 +170,11 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
                 if (isPedidoReparacaoFinalizarValido()) {
                     pedidoReparacao.setDataFim(dataFormatada);
                     pedidoReparacao.setDataInicio(dataFormatada);
-                    pedidoReparacao.setStatus(4);
+                    pedidoReparacao.setStatus(PedidoReparacao.STATUS_CONCLUIDO);
 
                     Intent intent = new Intent(getBaseContext(), FinalizarPedidoReparacaoActivity.class);
                     intent.putExtra("ID_REPARACAO", pedidoReparacao.getId());
-                    startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                    startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
                 }
             }
         }
@@ -186,8 +183,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     private boolean isPedidoReparacaoFinalizarValido() {
         Integer estado = pedidoReparacao.getStatus();
 
-        if (estado != 6) {
-
+        if (estado != PedidoReparacao.STATUS_EM_REVISAO) {
             Toast.makeText(getApplicationContext(), R.string.txt_erro_pedido_reparacao_finalizado, Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -195,7 +191,6 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     }
 
     public void onClick_btn_cancelar(View view) {
-
         if (isPedidoReparacaoCancelarValido()) {
             dialogRemover();
         }
@@ -211,7 +206,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Singleton.getInstance(getApplicationContext()).RemoverReparacaoAPI(pedidoReparacao, getApplicationContext());
                         Intent intent = new Intent(getBaseContext(), MenuActivity.class);
-                        startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                        startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -224,12 +219,10 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
                 .show();
     }
 
-
     private boolean isPedidoReparacaoCancelarValido() {
         Integer estado = pedidoReparacao.getStatus();
 
-        if (estado != 10 && estado!=8) {
-
+        if (estado != PedidoReparacao.STATUS_EM_PREPARACAO && estado != PedidoReparacao.STATUS_ABERTO) {
             Toast.makeText(getApplicationContext(), getString(R.string.txt_erro_pedido_reparacao_cancelado), Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -246,7 +239,8 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
 
     @Override
     public void onRefreshListaItens(ArrayList<Item> listaItens) {
-        if (listaItens.size()!=0) {
+        if (listaItens.size()!=0)
+        {
                 LV_Reparacoes.setAdapter(new ListaItensAdaptador(this, listaItens));
         }
         else

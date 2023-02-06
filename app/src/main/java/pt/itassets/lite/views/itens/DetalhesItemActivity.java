@@ -1,7 +1,5 @@
 package pt.itassets.lite.views.itens;
 
-import static pt.itassets.lite.views.itens.ListaItensFragment.ACTION_DETALHES;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -116,7 +114,7 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
             case R.id.edit:
                 Intent intent = new Intent(getBaseContext(), EditarItemActivity.class);
                 intent.putExtra("ID_ITEM", item.getId());
-                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
                 return true;
 
             case R.id.remove:
@@ -143,7 +141,7 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Singleton.getInstance(getApplicationContext()).RemoverItemAPI(item, getApplicationContext());
                         Intent intent = new Intent(getBaseContext(), MenuActivity.class);
-                        startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                        startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

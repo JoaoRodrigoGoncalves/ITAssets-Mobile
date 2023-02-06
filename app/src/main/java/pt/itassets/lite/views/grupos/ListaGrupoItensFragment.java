@@ -24,6 +24,7 @@ import pt.itassets.lite.adapters.ListaGruposItensAdaptador;
 import pt.itassets.lite.listeners.GrupoItensListener;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.Singleton;
+import pt.itassets.lite.utils.Helpers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,9 +34,7 @@ public class ListaGrupoItensFragment extends Fragment implements GrupoItensListe
 
     private ListView lvGruposItens;
     private FloatingActionButton fabListaGruposItens;
-    private SearchView searchView;
     private TextView TV_sem_dados;
-    public static final int ACTION_DETALHES = 1, ACTION_ADICIONAR = 1; //Ações
 
     public ListaGrupoItensFragment() {
         // Required empty public constructor
@@ -57,7 +56,7 @@ public class ListaGrupoItensFragment extends Fragment implements GrupoItensListe
             public void onItemClick(AdapterView<?> adapterView, View view, int positions, long id) {
                 Intent intent = new Intent(getContext(), DetalhesGrupoActivity.class);
                 intent.putExtra("ID_GRUPO", (int) id);
-                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
             }
         });
 
@@ -68,7 +67,7 @@ public class ListaGrupoItensFragment extends Fragment implements GrupoItensListe
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), AdicionarGrupoItensActivity.class);
-                startActivityForResult(intent, ACTION_DETALHES); //Método Deprecated
+                startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
             }
         });
 
@@ -77,18 +76,12 @@ public class ListaGrupoItensFragment extends Fragment implements GrupoItensListe
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
-        if(resultCode == Activity.RESULT_OK && requestCode == ACTION_DETALHES){
+        if(resultCode == Activity.RESULT_OK && (requestCode == Helpers.OPERACAO_DETALHES ||
+                requestCode == Helpers.OPERACAO_ADD))
+        {
             Singleton.getInstance(getContext()).getAllGrupoItensAPI(getContext());
             Toast.makeText(getContext(), getString(R.string.txt_operacao_bem_sucedida), Toast.LENGTH_SHORT).show();
         }
-    }
-    @Override
-    public void onResume() {
-        // Quando se faz Go Back a searchView fecha-se
-        if(searchView!=null){
-            searchView.onActionViewCollapsed();
-        }
-        super.onResume();
     }
 
     @Override
