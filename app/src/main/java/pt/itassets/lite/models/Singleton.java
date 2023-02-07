@@ -335,7 +335,7 @@ public class Singleton {
                 mqttClient.setCallback(new MqttCallback() {
                     @Override
                     public void connectionLost(Throwable cause) {
-                        Log.d("MQTT", "Ligação ao broker perdida: " + cause.getMessage());
+                        Log.d("MQTT", "Ligação ao broker perdida");
                     }
 
                     @Override

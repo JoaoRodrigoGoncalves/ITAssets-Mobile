@@ -14,8 +14,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -134,7 +132,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
 
                 // region Campo Data Inicio
                 if (pedidoReparacao.getDataInicio() != null) {
-                    TV_data_inicio.setText(String.valueOf(pedidoReparacao.getDataFim()));
+                    TV_data_inicio.setText(String.valueOf(pedidoReparacao.getDataInicio()));
                 } else {
                     TV_data_inicio.setTypeface(TV_data_inicio.getTypeface(), Typeface.ITALIC);
                     TV_data_inicio.setText(R.string.txt_nao_aplicavel);
@@ -160,7 +158,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
                 //endregion
             }
 
-            if (pedidoReparacao.getStatus() == PedidoReparacao.STATUS_CONCLUIDO)
+            if (pedidoReparacao.getStatus() == PedidoReparacao.STATUS_CONCLUIDO || pedidoReparacao.getStatus() == PedidoReparacao.STATUS_CANCELADO)
             {
                 btn_Cancelar.setVisibility(View.INVISIBLE);
                 btn_finalizar.setVisibility(View.INVISIBLE);
