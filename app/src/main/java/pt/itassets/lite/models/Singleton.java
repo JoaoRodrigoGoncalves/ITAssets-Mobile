@@ -604,7 +604,7 @@ public class Singleton {
 
     public ArrayList<Item> getItensAlocados(Integer user_id)
     {
-        ArrayList<PedidoAlocacao> ItensAlocadosUser = database.getAllAlocacoesItemDB(user_id);
+        ArrayList<PedidoAlocacao> ItensAlocadosUser = database.getAllAlocacoesByRequerente(user_id);
         ArrayList<Item> item=new ArrayList<>();
         ArrayList<Item> itemBD=database.getAllItensDB();
 
@@ -633,7 +633,7 @@ public class Singleton {
 
     public ArrayList<GrupoItens> getGrupoItensAlocados(Integer user_id)
     {
-        ArrayList<PedidoAlocacao> ItensAlocadosUser = database.getAllAlocacoesGrupoDB(user_id);
+        ArrayList<PedidoAlocacao> ItensAlocadosUser = database.getAllAlocacoesByRequerente(user_id);
         ArrayList<GrupoItens> grupoItens=new ArrayList<>();
         ArrayList<GrupoItens> grupoItensBD=database.getAllGruposItensDB();
 

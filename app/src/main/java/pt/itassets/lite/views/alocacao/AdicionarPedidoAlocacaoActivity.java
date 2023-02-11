@@ -48,11 +48,11 @@ public class AdicionarPedidoAlocacaoActivity extends AppCompatActivity implement
         TI_Observacoes = findViewById(R.id.TI_Observacoes);
 
         Singleton.getInstance(this).setOperacoesPedidoAlocacaoListener(this); //Subscrever o listener
-        // Atualizar todos os itens e grupos
+        // Atualizar todos os dados
         Singleton.getInstance(this).getAllItensAPI(this);
         Singleton.getInstance(this).getAllGrupoItensAPI(this);
-
-        radioBTNGrupo.setOrientation(LinearLayout.VERTICAL);
+        Singleton.getInstance(this).getUserAlocacoesAPI(this);
+        Singleton.getInstance(this).getUserReparacoesAPI(this);
 
         ArrayList<Item> itens = Singleton.getInstance(this).getItensBD();
         ArrayList<GrupoItens> grupos = Singleton.getInstance(this).getGrupoItensBD();

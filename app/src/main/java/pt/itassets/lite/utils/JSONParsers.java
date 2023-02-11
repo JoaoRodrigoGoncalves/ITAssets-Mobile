@@ -301,22 +301,6 @@ public class JSONParsers {
                     for (int j = 0; j < dados.length(); j++) {
                         JSONObject thisObject = dados.getJSONObject(j);
 
-                        String nome_item = null;
-
-                        if(!thisObject.isNull("item"))
-                        {
-                            JSONObject thisObjectItem = thisObject.getJSONObject("item");
-                            nome_item = thisObjectItem.getString("nome");
-                        }
-
-                        String nome_grupoItens = null;
-
-                        if(!thisObject.isNull("grupoItens"))
-                        {
-                            JSONObject thisObjectGrupoItens = thisObject.getJSONObject("grupoItens");
-                            nome_grupoItens = thisObjectGrupoItens.getString("nome");
-                        }
-
                         PedidoAlocacao auxAlcoacao = new PedidoAlocacao(
                                 thisObject.getInt("id"),
                                 thisObject.getInt("status"),
@@ -327,9 +311,11 @@ public class JSONParsers {
                                 thisObject.isNull("obsResposta") ? null : thisObject.getString("obsResposta"),
                                 thisObject.getJSONObject("requerente").getString("username"),
                                 thisObject.isNull("aprovador") ? null : thisObject.getJSONObject("aprovador").getString("username"),
-                                nome_item,
-                                nome_grupoItens,
-                                thisObject.getJSONObject("requerente").getInt("id")
+                                thisObject.isNull("item") ? null : thisObject.getJSONObject("item").getString("nome"),
+                                thisObject.isNull("grupoItens") ? null : thisObject.getJSONObject("grupoItens").getString("nome"),
+                                thisObject.getJSONObject("requerente").getInt("id"),
+                                thisObject.isNull("item") ? null : thisObject.getJSONObject("item").getInt("id"),
+                                thisObject.isNull("grupoItens") ? null : thisObject.getJSONObject("grupoItens").getInt("id")
                         );
                         alocacoes.add(auxAlcoacao);
                     }
@@ -351,18 +337,6 @@ public class JSONParsers {
             {
                 JSONObject data = response.getJSONObject("data");
 
-                String item = null, grupo = null;
-
-                if(!data.isNull("item"))
-                {
-                    item = data.getJSONObject("item").getString("nome");
-                }
-
-                if(!data.isNull("grupoItens"))
-                {
-                    grupo = data.getJSONObject("grupoItens").getString("nome");
-                }
-
                 pedidoAlocacao = new PedidoAlocacao(
                         data.getInt("id"),
                         data.getInt("status"),
@@ -373,9 +347,11 @@ public class JSONParsers {
                         data.isNull("obsResposta") ? null : data.getString("obsResposta"),
                         data.getJSONObject("requerente").getString("username"),
                         data.isNull("aprovador") ? null : data.getJSONObject("aprovador").getString("username"),
-                        item,
-                        grupo,
-                        data.getJSONObject("responsavel").getInt("id")
+                        data.isNull("item") ? null : data.getJSONObject("item").getString("nome"),
+                        data.isNull("grupoItens") ? null : data.getJSONObject("grupoItens").getString("nome"),
+                        data.getJSONObject("requerente").getInt("id"),
+                        data.isNull("item") ? null : data.getJSONObject("item").getInt("id"),
+                        data.isNull("grupoItens") ? null : data.getJSONObject("grupoItens").getInt("id")
                 );
             }
         }

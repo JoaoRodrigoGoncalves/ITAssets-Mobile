@@ -55,6 +55,12 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
 
         Singleton.getInstance(getApplicationContext()).setOperacoesGruposListener(this);
 
+        // Atualizar todos os dados
+        Singleton.getInstance(this).getAllItensAPI(this);
+        Singleton.getInstance(this).getAllGrupoItensAPI(this);
+        Singleton.getInstance(this).getUserAlocacoesAPI(this);
+        Singleton.getInstance(this).getUserReparacoesAPI(this);
+
         //region Lista do Item
         recyclerView = findViewById(R.id.rv_Itens);
         ArrayList<Item> items = Singleton.getInstance(this).getItensAlocados(preferences.getInt(Helpers.USER_ID, -1));

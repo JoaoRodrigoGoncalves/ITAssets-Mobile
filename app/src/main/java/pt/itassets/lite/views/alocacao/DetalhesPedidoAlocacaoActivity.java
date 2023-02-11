@@ -216,6 +216,25 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
             Toast.makeText(getApplicationContext(), getString(R.string.txt_erro_pedido_alocacao_devolver), Toast.LENGTH_SHORT).show();
             return false;
         }
+
+        if(pedidoAlocacao.getItemid() != null)
+        {
+            //Alocação de item. Validar dados do item
+
+            if(Singleton.getInstance(this).getItem(pedidoAlocacao.getItemid()).getPedido_reparacao_id() == null)
+                return false;
+        }
+        else
+        {
+
+            if(pedidoAlocacao.getGrupoid() == null) // estado inválido, mas verifica-se para não rebentar
+                return false;
+
+            //Assumimos grupo de item.
+            if(Singleton.getInstance(this).getGrupoItens(pedidoAlocacao.getGrupoid()).getPedido_reparacao_id() == null)
+                return false;
+        }
+
         return true;
     }
 
