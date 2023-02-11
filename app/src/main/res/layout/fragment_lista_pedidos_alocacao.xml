@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="10dp"
     tools:context=".views.alocacao.ListaPedidosAlocacaoFragment"
     android:theme="@style/Theme.ITAssets">
@@ -16,11 +17,83 @@
         android:gravity="center"
         android:visibility="gone"/>
 
-    <ListView
-        android:id="@+id/lvAlocacoes"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-    </ListView>
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/CG_filtro_alocacao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_aberto"
+                    android:tag="10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:checked="true"
+                    android:text="@string/txt_aberto"/>
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_aprovado"
+                    android:tag="9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:checked="true"
+                    android:text="@string/txt_aprovado"/>
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_negado"
+                    android:tag="8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:checked="true"
+                    android:text="@string/txt_negado"/>
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_devolvido"
+                    android:tag="7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:checked="true"
+                    android:text="@string/txt_devolvido"/>
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_cancelado"
+                    android:tag="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:checked="true"
+                    android:text="@string/txt_cancelado"/>
+
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </HorizontalScrollView>
+
+        <ListView
+            android:id="@+id/lvAlocacoes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </ListView>
+
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabListaPedidosAlocacao"

@@ -4,13 +4,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONObject;
@@ -32,7 +32,7 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
 
     private Integer id_user;
     private TextInputLayout tiProblema;
-    private Button btn_guadar;
+    private FloatingActionButton fab_PedidoReparacao;
     RecyclerView recyclerView;
     ArrayList<Item> itemSelected;
     ArrayList<GrupoItens> grupoItensSelected;
@@ -45,7 +45,7 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
         setContentView(R.layout.activity_adicionar_pedido_reparacao);
         SharedPreferences preferences = this.getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
         tiProblema = findViewById(R.id.tiProblema);
-        btn_guadar=findViewById(R.id.btn_guardar);
+        fab_PedidoReparacao =findViewById(R.id.fabAdicionarPedidoReparacao);
 
         if(!Helpers.isInternetConnectionAvailable(this))
         {
@@ -77,7 +77,7 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
         recyclerView.setAdapter(adaptador_grupoitens);
         //endregion
 
-        btn_guadar.setOnClickListener(new View.OnClickListener() {
+        fab_PedidoReparacao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 itemSelected = adapter_item.getArrayitems();
@@ -86,7 +86,6 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
                 if(itemSelected != null || grupoItensSelected != null)
                 {
                     String obs = tiProblema.getEditText().getText().toString().trim();
-
 
                     SharedPreferences preferences = getSharedPreferences(Helpers.SHAREDPREFERENCES, MODE_PRIVATE);
 

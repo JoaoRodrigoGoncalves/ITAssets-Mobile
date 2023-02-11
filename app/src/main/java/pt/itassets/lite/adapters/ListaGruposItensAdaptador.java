@@ -70,7 +70,7 @@ public class ListaGruposItensAdaptador extends BaseAdapter {
 
         public void update(GrupoItens grupoItens) {
             tvNome.setText(grupoItens.getNome());
-            if(grupoItens.getNotas() != null)
+            if(grupoItens.getNotas() != "null")
             {
                 tvNotas.setText(grupoItens.getNotas());
             }

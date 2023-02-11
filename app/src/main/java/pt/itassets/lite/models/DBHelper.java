@@ -593,7 +593,7 @@ public class DBHelper extends SQLiteOpenHelper {
             {
                 Cursor tabela_grupo = db.query(
                         TABLE_GRUPO_ITENS,
-                        new String[]{ID, NOME, NOTAS, STATUS, PEDIDO_ALOCACAO_ID},
+                        new String[]{ID, NOME, NOTAS, STATUS, PEDIDO_ALOCACAO_ID, PEDIDO_REPARACAO_ID},
                         ID + "=" + cursor.getInt(1),
                         null,
                         null,
@@ -611,8 +611,7 @@ public class DBHelper extends SQLiteOpenHelper {
                                 tabela_grupo.getString(1), //Nome
                                 (tabela_grupo.isNull(2) ? null : tabela_grupo.getString(2)), // Notas
                                 (tabela_grupo.isNull(4) ? null : tabela_grupo.getInt(4)), // pedido alocacao id
-                                (tabela_grupo.isNull(5) ? null : tabela_grupo.getInt(5)) // pedido alocacao id
-
+                                (tabela_grupo.isNull(5) ? null : tabela_grupo.getInt(5)) // pedido reparacao id
                         );
                     }
                 }

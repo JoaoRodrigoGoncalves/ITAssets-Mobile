@@ -87,7 +87,6 @@
     <string name="txt_erro_pedido_alocacao_nao_encontrado">Erro: Pedido de Alocação não encontrado!</string>
     <string name="txt_novo_pedido_alocacao">Novo Pedido de Alocação</string>
     <string name="txt_selecionar_item_grupo">Selecione um item ou grupo</string>
-
     <string name="txt_erro_pedido_alocacao_devolver">Erro: Não é possível devolver este Pedido de Alocação!</string>
     <string name="txt_erro_pedido_alocacao_cancelar">Erro: Não é possível cancelar este Pedido de Alocação!</string>
     <string name="txt_insira_nome_item">Erro: Insira o Nome do Item!</string>
@@ -104,11 +103,9 @@
     <string name="txt_email">Email</string>
     <string name="txt_password">Password</string>
     <string name="itens_nao_associados">Ainda não existem itens/Grupos de itens associados</string>
-
     <string name="txt_token_invalido">Token inválido. Inicie sessão novamente.</string>
     <string name="txt_coloque_dedo_sensor_title">Coloque o dedo no sensor para iniciar sessão</string>
     <string name="txt_coloque_dedo_sensor_description">Coloque a sua impressão digital sobre o sensor de impressão digital para validar a sua identidade e iniciar sessão</string>
-
     <string name="adicionar_pedido_reparacao">Adicionar pedido Reparação</string>
     <string name="problema">Problema</string>
     <string name="error_problema">Escreva um problema</string>
@@ -121,6 +118,8 @@
     <string name="txt_reparacao_atualizado">Pedido de Reparação Atualizado!</string>
     <string name="txt_reparacao_submetido">Peido de Reparação submetido!</string>
     <string name="txt_select_item_error">Selecione pelo menos 1 item.</string>
-
+    <string name="txt_remover_grupo">Remover Grupo</string>
+    <string name="txt_confirmar_remover_grupo">Tem a certeza que deseja remover o Grupo Itens?</string>
+    <string name="txt_grupo_nao_encontrado">Grupo não encontrado!</string>
 
 </resources>

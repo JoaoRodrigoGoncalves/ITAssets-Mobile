@@ -11,12 +11,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.adapters.ListaPedidosReparacaoAdaptador;
@@ -30,6 +34,8 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
     private ListView lvReparacoes;
     private FloatingActionButton fabListaPedidosReparacao;
     private TextView TV_sem_dados;
+    private ChipGroup CG_filtro_reparacao;
+    private ArrayList<Integer> status_filter;
 
     public ListaReparacoesFragment() {
         // Required empty public constructor
@@ -45,6 +51,17 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
         lvReparacoes = view.findViewById(R.id.lvReparacoes);
         TV_sem_dados = view.findViewById(R.id.TV_sem_dados);
         fabListaPedidosReparacao = view.findViewById(R.id.fabListaPedidosReparacao);
+        CG_filtro_reparacao = view.findViewById(R.id.CG_filtro_reparacao);
+
+        status_filter = new ArrayList<>();
+
+        status_filter.add(PedidoReparacao.STATUS_ABERTO);
+        status_filter.add(PedidoReparacao.STATUS_CANCELADO);
+        status_filter.add(PedidoReparacao.STATUS_CONCLUIDO);
+        status_filter.add(PedidoReparacao.STATUS_EM_REVISAO);
+        status_filter.add(PedidoReparacao.STATUS_EM_PREPARACAO);
+
+        Singleton.getInstance(getContext()).setPedidosReparacaoListener(this);
 
         lvReparacoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -55,7 +72,19 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
             }
         });
 
-        Singleton.getInstance(getContext()).setPedidosReparacaoListener(this);
+        CG_filtro_reparacao.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
+                status_filter.clear();
+
+                for (int i : checkedIds) {
+                    Chip local = view.findViewById(i);
+                    status_filter.add(Integer.parseInt((String) local.getTag()));
+                }
+                Singleton.getInstance(getContext()).getUserReparacoesAPI(getContext());
+            }
+        });
+
         Singleton.getInstance(getContext()).getUserReparacoesAPI(getContext());
 
         fabListaPedidosReparacao.setOnClickListener(new View.OnClickListener() {
@@ -106,13 +135,19 @@ public class ListaReparacoesFragment extends Fragment implements PedidosReparaca
         {
             if(listaReparacoes.size() > 0)
             {
-                lvReparacoes.setAdapter(new ListaPedidosReparacaoAdaptador(getContext(), listaReparacoes));
+                //Filtrar
+                listaReparacoes.removeIf(pedidoReparacao -> !status_filter.contains(pedidoReparacao.getStatus()));
+
+                if(listaReparacoes.size() > 0)
+                {
+                    lvReparacoes.setVisibility(View.VISIBLE);
+                    TV_sem_dados.setVisibility(View.INVISIBLE);
+                    lvReparacoes.setAdapter(new ListaPedidosReparacaoAdaptador(getContext(), listaReparacoes));
+                    return;
+                }
             }
-            else
-            {
-                lvReparacoes.setVisibility(View.INVISIBLE);
-                TV_sem_dados.setVisibility(View.VISIBLE);
-            }
+            lvReparacoes.setVisibility(View.INVISIBLE);
+            TV_sem_dados.setVisibility(View.VISIBLE);
         }
     }
 }

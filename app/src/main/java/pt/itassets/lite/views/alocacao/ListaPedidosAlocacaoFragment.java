@@ -11,14 +11,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
+import java.util.List;
 
 import pt.itassets.lite.R;
 import pt.itassets.lite.adapters.ListaPedidosAlocacaoAdaptador;
@@ -35,7 +37,9 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
 
     private ListView lvAlocacoes;
     private FloatingActionButton fabListaPedidosAlocacao;
+    private ChipGroup CG_filtro_alocacao;
     private TextView TV_sem_dados;
+    private ArrayList<Integer> status_filter;
 
     public ListaPedidosAlocacaoFragment() {
         // Required empty public constructor
@@ -51,6 +55,30 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
         lvAlocacoes = view.findViewById(R.id.lvAlocacoes);
         TV_sem_dados = view.findViewById(R.id.TV_sem_dados);
         fabListaPedidosAlocacao = view.findViewById(R.id.fabListaPedidosAlocacao);
+        CG_filtro_alocacao = view.findViewById(R.id.CG_filtro_alocacao);
+
+        status_filter = new ArrayList<>();
+
+        status_filter.add(PedidoAlocacao.STATUS_ABERTO);
+        status_filter.add(PedidoAlocacao.STATUS_APROVADO);
+        status_filter.add(PedidoAlocacao.STATUS_NEGADO);
+        status_filter.add(PedidoAlocacao.STATUS_DEVOLVIDO);
+        status_filter.add(PedidoAlocacao.STATUS_CANCELADO);
+
+        Singleton.getInstance(getContext()).setPedidosAlocacaoListener(this);
+
+        CG_filtro_alocacao.setOnCheckedStateChangeListener(new ChipGroup.OnCheckedStateChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull ChipGroup group, @NonNull List<Integer> checkedIds) {
+                status_filter.clear();
+
+                for (int i : checkedIds) {
+                    Chip local = view.findViewById(i);
+                    status_filter.add(Integer.parseInt((String) local.getTag()));
+                }
+                Singleton.getInstance(getContext()).getUserAlocacoesAPI(getContext());
+            }
+        });
 
         lvAlocacoes.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -61,7 +89,6 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
             }
         });
 
-        Singleton.getInstance(getContext()).setPedidosAlocacaoListener(this);
         Singleton.getInstance(getContext()).getUserAlocacoesAPI(getContext());
 
         fabListaPedidosAlocacao.setOnClickListener(new View.OnClickListener() {
@@ -112,13 +139,19 @@ public class ListaPedidosAlocacaoFragment extends Fragment implements PedidosAlo
         {
             if(listaAlocacoes.size() > 0)
             {
-                lvAlocacoes.setAdapter(new ListaPedidosAlocacaoAdaptador(getContext(), listaAlocacoes));
-            }
-            else
-            {
-                TV_sem_dados.setVisibility(View.VISIBLE);
-                lvAlocacoes.setVisibility(View.INVISIBLE);
+                // Filtrar pedidos
+                listaAlocacoes.removeIf(pedido -> !status_filter.contains(pedido.getStatus()));
+
+                if(listaAlocacoes.size() > 0)
+                {
+                    TV_sem_dados.setVisibility(View.INVISIBLE);
+                    lvAlocacoes.setVisibility(View.VISIBLE);
+                    lvAlocacoes.setAdapter(new ListaPedidosAlocacaoAdaptador(getContext(), listaAlocacoes));
+                    return;
+                }
             }
         }
+        TV_sem_dados.setVisibility(View.VISIBLE);
+        lvAlocacoes.setVisibility(View.INVISIBLE);
     }
 }

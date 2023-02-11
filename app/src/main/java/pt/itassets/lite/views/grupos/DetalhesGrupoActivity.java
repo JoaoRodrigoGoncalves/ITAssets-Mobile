@@ -45,7 +45,7 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
 
         if(grupoId == -1)
         {
-            Toast.makeText(this, "Item não encontrado!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.txt_grupo_nao_encontrado, Toast.LENGTH_SHORT).show();
             finish();
         }
         else
@@ -55,9 +55,9 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
             tv_nome_grupo.setText(String.valueOf(grupoItens.getNome()));
             setTitle(String.valueOf(grupoItens.getNome()));
 
-            if(grupoItens.getNotas() == null)
+            if(grupoItens.getNotas() == "null")
             {
-                tv_notas.setText("Não Aplicável");
+                tv_notas.setText(R.string.txt_nao_aplicavel);
                 tv_notas.setTypeface(tv_notas.getTypeface(), Typeface.ITALIC);
             }
             else
@@ -107,8 +107,8 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
     //Dialog para perguntar se o user pretende mesmo eliminar/ desativar o item
     private void dialogRemover(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Remover Item")
-                .setMessage("Tem a certeza que deseja remover o Grupo Itens?")
+        builder.setTitle(getString(R.string.txt_remover_grupo))
+                .setMessage(getString(R.string.txt_confirmar_remover_grupo))
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
