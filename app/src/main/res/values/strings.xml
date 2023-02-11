@@ -120,6 +120,7 @@
     <string name="txt_alocacao_submetido">Pedido de Alocação Submetido!</string>
     <string name="txt_reparacao_atualizado">Pedido de Reparação Atualizado!</string>
     <string name="txt_reparacao_submetido">Peido de Reparação submetido!</string>
+    <string name="txt_select_item_error">Selecione pelo menos 1 item.</string>
 
 
 </resources>

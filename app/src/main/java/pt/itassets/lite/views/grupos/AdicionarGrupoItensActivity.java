@@ -78,7 +78,15 @@ public class AdicionarGrupoItensActivity extends AppCompatActivity implements Op
                         );
 
                         ArrayList<Integer> itemSelected = adapter.getArrayitems();
-                        Singleton.getInstance(getBaseContext()).AdicionarGrupoItensAPI(grupoItensAux,itemSelected, getBaseContext());
+                        if(itemSelected != null)
+                        {
+                            if(itemSelected.size() > 0)
+                            {
+                                Singleton.getInstance(getBaseContext()).AdicionarGrupoItensAPI(grupoItensAux,itemSelected, getBaseContext());
+                                return;
+                            }
+                        }
+                        Toast.makeText(AdicionarGrupoItensActivity.this, R.string.txt_select_item_error, Toast.LENGTH_SHORT).show();
                     }
                 }
             }

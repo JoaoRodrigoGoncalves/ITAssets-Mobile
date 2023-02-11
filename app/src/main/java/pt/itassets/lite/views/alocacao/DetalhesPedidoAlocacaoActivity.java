@@ -168,13 +168,14 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
                 if (isPedidoAlocacaoDevolverValido()) {
                     if (pedidoAlocacao != null) {
                         pedidoAlocacao.setDataFim(dataFormatada);
-                        pedidoAlocacao.setStatus(7);
+                        pedidoAlocacao.setStatus(PedidoAlocacao.STATUS_DEVOLVIDO);
 
                         Singleton.getInstance(getApplicationContext()).EditarAlocacaoAPI(pedidoAlocacao, getApplicationContext());
-
-//                        Intent intent = new Intent(getBaseContext(), MenuActivity.class);
-//                        startActivityForResult(intent, Helpers.OPERACAO_EDIT); //Método Deprecated
                     }
+                }
+                else
+                {
+                    Toast.makeText(this, getString(R.string.txt_erro_pedido_alocacao_devolver), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -213,7 +214,6 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
         Integer estado = pedidoAlocacao.getStatus();
 
         if(estado != PedidoAlocacao.STATUS_APROVADO) {
-            Toast.makeText(getApplicationContext(), getString(R.string.txt_erro_pedido_alocacao_devolver), Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -221,8 +221,10 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
         {
             //Alocação de item. Validar dados do item
 
-            if(Singleton.getInstance(this).getItem(pedidoAlocacao.getItemid()).getPedido_reparacao_id() == null)
+            if(Singleton.getInstance(this).getItem(pedidoAlocacao.getItemid()).getPedido_reparacao_id() != null)
+            {
                 return false;
+            }
         }
         else
         {
@@ -231,7 +233,7 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
                 return false;
 
             //Assumimos grupo de item.
-            if(Singleton.getInstance(this).getGrupoItens(pedidoAlocacao.getGrupoid()).getPedido_reparacao_id() == null)
+            if(Singleton.getInstance(this).getGrupoItens(pedidoAlocacao.getGrupoid()).getPedido_reparacao_id() != null)
                 return false;
         }
 
