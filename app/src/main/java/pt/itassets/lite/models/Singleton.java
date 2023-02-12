@@ -53,6 +53,7 @@ public class Singleton {
     private ArrayList<PedidoAlocacao> alocacoes;
     private ArrayList<GrupoItensItem> grupoItensItems;
     private ArrayList<PedidoReparacao> reparacoes;
+    private ArrayList<LinhaPedidoReparacao> linha_pedido_reparacoes;
     private static Singleton instance=null;
     private static RequestQueue volleyQueue=null;
     private DBHelper database = null;
@@ -729,6 +730,17 @@ public class Singleton {
         }
     }
 
+    public void adicionarLinhaPedidoReparacoesBD(ArrayList<LinhaPedidoReparacao> linhaPedidoReparacaos){
+        database.removerAllLinhaPedidoReparacaoDB();
+        for(LinhaPedidoReparacao i : linhaPedidoReparacaos){
+            adicionarLinhaPedidoReparacaoBD(i);
+        }
+    }
+
+    public void adicionarLinhaPedidoReparacaoBD(LinhaPedidoReparacao i){
+        database.adicionarLinhaPedidoReparacaoDB(i);
+    }
+
     public void adicionarReparacaoBD(PedidoReparacao i){
         database.adicionarPedidoReparacaoDB(i);
     }
@@ -1383,9 +1395,13 @@ public class Singleton {
                             public void onResponse(JSONObject response) {
                                 reparacoes = JSONParsers.parserJsonReparacoes(response, context);
                                 adicionarReparacoesBD(reparacoes);
+                                linha_pedido_reparacoes=JSONParsers.parserJsonLinhaPedidoReparacoes(response);
+                                adicionarLinhaPedidoReparacoesBD(linha_pedido_reparacoes);
                                 if (pedidosReparacaoListener != null) {
                                     pedidosReparacaoListener.onRefreshListaReparacoes(reparacoes);
                                 }
+
+
                             }
                         },
                         new Response.ErrorListener() {

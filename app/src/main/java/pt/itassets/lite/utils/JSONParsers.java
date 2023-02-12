@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import pt.itassets.lite.models.LinhaPedidoReparacao;
 import pt.itassets.lite.models.PedidoAlocacao;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.GrupoItensItem;
@@ -380,17 +381,19 @@ public class JSONParsers {
 
                         JSONObject thisObject = dados.getJSONObject(j);
                         JSONArray itens=thisObject.getJSONArray("itens");
-
-                        for (int k=0;k<itens.length();k++)
+                        if (itens.length()!=0)
                         {
-                            JSONObject thisitem = itens.getJSONObject(k);
+                            for (int k=0;k<itens.length();k++)
+                            {
+                                JSONObject thisitem = itens.getJSONObject(k);
 
-                            GrupoItensItem auxGrupoItensItem=new GrupoItensItem(
-                                    k,
-                                    thisObject.getInt("id"),
-                                    thisitem.getInt("id")
-                            );
-                            grupoItensItems.add(auxGrupoItensItem);
+                                GrupoItensItem auxGrupoItensItem=new GrupoItensItem(
+                                        k,
+                                        thisObject.getInt("id"),
+                                        thisitem.getInt("id")
+                                );
+                                grupoItensItems.add(auxGrupoItensItem);
+                            }
                         }
 
                     }
@@ -435,5 +438,67 @@ public class JSONParsers {
             e.printStackTrace();
         }
         return reparacoes;
+    }
+
+    public static ArrayList<LinhaPedidoReparacao> parserJsonLinhaPedidoReparacoes(JSONObject response)
+    {
+        ArrayList<LinhaPedidoReparacao> linhaPedidoReparacaos = null;
+        try{
+
+            for(int i=0; i<response.length(); i++){
+
+                if(response.getInt("status") == 200)
+                {
+                    JSONArray dados = response.getJSONArray("data");
+                    linhaPedidoReparacaos = new  ArrayList<>();
+
+                    for (int j = 0; j < dados.length(); j++) {
+
+
+                        JSONObject thisObject = dados.getJSONObject(j);
+
+                        //vai buscar os itens que estao associados
+                        JSONArray itens=thisObject.getJSONObject("objetos").optJSONArray("itens");
+                        //caso existam itens associados
+                        if (itens!=null) {
+                            for (int k = 0; k < itens.length(); k++) {
+                                JSONObject thisitem = itens.getJSONObject(k);
+
+                                LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
+                                        k,
+                                        thisObject.getInt("id"),
+                                        thisitem.getInt("id"),
+                                        null
+                                );
+                                linhaPedidoReparacaos.add(auxLinhaReparacao);
+
+                            }
+                        }
+
+                        JSONArray grupos=thisObject.getJSONObject("objetos").optJSONArray("grupos");
+                        //caso existam itens associados
+                        if (grupos!=null) {
+                            for (int k = 0; k < grupos.length(); k++) {
+                                JSONObject thisgrupo = grupos.getJSONObject(k);
+
+                                LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
+                                        k,
+                                        thisObject.getInt("id"),
+                                        null,
+                                        thisgrupo.getInt("id")
+                                );
+                                linhaPedidoReparacaos.add(auxLinhaReparacao);
+
+                            }
+                        }
+
+
+                    }
+                }
+            }
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+        return linhaPedidoReparacaos;
     }
 }

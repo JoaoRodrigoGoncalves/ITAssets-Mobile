@@ -21,6 +21,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String TABLE_ITENS_GRUPO ="grupoitensitem";//nome da tabela
     private static final String TABLE_PEDIDOS_REQUISICAO = "pedidosrequisicao"; // Nome da tabela
     private static final String TABLE_PEDIDO_REPARACAO = "pedido_reparcao"; // Nome da tabela
+    private static final String TABLE_LINHA_PEDIDO_REPARACAO = "linha_pedido_reparacao"; // Nome da tabelax
 
     // Nome dos campos
     private static final String
@@ -132,8 +133,16 @@ public class DBHelper extends SQLiteOpenHelper {
                         NOME_RESPONSAVEL + " TEXT," +
                         RESPOSTA_OBS + " TEXT," +
                         STATUS + " INTEGER NOT NULL" + ")";
-
         sqlLiteDatabase.execSQL(sqlCreateTablePedidoReparacao);
+
+        String sqlCreateTableLinhaPedidoReparacao =
+                "CREATE TABLE " + TABLE_LINHA_PEDIDO_REPARACAO + "(" +
+                        ID + " INTEGER PRIMARY KEY," +
+                        PEDIDO_REPARACAO_ID + " INTEGER NOT NULL," +
+                        ITEMID + " INTEGER," +
+                        GRUPOITENSID + " INTEGER)";
+
+        sqlLiteDatabase.execSQL(sqlCreateTableLinhaPedidoReparacao);
     }
 
     @Override
@@ -155,6 +164,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String sqlDropTableGrupoItensItem = "DROP TABLE IF EXISTS " + TABLE_ITENS_GRUPO;
         sqlLiteDatabase.execSQL(sqlDropTableGrupoItensItem);
+
+        String sqlDropTableLinhaPedidoReparacao = "DROP TABLE IF EXISTS " + TABLE_LINHA_PEDIDO_REPARACAO;
+        sqlLiteDatabase.execSQL(sqlDropTableLinhaPedidoReparacao);
 
         onCreate(sqlLiteDatabase);
     }
@@ -407,6 +419,32 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //endregion
 
+    //Funcoes Tabela Linha de Reparacao
+
+    public LinhaPedidoReparacao adicionarLinhaPedidoReparacaoDB(LinhaPedidoReparacao linhaPedidoReparacao)
+    {
+        ContentValues values = new ContentValues();
+
+        //values.put(ID, linhaPedidoReparacao.getId());
+        values.put(PEDIDO_REPARACAO_ID, linhaPedidoReparacao.getId_reparacao());
+        values.put(ITEMID, linhaPedidoReparacao.getItem_id());
+        values.put(GRUPOITENSID, linhaPedidoReparacao.getGrupo_id());
+
+
+        // devolve -1 em caso de erro, ou o id do novo objeto (long)
+        int id = (int) db.insert(TABLE_LINHA_PEDIDO_REPARACAO, null, values);
+        if(id != -1)
+        {
+            linhaPedidoReparacao.setId(id);
+            return linhaPedidoReparacao;
+        }
+        else
+        {
+            return null;
+        }
+    }
+    //endregion
+
     //region Funções Tabela Reparacoes
 
     public PedidoReparacao adicionarPedidoReparacaoDB(PedidoReparacao pedido)
@@ -432,6 +470,8 @@ public class DBHelper extends SQLiteOpenHelper {
             return null;
         }
     }
+
+
     
     public boolean editarPedidoReparacaoDB(PedidoReparacao pedido)
     {
@@ -455,6 +495,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public void removerAllPedidoReparacaoDB()
     {
         db.delete(TABLE_PEDIDO_REPARACAO, null, null);
+    }
+
+    public void removerAllLinhaPedidoReparacaoDB()
+    {
+        db.delete(TABLE_LINHA_PEDIDO_REPARACAO, null, null);
     }
 
     public ArrayList<PedidoReparacao> getAllPedidosReparacaoDB()
@@ -755,28 +800,40 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         ArrayList<Item> items = new ArrayList<>();
 
-        Cursor cursor = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID,PEDIDO_REPARACAO_ID},
+        Cursor cursor = db.query(TABLE_LINHA_PEDIDO_REPARACAO, new String[]{ID, PEDIDO_REPARACAO_ID, ITEMID, GRUPOITENSID},
                 PEDIDO_REPARACAO_ID+"="+idPedidoReparacao, null, null, null, null);
 
         if(cursor.moveToFirst())
         {
             do {
-                Item iten = new Item(
-                        cursor.getInt(0), //ID
-                        cursor.getString(1), //Nome
-                        (cursor.isNull(2) ? null : cursor.getString(2)), //Serial
-                        (cursor.isNull(3) ? null : cursor.getString(3)), // Notas
-                        cursor.getInt(4), // status
-                        (cursor.isNull(5) ? null : cursor.getString(5)), // categoria
-                        (cursor.isNull(6) ? null : cursor.getInt(6)), // site
-                        (cursor.isNull(7) ? null : cursor.getInt(7)),//pedido alocação id
-                        (cursor.isNull(8) ? null : cursor.getInt(8)) //pedido alocação id
+                //verifica se o grupo e diferente de null
+                if (!cursor.isNull(2))
+                {
+                    //vai buscar o grupo de itens
+                    Cursor item = db.query(TABLE_ITENS, new String[]{ID, NOME, SERIALNUMBER, NOTAS, STATUS, NOME_CATEGORIA, SITE_ID, PEDIDO_ALOCACAO_ID,PEDIDO_REPARACAO_ID},
+                            ID+"="+cursor.getInt(2), null, null, null, null);
 
-                );
-                items.add(iten);
+                    if(item.moveToFirst())
+                    {
+                        Item iten = new Item(
+                                item.getInt(0), //ID
+                                item.getString(1), //Nome
+                                (item.isNull(2) ? null : item.getString(2)), //Serial
+                                (item.isNull(3) ? null : item.getString(3)), // Notas
+                                item.getInt(4), // status
+                                (item.isNull(5) ? null : item.getString(5)), // categoria
+                                (item.isNull(6) ? null : item.getInt(6)), // site
+                                (item.isNull(7) ? null : item.getInt(7)),//pedido alocação id
+                                (item.isNull(8) ? null : item.getInt(8)) //pedido alocação id
+
+                        );
+                        items.add(iten);
+                    }
+                }
             }while(cursor.moveToNext());
             cursor.close();
         }
+
         return items;
     }
 
@@ -784,22 +841,33 @@ public class DBHelper extends SQLiteOpenHelper {
     {
 
         ArrayList<GrupoItens> grupoItensAux= new ArrayList<>();
-        Cursor cursor = db.query(TABLE_GRUPO_ITENS, new String[]{ID, NOME, NOTAS, STATUS, PEDIDO_ALOCACAO_ID,PEDIDO_REPARACAO_ID},
+        Cursor cursor = db.query(TABLE_LINHA_PEDIDO_REPARACAO, new String[]{ID, PEDIDO_REPARACAO_ID, ITEMID, GRUPOITENSID},
                 PEDIDO_REPARACAO_ID+"="+idPedidoReparacao, null, null, null, null);
 
         if(cursor.moveToFirst())
         {
             do {
-                GrupoItens grupoItens = new GrupoItens(
-                        cursor.getInt(0), //ID
-                        cursor.getInt(3), // status
-                        cursor.getString(1), //Nome
-                        (cursor.isNull(2) ? null : cursor.getString(2)), // Notas
-                        (cursor.isNull(4) ? null : cursor.getInt(4)), // pedido alocacao id
-                        (cursor.isNull(5) ? null : cursor.getInt(5)) // pedido Reparacao id
+                //verifica se o grupo e diferente de null
+                if (!cursor.isNull(3))
+                {
+                    //vai buscar o grupo de itens
+                    Cursor grupo = db.query(TABLE_GRUPO_ITENS, new String[]{ID, NOME, NOTAS, STATUS, PEDIDO_ALOCACAO_ID,PEDIDO_REPARACAO_ID},
+                            ID+"="+cursor.getInt(3), null, null, null, null);
 
-                );
-                grupoItensAux.add(grupoItens);
+                    if (grupo.moveToFirst())
+                    {
+                        GrupoItens grupoItens = new GrupoItens(
+                                grupo.getInt(0), //ID
+                                grupo.getInt(3), // status
+                                grupo.getString(1), //Nome
+                                (grupo.isNull(2) ? null : grupo.getString(2)), // Notas
+                                (grupo.isNull(4) ? null : grupo.getInt(4)), // pedido alocacao id
+                                (grupo.isNull(5) ? null : grupo.getInt(5)) // pedido Reparacao id
+
+                        );
+                        grupoItensAux.add(grupoItens);
+                    }
+                }
             }while(cursor.moveToNext());
             cursor.close();
         }
