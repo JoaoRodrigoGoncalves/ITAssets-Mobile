@@ -86,6 +86,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
             {
                 TV_Sem_Dados.setVisibility(View.VISIBLE);
                 TV_Sem_Dados.setText(R.string.itens_nao_associados);
+
             }
             else{
 
@@ -113,53 +114,55 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
             }
 
             //Botão
+
             btn_Cancelar.setVisibility(View.VISIBLE);
 
-            // Aprovador
-            if (pedidoReparacao.getStatus() != PedidoReparacao.STATUS_ABERTO) {
-                LL_dados_resposta.setVisibility(View.VISIBLE);
-                btn_Cancelar.setVisibility(View.INVISIBLE);
-                btn_finalizar.setVisibility(View.VISIBLE);
+            if (grupoItens.size()!=0 || item.size()!=0) {
+                // Aprovador
+                if (pedidoReparacao.getStatus() != PedidoReparacao.STATUS_ABERTO) {
+                    LL_dados_resposta.setVisibility(View.VISIBLE);
+                    btn_Cancelar.setVisibility(View.INVISIBLE);
+                    btn_finalizar.setVisibility(View.VISIBLE);
 
-                // region Campo Responsavel
-                if (pedidoReparacao.getNome_responsavel() != null) {
-                    TV_Responsavel.setText(String.valueOf(pedidoReparacao.getNome_responsavel()));
-                } else {
-                    TV_Responsavel.setTypeface(TV_Responsavel.getTypeface(), Typeface.ITALIC);
-                    TV_Responsavel.setText(R.string.txt_nao_aplicavel);
-                }
-                // endregion
+                    // region Campo Responsavel
+                    if (pedidoReparacao.getNome_responsavel() != null) {
+                        TV_Responsavel.setText(String.valueOf(pedidoReparacao.getNome_responsavel()));
+                    } else {
+                        TV_Responsavel.setTypeface(TV_Responsavel.getTypeface(), Typeface.ITALIC);
+                        TV_Responsavel.setText(R.string.txt_nao_aplicavel);
+                    }
+                    // endregion
 
-                // region Campo Data Inicio
-                if (pedidoReparacao.getDataInicio() != null) {
-                    TV_data_inicio.setText(String.valueOf(pedidoReparacao.getDataInicio()));
-                } else {
-                    TV_data_inicio.setTypeface(TV_data_inicio.getTypeface(), Typeface.ITALIC);
-                    TV_data_inicio.setText(R.string.txt_nao_aplicavel);
-                }
-                //endregion
+                    // region Campo Data Inicio
+                    if (pedidoReparacao.getDataInicio() != null) {
+                        TV_data_inicio.setText(String.valueOf(pedidoReparacao.getDataInicio()));
+                    } else {
+                        TV_data_inicio.setTypeface(TV_data_inicio.getTypeface(), Typeface.ITALIC);
+                        TV_data_inicio.setText(R.string.txt_nao_aplicavel);
+                    }
+                    //endregion
 
-                // region Campo Data Fim
-                if (pedidoReparacao.getDataFim() != null) {
-                    TV_data_fim.setText(String.valueOf(pedidoReparacao.getDataFim()));
-                } else {
-                    TV_data_fim.setTypeface(TV_data_fim.getTypeface(), Typeface.ITALIC);
-                    TV_data_fim.setText(R.string.txt_nao_aplicavel);
-                }
-                //endregion
+                    // region Campo Data Fim
+                    if (pedidoReparacao.getDataFim() != null) {
+                        TV_data_fim.setText(String.valueOf(pedidoReparacao.getDataFim()));
+                    } else {
+                        TV_data_fim.setTypeface(TV_data_fim.getTypeface(), Typeface.ITALIC);
+                        TV_data_fim.setText(R.string.txt_nao_aplicavel);
+                    }
+                    //endregion
 
-                // region Campo Observações Resposta
-                if (pedidoReparacao.getRespostaObs() != null) {
-                    TV_observacoes_resposta.setText(String.valueOf(pedidoReparacao.getRespostaObs()));
-                } else {
-                    TV_observacoes_resposta.setTypeface(TV_observacoes_resposta.getTypeface(), Typeface.ITALIC);
-                    TV_observacoes_resposta.setText(R.string.txt_nao_aplicavel);
+                    // region Campo Observações Resposta
+                    if (pedidoReparacao.getRespostaObs() != null) {
+                        TV_observacoes_resposta.setText(String.valueOf(pedidoReparacao.getRespostaObs()));
+                    } else {
+                        TV_observacoes_resposta.setTypeface(TV_observacoes_resposta.getTypeface(), Typeface.ITALIC);
+                        TV_observacoes_resposta.setText(R.string.txt_nao_aplicavel);
+                    }
+                    //endregion
                 }
-                //endregion
+
             }
-
-            if (pedidoReparacao.getStatus() == PedidoReparacao.STATUS_CONCLUIDO || pedidoReparacao.getStatus() == PedidoReparacao.STATUS_CANCELADO)
-            {
+            if (pedidoReparacao.getStatus() == PedidoReparacao.STATUS_CONCLUIDO || pedidoReparacao.getStatus() == PedidoReparacao.STATUS_CANCELADO) {
                 btn_Cancelar.setVisibility(View.INVISIBLE);
                 btn_finalizar.setVisibility(View.INVISIBLE);
             }

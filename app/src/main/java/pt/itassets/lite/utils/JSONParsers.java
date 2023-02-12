@@ -492,6 +492,17 @@ public class JSONParsers {
                             }
                         }
 
+                        if (itens == null && grupos == null)
+                        {
+                            LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
+                                    j,
+                                    thisObject.getInt("id"),
+                                    null,
+                                   null
+                            );
+                            linhaPedidoReparacaos.add(auxLinhaReparacao);
+                        }
+
 
                     }
                 }
