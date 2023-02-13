@@ -457,53 +457,64 @@ public class JSONParsers {
 
                         JSONObject thisObject = dados.getJSONObject(j);
 
-                        //vai buscar os itens que estao associados
-                        JSONArray itens=thisObject.getJSONObject("objetos").optJSONArray("itens");
-                        //caso existam itens associados
-                        if (itens!=null) {
-                            for (int k = 0; k < itens.length(); k++) {
-                                JSONObject thisitem = itens.getJSONObject(k);
+                        JSONObject object=thisObject.optJSONObject("objetos");
 
+                        if (object!=null)
+                        {
+                            JSONArray itens=object.optJSONArray("itens");
+                            //caso existam itens associados
+                            if (itens!=null) {
+                                for (int k = 0; k < itens.length(); k++) {
+                                    JSONObject thisitem = itens.getJSONObject(k);
+
+                                    LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
+                                            k,
+                                            thisObject.getInt("id"),
+                                            thisitem.getInt("id"),
+                                            null
+                                    );
+                                    linhaPedidoReparacaos.add(auxLinhaReparacao);
+
+                                }
+                            }
+
+                            JSONArray grupos=object.optJSONArray("grupos");
+                            //caso existam itens associados
+                            if (grupos!=null) {
+                                for (int k = 0; k < grupos.length(); k++) {
+                                    JSONObject thisgrupo = grupos.getJSONObject(k);
+
+                                    LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
+                                            k,
+                                            thisObject.getInt("id"),
+                                            null,
+                                            thisgrupo.getInt("id")
+                                    );
+                                    linhaPedidoReparacaos.add(auxLinhaReparacao);
+
+                                }
+                            }
+                            if (itens == null && grupos == null)
+                            {
                                 LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
-                                        k,
+                                        j,
                                         thisObject.getInt("id"),
-                                        thisitem.getInt("id"),
+                                        null,
                                         null
                                 );
                                 linhaPedidoReparacaos.add(auxLinhaReparacao);
-
                             }
                         }
-
-                        JSONArray grupos=thisObject.getJSONObject("objetos").optJSONArray("grupos");
-                        //caso existam itens associados
-                        if (grupos!=null) {
-                            for (int k = 0; k < grupos.length(); k++) {
-                                JSONObject thisgrupo = grupos.getJSONObject(k);
-
-                                LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
-                                        k,
-                                        thisObject.getInt("id"),
-                                        null,
-                                        thisgrupo.getInt("id")
-                                );
-                                linhaPedidoReparacaos.add(auxLinhaReparacao);
-
-                            }
-                        }
-
-                        if (itens == null && grupos == null)
+                        else
                         {
                             LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
                                     j,
                                     thisObject.getInt("id"),
                                     null,
-                                   null
+                                    null
                             );
                             linhaPedidoReparacaos.add(auxLinhaReparacao);
                         }
-
-
                     }
                 }
             }
