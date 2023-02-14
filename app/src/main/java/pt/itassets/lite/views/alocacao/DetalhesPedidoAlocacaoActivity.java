@@ -60,6 +60,7 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
         if(id_pedido != -1)
         {
             setTitle("Pedido Alocação Nº" + id_pedido);
+            Singleton.getInstance(this).setOperacoesPedidoAlocacaoListener(this);
             pedidoAlocacao = Singleton.getInstance(this).getAlocacao(id_pedido);
 
             TV_id_pedido.setText(String.valueOf(pedidoAlocacao.getId()));
@@ -196,8 +197,6 @@ public class DetalhesPedidoAlocacaoActivity extends AppCompatActivity implements
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Singleton.getInstance(getApplicationContext()).RemoverAlocacaoAPI(pedidoAlocacao, getApplicationContext());
-                        Intent intent = new Intent(getBaseContext(), MenuActivity.class);
-                        startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {

@@ -425,7 +425,6 @@ public class DBHelper extends SQLiteOpenHelper {
     {
         ContentValues values = new ContentValues();
 
-        //values.put(ID, linhaPedidoReparacao.getId());
         values.put(PEDIDO_REPARACAO_ID, linhaPedidoReparacao.getId_reparacao());
         values.put(ITEMID, linhaPedidoReparacao.getItem_id());
         values.put(GRUPOITENSID, linhaPedidoReparacao.getGrupo_id());

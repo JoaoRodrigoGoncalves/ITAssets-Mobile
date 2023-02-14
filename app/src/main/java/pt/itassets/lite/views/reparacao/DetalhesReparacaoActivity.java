@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,7 +32,7 @@ import pt.itassets.lite.utils.Helpers;
 import pt.itassets.lite.views.MenuActivity;
 
 
-public class DetalhesReparacaoActivity extends AppCompatActivity implements OperacoesPedidoReparacaoListener, ItensListener {
+public class DetalhesReparacaoActivity extends AppCompatActivity implements OperacoesPedidoReparacaoListener {
 
     private TextView TV_id_pedido, TV_estado_pedido, TV_requerente, TV_data_pedido,
             TV_Descricao, TV_Responsavel, TV_data_inicio, TV_data_fim,
@@ -70,6 +71,7 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
 
         if (id_reparacao != -1) {
             setTitle(getString(R.string.Titulo_reparacao) + id_reparacao);
+            Singleton.getInstance(this).setOperacoesPedidoReparacaoListener(this);
             pedidoReparacao = Singleton.getInstance(this).getReparacao(id_reparacao);
 
             TV_id_pedido.setText(String.valueOf(pedidoReparacao.getId()));
@@ -88,17 +90,10 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
                 TV_Sem_Dados.setText(R.string.itens_nao_associados);
 
             }
-            else{
-
-                if (grupoItens.size()!=0)
-                {
-                    onRefreshListaGrupoItens(grupoItens);
-                }
-
-                if (item.size()!=0)
-                {
-                    onRefreshListaItens(item);
-                }
+            else
+            {
+                LV_Reparacoes.setAdapter(new ListaItensAdaptador(this, item));
+                LV_Grupo.setAdapter(new ListaGruposItensAdaptador(this, grupoItens));
             }
 
             if (pedidoReparacao.getDataPedido() != null) {
@@ -174,28 +169,35 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     }
 
     public void onClick_btn_finalizar(View view) {
-        Date data = new Date();
-        String dataFormatada = formatoData.format(data);
+        if(Helpers.isInternetConnectionAvailable(this))
+        {
+            Date data = new Date();
+            String dataFormatada = formatoData.format(data);
 
-        Singleton.getInstance(getApplicationContext()).setOperacoesPedidoReparacaoListener(this);
+            Singleton.getInstance(getApplicationContext()).setOperacoesPedidoReparacaoListener(this);
 
-        if (pedidoReparacao.getId() == -1) {
-            Toast.makeText(getApplicationContext(), getString(R.string.txt_erro_pedido_reparacao_nao_encontrado), Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
-            pedidoReparacao = Singleton.getInstance(getBaseContext()).getReparacao(pedidoReparacao.getId());
+            if (pedidoReparacao.getId() == -1) {
+                Toast.makeText(getApplicationContext(), getString(R.string.txt_erro_pedido_reparacao_nao_encontrado), Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                pedidoReparacao = Singleton.getInstance(getBaseContext()).getReparacao(pedidoReparacao.getId());
 
-            if (pedidoReparacao != null) {
-                if (isPedidoReparacaoFinalizarValido()) {
-                    pedidoReparacao.setDataFim(dataFormatada);
-                    pedidoReparacao.setDataInicio(dataFormatada);
-                    pedidoReparacao.setStatus(PedidoReparacao.STATUS_CONCLUIDO);
+                if (pedidoReparacao != null) {
+                    if (isPedidoReparacaoFinalizarValido()) {
+                        pedidoReparacao.setDataFim(dataFormatada);
+                        pedidoReparacao.setDataInicio(dataFormatada);
+                        pedidoReparacao.setStatus(PedidoReparacao.STATUS_CONCLUIDO);
 
-                    Intent intent = new Intent(getBaseContext(), FinalizarPedidoReparacaoActivity.class);
-                    intent.putExtra("ID_REPARACAO", pedidoReparacao.getId());
-                    startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
+                        Intent intent = new Intent(getBaseContext(), FinalizarPedidoReparacaoActivity.class);
+                        intent.putExtra("ID_REPARACAO", pedidoReparacao.getId());
+                        startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
+                    }
                 }
             }
+        }
+        else
+        {
+            Toast.makeText(this, R.string.txt_sem_internet, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -210,8 +212,15 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     }
 
     public void onClick_btn_cancelar(View view) {
-        if (isPedidoReparacaoCancelarValido()) {
-            dialogRemover();
+        if(Helpers.isInternetConnectionAvailable(this))
+        {
+            if (isPedidoReparacaoCancelarValido()) {
+                dialogRemover();
+            }
+        }
+        else
+        {
+            Toast.makeText(this, R.string.txt_sem_internet, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -224,8 +233,6 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Singleton.getInstance(getApplicationContext()).RemoverReparacaoAPI(pedidoReparacao, getApplicationContext());
-                        Intent intent = new Intent(getBaseContext(), MenuActivity.class);
-                        startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
                     }
                 })
                 .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
@@ -257,18 +264,14 @@ public class DetalhesReparacaoActivity extends AppCompatActivity implements Oper
     }
 
     @Override
-    public void onRefreshListaItens(ArrayList<Item> listaItens) {
-        if (listaItens.size()!=0)
-        {
-            LV_Reparacoes.setAdapter(new ListaItensAdaptador(this, listaItens));
-        }
-    }
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        // Handle da atividade de finalização de reparação e repetição dos dados recebidos para
+        // o fragmentos da lista de reparações
 
-
-    public void onRefreshListaGrupoItens(ArrayList<GrupoItens> listaGrupoItens) {
-        if (listaGrupoItens.size()!=0)
-        {
-            LV_Grupo.setAdapter(new ListaGruposItensAdaptador(this, listaGrupoItens));
-        }
+        super.onActivityResult(requestCode, resultCode, data);
+        Intent intent = new Intent();
+        intent.putExtra(Helpers.OPERACAO, Helpers.OPERACAO_EDIT);
+        setResult(resultCode, intent);
+        finish();
     }
 }

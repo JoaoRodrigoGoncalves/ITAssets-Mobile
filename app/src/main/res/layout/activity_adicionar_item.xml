@@ -34,40 +34,24 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- TODO: Colocar botão para usar o leitor de códigos para preencher o numero de serie -->
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputLayout
+            style="?attr/textInputOutlinedStyle"
+            android:id="@+id/tiNSerie"
+            app:boxStrokeColor="?attr/colorPrimary"
+            app:boxStrokeErrorColor="?attr/colorError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:hint="@string/tv_nSerie"
+            android:layout_marginBottom="10dp">
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="?attr/textInputOutlinedStyle"
-                android:id="@+id/tiNSerie"
-                app:boxStrokeColor="?attr/colorPrimary"
-                app:boxStrokeErrorColor="?attr/colorError"
-                android:layout_width="0dp"
-                android:layout_weight=".9"
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/tv_nSerie"
-                android:layout_marginBottom="10dp">
+                android:inputType="text"
+                />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- TODO: btn para ler serial -->
-            <com.google.android.material.button.MaterialButton
-                android:layout_width="0dp"
-                android:layout_weight="0.1"
-                android:layout_height="wrap_content"
-                app:icon="@drawable/ic_barcode">
-            </com.google.android.material.button.MaterialButton>
-        </LinearLayout>
-
+        </com.google.android.material.textfield.TextInputLayout>
+        
         <com.google.android.material.textfield.TextInputLayout
             style="?attr/textInputOutlinedStyle"
             android:id="@+id/tiNota"

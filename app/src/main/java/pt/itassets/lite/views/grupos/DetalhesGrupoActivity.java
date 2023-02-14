@@ -97,7 +97,6 @@ public class DetalhesGrupoActivity extends AppCompatActivity {
                 else
                 {
                     Toast.makeText(this, R.string.txt_sem_internet, Toast.LENGTH_SHORT).show();
-                    finish();
                 }
                 return true;
         }

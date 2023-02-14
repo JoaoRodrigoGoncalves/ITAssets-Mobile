@@ -1342,8 +1342,8 @@ public class Singleton {
                     public void onResponse(String response) {
                         removerAlocacaoBD(pedidoAlocacao.getId());
 
-                        if (pedidosAlocacaoListener != null) {
-                            pedidosAlocacaoListener.onRefreshListaAlocacoes(alocacoes);
+                        if (operacoesPedidoAlocacaoListener != null) {
+                            operacoesPedidoAlocacaoListener.onAlocacaoOperacaoRefresh(Helpers.OPERACAO_EDIT);
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -1531,8 +1531,8 @@ public class Singleton {
                     public void onResponse(String response) {
                         removerReparacaoBD(reparacao.getId());
 
-                        if (pedidosReparacaoListener != null) {
-                            pedidosReparacaoListener.onRefreshListaReparacoes(reparacoes);
+                        if (operacoesPedidoReparacaoListener != null) {
+                            operacoesPedidoReparacaoListener.onReparacaoOperacaoRefresh(Helpers.OPERACAO_EDIT);
                         }
                     }
                 }, new Response.ErrorListener() {

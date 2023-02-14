@@ -1,11 +1,13 @@
 package pt.itassets.lite.views.reparacao;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -55,19 +57,27 @@ public class FinalizarPedidoReparacaoActivity extends AppCompatActivity implemen
     }
 
     public void onClick_btn_confirmar_finalizar(View view) {
-        Date data = new Date();
-        String dataFormatada = formatoData.format(data);
 
-        Singleton.getInstance(getApplicationContext()).setOperacoesPedidoReparacaoListener(this);
+        if(Helpers.isInternetConnectionAvailable(this))
+        {
+            Date data = new Date();
+            String dataFormatada = formatoData.format(data);
 
-        pedidoReparacao.setRespostaObs(tf_respostaObs.getEditText().getText().toString().trim());
-        pedidoReparacao.setDataFim(dataFormatada);
-        pedidoReparacao.setStatus(4);
+            Singleton.getInstance(getApplicationContext()).setOperacoesPedidoReparacaoListener(this);
 
-        Singleton.getInstance(getApplicationContext()).EditarReparacaoAPI(pedidoReparacao, getApplicationContext());
+            pedidoReparacao.setRespostaObs(tf_respostaObs.getEditText().getText().toString().trim());
+            pedidoReparacao.setDataFim(dataFormatada);
+            pedidoReparacao.setStatus(4);
 
-        Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
-        startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
+            Singleton.getInstance(getApplicationContext()).EditarReparacaoAPI(pedidoReparacao, getApplicationContext());
+
+//            Intent intent = new Intent(getApplicationContext(), MenuActivity.class);
+//            startActivityForResult(intent, Helpers.OPERACAO_DETALHES); //Método Deprecated
+        }
+        else
+        {
+            Toast.makeText(this, R.string.txt_sem_internet, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

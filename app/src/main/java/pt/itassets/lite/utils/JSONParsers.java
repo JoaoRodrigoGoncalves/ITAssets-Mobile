@@ -453,10 +453,11 @@ public class JSONParsers {
                     linhaPedidoReparacaos = new  ArrayList<>();
 
                     for (int j = 0; j < dados.length(); j++) {
-
-
                         JSONObject thisObject = dados.getJSONObject(j);
 
+                        // O optJsonObject valida se o campo existe e é um JSONObject, se não for
+                        // devolve null. Essa condição é postriormente avaliada para determinar se
+                        // há dados para interpretar ou se indicamos NULL
                         JSONObject object=thisObject.optJSONObject("objetos");
 
                         if (object!=null)
@@ -468,7 +469,7 @@ public class JSONParsers {
                                     JSONObject thisitem = itens.getJSONObject(k);
 
                                     LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
-                                            k,
+                                            0,
                                             thisObject.getInt("id"),
                                             thisitem.getInt("id"),
                                             null
@@ -479,13 +480,13 @@ public class JSONParsers {
                             }
 
                             JSONArray grupos=object.optJSONArray("grupos");
-                            //caso existam itens associados
+                            //caso existam grupos associados
                             if (grupos!=null) {
                                 for (int k = 0; k < grupos.length(); k++) {
                                     JSONObject thisgrupo = grupos.getJSONObject(k);
 
                                     LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
-                                            k,
+                                            0,
                                             thisObject.getInt("id"),
                                             null,
                                             thisgrupo.getInt("id")
@@ -494,10 +495,13 @@ public class JSONParsers {
 
                                 }
                             }
+
+                            //Isto não deve acontecer por causa da maneira como o JSON funciona,
+                            //mas deixa-se aqui na mesma para prevenir
                             if (itens == null && grupos == null)
                             {
                                 LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
-                                        j,
+                                        0,
                                         thisObject.getInt("id"),
                                         null,
                                         null
@@ -508,7 +512,7 @@ public class JSONParsers {
                         else
                         {
                             LinhaPedidoReparacao auxLinhaReparacao = new LinhaPedidoReparacao(
-                                    j,
+                                    0,
                                     thisObject.getInt("id"),
                                     null,
                                     null

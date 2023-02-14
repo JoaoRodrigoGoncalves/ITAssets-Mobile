@@ -23,12 +23,13 @@ import pt.itassets.lite.R;
 import pt.itassets.lite.adapters.ListaGrupoItensAdaptorRV;
 import pt.itassets.lite.adapters.ListaItensAdaptadorRV;
 import pt.itassets.lite.listeners.OperacoesGruposListener;
+import pt.itassets.lite.listeners.OperacoesPedidoReparacaoListener;
 import pt.itassets.lite.models.GrupoItens;
 import pt.itassets.lite.models.Item;
 import pt.itassets.lite.models.Singleton;
 import pt.itassets.lite.utils.Helpers;
 
-public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implements OperacoesGruposListener {
+public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implements OperacoesPedidoReparacaoListener {
 
     private Integer id_user;
     private TextInputLayout tiProblema;
@@ -53,7 +54,7 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
             finish();
         }
 
-        Singleton.getInstance(getApplicationContext()).setOperacoesGruposListener(this);
+        Singleton.getInstance(getApplicationContext()).setOperacoesPedidoReparacaoListener(this);
 
         // Atualizar todos os dados
         Singleton.getInstance(this).getAllItensAPI(this);
@@ -109,8 +110,8 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
                     }
                     else
                     {
-                    // Erro selecionar objeto
-                    Toast.makeText(getApplicationContext(), getString(R.string.error_problema), Toast.LENGTH_SHORT).show();
+                        // Erro selecionar objeto
+                        Toast.makeText(getApplicationContext(), getString(R.string.error_problema), Toast.LENGTH_SHORT).show();
                     }
                 }
                 else
@@ -123,7 +124,7 @@ public class AdicionarPedidoReparacaoActivity extends AppCompatActivity implemen
     }
 
     @Override
-    public void onGrupoOperacoesRefresh(int operacao) {
+    public void onReparacaoOperacaoRefresh(int operacao) {
         Intent intent = new Intent();
         intent.putExtra(Helpers.OPERACAO, operacao);
         setResult(RESULT_OK, intent);
