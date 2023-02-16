@@ -3,9 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".vistas.ConfigurarServerFragment"
+    tools:context=".views.ConfigurarServerFragment"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:theme="@style/Theme.ITAssets">
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressbar_configServer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="invisible"/>
 
     <TextView
         android:layout_width="match_parent"
@@ -17,19 +25,27 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/label_configurar_server"/>
+        android:text="@string/lb_url"/>
 
-    <EditText
-        android:id="@+id/et_endereco_servidor"
+    <LinearLayout
+        android:id="@+id/ll_url_e_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/txt_hint_server_domain"
-        android:inputType="textUri"/>
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_ok"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/txt_ok"/>
+        <EditText
+            android:id="@+id/et_endereco_servidor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/txt_hint_server_domain"
+            android:inputType="textUri"/>
+
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_ok"/>
+
+    </LinearLayout>
 
 </LinearLayout>

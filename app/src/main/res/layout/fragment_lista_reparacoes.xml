@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="10dp"
+    tools:context=".views.reparacao.ListaReparacoesFragment"
+    android:theme="@style/Theme.ITAssets">
+
+    <!-- TV sem dados -->
+    <TextView
+        android:id="@+id/TV_sem_dados"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/sem_dados_a_mostrar"
+        android:gravity="center"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/CG_filtro_reparacao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleLine="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_aberto"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:checked="true"
+                    android:tag="8"
+                    android:text="@string/txt_aberto" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_em_revisao"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:checked="true"
+                    android:tag="6"
+                    android:text="@string/txt_emRevisao" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_concluido"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:checked="true"
+                    android:tag="4"
+                    android:text="@string/txt_concluido" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_cancelado"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:tag="0"
+                    android:text="@string/txt_cancelado" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_em_preparacao"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:checked="true"
+                    android:tag="10"
+                    android:text="@string/txt_emPreparacao" />
+
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </HorizontalScrollView>
+
+        <ListView
+            android:id="@+id/lvReparacoes"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+        </ListView>
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabListaPedidosReparacao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="25dp"
+        android:clickable="true"
+        android:src="@drawable/ic_add" />
+
+</FrameLayout>

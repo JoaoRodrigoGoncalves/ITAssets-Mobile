@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".vistas.LoginActivity"
-    android:layout_margin="5dp">
+    tools:context=".views.LoginActivity"
+    android:layout_margin="5dp"
+    android:theme="@style/Theme.ITAssets">
 
     <ImageView
         android:layout_width="match_parent"
@@ -21,7 +22,14 @@
         android:text="@string/txt_iniciar_sessao"
         android:textStyle="bold"
         android:gravity="center"
-        android:textSize="20dp"/>
+        android:textSize="20sp"/>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressbar_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="invisible" />
 
     <EditText
         android:id="@+id/etEmail"

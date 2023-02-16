@@ -1,4 +1,4 @@
-package pt.itassets.android;
+package pt.itassets.lite;
 
 import org.junit.Test;
 

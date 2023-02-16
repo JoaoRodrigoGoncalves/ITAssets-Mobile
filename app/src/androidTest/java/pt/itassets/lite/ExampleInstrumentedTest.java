@@ -1,4 +1,4 @@
-package pt.itassets.android;
+package pt.itassets.lite;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("pt.itassets.android", appContext.getPackageName());
+        assertEquals("pt.itassets.lite", appContext.getPackageName());
     }
 }

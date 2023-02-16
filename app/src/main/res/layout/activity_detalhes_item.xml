@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".views.itens.DetalhesItemActivity"
+    android:orientation="vertical">
+
+
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.25"
+        class="com.google.android.gms.maps.SupportMapFragment" />
+
+    <ImageView
+        android:id="@+id/img_no_site"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.25"
+        android:src="@drawable/no_site"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.75"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <!-- region Campo Nome -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_nome"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_item_nome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Example Text"
+                android:layout_marginStart="5dp"
+                />
+
+        </LinearLayout>
+
+        <!-- endregion -->
+
+        <!-- region Campo Numero de Serie -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_nSerie"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_item_serialNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Example Text"
+                android:layout_marginStart="5dp"
+                />
+
+        </LinearLayout>
+
+        <!-- endregion -->
+
+        <!-- region Campo Categoria -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_categoria"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_item_categoria"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Example Text"
+                android:layout_marginStart="5dp"
+                />
+
+        </LinearLayout>
+
+        <!-- endregion -->
+
+        <!-- region Campo Notas -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tv_nota"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_item_notas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Example Text"
+                />
+
+        </LinearLayout>
+
+        <!-- endregion -->
+
+    </LinearLayout>
+
+</LinearLayout>
