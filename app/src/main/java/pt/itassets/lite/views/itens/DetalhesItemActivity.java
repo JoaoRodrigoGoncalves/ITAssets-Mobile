@@ -67,7 +67,15 @@ public class DetalhesItemActivity extends AppCompatActivity implements OnMapRead
             tv_nome.setText(String.valueOf(item.getNome()));
             setTitle(String.valueOf(item.getNome()));
 
-            tv_serialNumber.setText(String.valueOf(item.getSerialNumber()));
+            if(item.getSerialNumber() == null)
+            {
+                tv_serialNumber.setText("Não Aplicável");
+                tv_serialNumber.setTypeface(tv_serialNumber.getTypeface(), Typeface.ITALIC);
+            }
+            else
+            {
+                tv_serialNumber.setText(item.getSerialNumber());
+            }
 
             if(item.getNome_Categoria() == null)
             {

@@ -73,7 +73,16 @@ public class ListaItensAdaptador extends BaseAdapter
 
         public void update(Item item){
             tvNome.setText(item.getNome());
-            tvNumSerie.setText(item.getSerialNumber());
+
+            if(item.getSerialNumber() == null)
+            {
+                tvNumSerie.setText("Não Aplicável");
+                tvNumSerie.setTypeface(tvNumSerie.getTypeface(), Typeface.ITALIC);
+            }
+            else
+            {
+                tvNumSerie.setText(item.getSerialNumber());
+            }
 
             if(item.getNome_Categoria() == null)
             {
